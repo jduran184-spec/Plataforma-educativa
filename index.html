@@ -718,24 +718,19 @@ document.getElementById("tutorForm").addEventListener(
 
   let detalle = error?.message || String(error);
 
-  try {
-    if (error?.context instanceof Response) {
-      const respuesta = await error.context.clone().json();
-      detalle = respuesta.error || detalle;
-      if (respuesta.status) {
-        detalle += " (estado " + respuesta.status + ")";
-      }
+  if (error?.context) {
+    try {
+      const respuesta = await error.context.json();
+      detalle += " | " + JSON.stringify(respuesta);
+    } catch (_) {
+      // Conserva el mensaje original.
     }
-  } catch (_) {
-    // Conserva el mensaje original si no hay más detalles.
   }
 
   status.textContent = "Error del tutor: " + detalle;
 } finally {
-      button.disabled = false;
-    }
-  }
-);
+  button.disabled = false;
+}
 
 /* CERRAR SESIÓN */
 document.getElementById("logoutButton").addEventListener(
