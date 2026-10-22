@@ -340,28 +340,37 @@ h2 { font-size: 19px; }
         </div>
       </section>
 
-      <!-- TUTOR IA -->
-      <section id="tutor" class="panel">
-        <h1>🤖 Tutor IA de NYCE</h1>
-        <p class="muted">
-          Pregunta lo que quieras aprender. Te explicaré los conceptos paso a paso.
-        </p>
+      
+<!-- TUTOR IA -->
+<section id="tutor" class="panel">
+  <h1>🤖 Tutor IA de NYCE</h1>
 
-        <div class="card">
-          <form id="tutorForm">
-            <label for="tutorQuestion">¿Qué quieres aprender hoy?</label>
-            <textarea id="tutorQuestion" rows="4" maxlength="1000"
-              required placeholder="Ej.: Explícame las fracciones con ejemplos."></textarea>
+  <p class="muted">
+    Pregunta lo que quieras aprender. Te explicaré los conceptos paso a paso.
+  </p>
 
-            <button id="tutorButton" class="btn" type="submit">
-              Preguntar al tutor
-            </button>
-          </form>
+  <div class="card">
+    <form id="tutorForm">
+      <label for="tutorQuestion">¿Qué quieres aprender hoy?</label>
 
-          <p id="tutorStatus" class="muted" role="status"></p>
-          <div id="tutorAnswer" class="answer"></div>
-        </div>
-      </section>
+      <textarea
+        id="tutorQuestion"
+        rows="4"
+        maxlength="1000"
+        required
+        placeholder="Ej.: Explícame las fracciones con ejemplos."
+      ></textarea>
+
+      <button id="tutorButton" class="btn" type="submit">
+        Preguntar al tutor
+      </button>
+    </form>
+
+    <p id="tutorStatus" class="muted" role="status"></p>
+    <div id="tutorAnswer" class="answer"></div>
+  </div>
+</section>
+
 
       <!-- CUENTA -->
       <section id="account" class="panel">
