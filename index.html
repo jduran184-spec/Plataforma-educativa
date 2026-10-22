@@ -2,885 +2,309 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NYCE | Aprende a tu manera</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root {
-      --primary: #5145cd;
-      --primary-dark: #39309b;
-      --purple: #8b5cf6;
-      --ink: #242344;
-      --muted: #777994;
-      --bg: #f6f7fc;
-      --line: #ececf5;
-      --white: #ffffff;
-      --green: #16a085;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Inter, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--ink);
-    }
-
-    button, input { font: inherit; }
-    button { cursor: pointer; }
-
-    .hidden { display: none !important; }
-
-    .auth-wrap {
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      background: linear-gradient(135deg, #eeedff, #f8f7ff 55%, #e7f2ff);
-    }
-
-    .auth-card {
-      background: white;
-      border-radius: 24px;
-      width: 100%;
-      max-width: 430px;
-      padding: 32px;
-      box-shadow: 0 18px 60px #312e8118;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 24px;
-      font-weight: 800;
-      letter-spacing: -1px;
-    }
-
-    .brand-mark {
-      display: grid;
-      place-items: center;
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      color: white;
-      background: linear-gradient(135deg, var(--primary), var(--purple));
-      font-weight: 800;
-    }
-
-    .auth-card h1 { margin: 28px 0 8px; }
-    .muted { color: var(--muted); line-height: 1.6; }
-
-    label {
-      display: block;
-      font-size: 14px;
-      font-weight: 700;
-      margin: 16px 0 7px;
-    }
-
-    input {
-      width: 100%;
-      padding: 13px 14px;
-      border: 1px solid #dedff0;
-      border-radius: 11px;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px #5145cd16;
-    }
-
-    .btn {
-      border: 0;
-      border-radius: 11px;
-      padding: 12px 16px;
-      font-weight: 700;
-      transition: .2s;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-
-    .btn-primary:hover { background: var(--primary-dark); }
-    .btn-light { background: #efeeff; color: var(--primary-dark); }
-    .btn-block { width: 100%; margin-top: 18px; }
-
-    #authMessage {
-      font-size: 14px;
-      line-height: 1.5;
-      overflow-wrap: anywhere;
-    }
-
-    /* Panel principal */
-    .app-layout {
-      min-height: 100vh;
-      display: grid;
-      grid-template-columns: 250px minmax(0, 1fr);
-    }
-
-    .sidebar {
-      background: white;
-      border-right: 1px solid var(--line);
-      padding: 25px 17px;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    .sidebar .brand { padding: 0 9px 30px; }
-
-    .menu-label {
-      color: #a0a1b8;
-      text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 1.4px;
-      font-weight: 800;
-      padding: 10px 12px;
-    }
-
-    .nav-btn {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border: 0;
-      background: transparent;
-      width: 100%;
-      text-align: left;
-      padding: 13px 14px;
-      margin: 3px 0;
-      border-radius: 12px;
-      color: #686985;
-      font-weight: 700;
-    }
-
-    .nav-btn:hover { background: #f7f6ff; color: var(--primary); }
-
-    .nav-btn.active {
-      background: #eeedff;
-      color: var(--primary);
-    }
-
-    .nav-icon { font-size: 19px; width: 23px; text-align: center; }
-
-    .sidebar-bottom { margin-top: auto; }
-
-    .help-card {
-      padding: 15px;
-      margin: 20px 3px;
-      border-radius: 15px;
-      background: linear-gradient(135deg, #f0edff, #e9f2ff);
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .main-area { min-width: 0; }
-
-    .topbar {
-      background: white;
-      border-bottom: 1px solid var(--line);
-      min-height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      padding: 16px 30px;
-    }
-
-    .topbar h2 { margin: 0; font-size: 18px; }
-
-    .user-chip {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-    }
-
-    .avatar {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      background: #e8e6ff;
-      color: var(--primary);
-      border-radius: 50%;
-      font-weight: 800;
-    }
-
-    .user-name {
-      font-size: 14px;
-      font-weight: 800;
-      overflow-wrap: anywhere;
-    }
-
-    .content {
-      max-width: 1450px;
-      margin: 0 auto;
-      padding: 30px;
-    }
-
-    .welcome-banner {
-      padding: 30px;
-      border-radius: 23px;
-      background: linear-gradient(115deg, #5145cd, #7658e8 60%, #9671f5);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      overflow: hidden;
-    }
-
-    .welcome-banner h1 {
-      font-size: clamp(25px, 3vw, 35px);
-      margin: 0 0 10px;
-      letter-spacing: -1px;
-    }
-
-    .welcome-banner p {
-      margin: 0;
-      line-height: 1.6;
-      color: #eeebff;
-    }
-
-    .banner-art {
-      font-size: 72px;
-      padding: 8px;
-      flex-shrink: 0;
-    }
-
-    .section-heading {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin: 30px 0 17px;
-    }
-
-    .section-heading h2 { margin: 0; font-size: 21px; }
-    .section-heading p { margin: 5px 0 0; color: var(--muted); font-size: 14px; }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .stat-card, .panel-card, .course-card {
-      background: white;
-      border: 1px solid #efeff7;
-      border-radius: 18px;
-      padding: 20px;
-      min-width: 0;
-    }
-
-    .stat-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .stat-icon {
-      width: 43px;
-      height: 43px;
-      display: grid;
-      place-items: center;
-      border-radius: 13px;
-      font-size: 21px;
-    }
-
-    .lavender { background: #efedff; }
-    .mint { background: #e0f8ef; }
-    .peach { background: #fff0e4; }
-    .blue { background: #e6f2ff; }
-
-    .stat-value {
-      font-size: 30px;
-      font-weight: 800;
-      margin-top: 17px;
-      letter-spacing: -1px;
-    }
-
-    .stat-label { color: var(--muted); font-size: 13px; margin-top: 5px; }
-
-    .two-columns {
-      display: grid;
-      grid-template-columns: minmax(0, 1.55fr) minmax(260px, 1fr);
-      gap: 18px;
-      align-items: start;
-    }
-
-    .course-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .course-cover {
-      min-height: 105px;
-      border-radius: 13px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px;
-      font-size: 36px;
-    }
-
-    .course-cover small {
-      font-size: 12px;
-      font-weight: 800;
-      padding: 7px 9px;
-      border-radius: 8px;
-      color: #39309b;
-      background: #ffffffbb;
-    }
-
-    .course-card h3 { font-size: 17px; margin: 17px 0 7px; }
-    .course-card p { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
-
-    .progress-track {
-      height: 8px;
-      background: #eeedf7;
-      border-radius: 20px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #5145cd, #9671f5);
-      border-radius: inherit;
-    }
-
-    .progress-label {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 12px;
-      margin: 9px 0 0;
-      color: var(--muted);
-    }
-
-    .task-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 15px 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .task-row:last-child { border-bottom: 0; }
-
-    .task-check {
-      width: 19px;
-      height: 19px;
-      margin-top: 2px;
-      accent-color: var(--primary);
-      flex-shrink: 0;
-    }
-
-    .task-title { font-weight: 700; font-size: 14px; line-height: 1.4; }
-    .task-meta { color: var(--muted); font-size: 12px; margin-top: 5px; }
-
-    .task-done .task-title {
-      text-decoration: line-through;
-      color: var(--muted);
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 5px 8px;
-      border-radius: 7px;
-      font-size: 11px;
-      font-weight: 800;
-      background: #efedff;
-      color: #5145cd;
-      margin-top: 8px;
-    }
-
-    .badge-done { background: #e0f8ef; color: #14785e; }
-
-    .page-view { display: none; }
-    .page-view.active { display: block; }
-
-    .empty-state {
-      padding: 30px 12px;
-      text-align: center;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .page-note {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 24px;
-      line-height: 1.6;
-    }
-
-    .mobile-menu { display: none; }
-
-    @media (max-width: 1050px) {
-      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .two-columns { grid-template-columns: 1fr; }
-    }
-
-    @media (max-width: 700px) {
-      .app-layout { grid-template-columns: 1fr; }
-      .sidebar {
-        min-height: auto;
-        border-right: 0;
-        border-bottom: 1px solid var(--line);
-        padding: 13px;
-      }
-      .sidebar .brand { padding: 0 8px 13px; }
-      .sidebar .menu-label, .sidebar-bottom { display: none; }
-      .nav-list {
-        display: flex;
-        overflow-x: auto;
-        gap: 5px;
-      }
-      .nav-btn {
-        width: auto;
-        white-space: nowrap;
-        padding: 10px;
-        font-size: 12px;
-      }
-      .nav-icon { width: auto; }
-      .topbar { padding: 14px 17px; min-height: 68px; }
-      .topbar h2 { font-size: 16px; }
-      .content { padding: 17px; }
-      .welcome-banner { padding: 23px 19px; }
-      .banner-art { display: none; }
-      .stats-grid { gap: 10px; }
-      .stat-card { padding: 14px; }
-      .stat-value { font-size: 25px; }
-      .course-grid { grid-template-columns: 1fr; }
-      .section-heading h2 { font-size: 19px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NYCE | Plataforma educativa</title>
+<style>
+:root{--primary:#5b5ce2;--dark:#202344;--muted:#747b91;--bg:#f5f6fc;--border:#e8eaf3}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--dark)}
+button,input{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.5;cursor:wait}
+.hidden{display:none!important}
+.btn{border:0;background:var(--primary);color:white;padding:11px 16px;border-radius:10px;font-weight:700}
+.light{background:#eeefff;color:var(--primary)}
+input{width:100%;padding:12px;border:1px solid var(--border);border-radius:9px;margin:6px 0 14px}
+.auth{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#eeefff,#f9fbff)}
+.authbox{background:white;padding:30px;border-radius:20px;width:min(100%,420px);box-shadow:0 12px 45px #20234412}
+.logo{font-size:27px;font-weight:900;color:var(--primary)}
+.muted{color:var(--muted);line-height:1.6}
+.app{display:flex;min-height:100vh}
+.sidebar{width:230px;background:white;border-right:1px solid var(--border);padding:22px 14px;flex-shrink:0}
+.sidebar button{display:block;width:100%;text-align:left;padding:13px;margin:5px 0;border:0;border-radius:9px;background:white;color:var(--dark)}
+.sidebar button.active,.sidebar button:hover{background:#eeefff;color:var(--primary)}
+.main{flex:1;min-width:0}
+.top{background:white;padding:18px 25px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.content{padding:26px;max-width:1250px;margin:auto}
+.panel{display:none}.panel.active{display:block}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:20px 0}
+.card{background:white;border:1px solid var(--border);border-radius:15px;padding:20px;min-width:0}
+h1{font-size:28px;margin:0 0 8px}h2{font-size:19px}
+.progress{height:9px;background:#eeeef7;border-radius:10px;overflow:hidden}
+.progress div{height:100%;background:var(--primary)}
+.tag{display:inline-block;padding:5px 9px;background:#eeefff;color:var(--primary);border-radius:7px;font-size:12px}
+.task{padding:14px 0;border-bottom:1px solid var(--border)}
+.task:last-child{border:0}
+.notice{padding:12px;background:#fff5dd;border-radius:9px;font-size:13px}
+@media(max-width:750px){.app{display:block}.sidebar{width:100%;display:flex;overflow-x:auto;padding:8px}.sidebar .logo{display:none}.sidebar button{white-space:nowrap;width:auto}.cards{grid-template-columns:1fr}.content{padding:17px}.top{padding:14px}.authbox{padding:23px}}
+</style>
 </head>
 <body>
 
-  <!-- Inicio de sesión -->
-  <section class="auth-wrap" id="authScreen">
-    <div class="auth-card">
-      <div class="brand">
-        <div class="brand-mark">N</div>
-        <span>NYCE</span>
+<section id="authScreen" class="auth">
+  <div class="authbox">
+    <div class="logo">✦ NYCE</div>
+    <h1 id="authTitle" style="margin-top:24px">¡Bienvenido a NYCE!</h1>
+    <p class="muted" id="authDescription">Tu espacio para aprender, descubrir y avanzar.</p>
+
+    <form id="authForm">
+      <div id="nameField" class="hidden">
+        <label for="fullName">Tu nombre</label>
+        <input id="fullName" autocomplete="name" placeholder="Escribe tu nombre">
       </div>
-
-      <h1>Tu aprendizaje comienza aquí</h1>
-      <p class="muted">Entra a tu espacio educativo y sigue avanzando hacia tus metas.</p>
-
-      <form id="authForm">
-        <label for="fullName">Nombre completo (para registrarte)</label>
-        <input id="fullName" autocomplete="name" placeholder="Tu nombre">
-
-        <label for="email">Correo electrónico</label>
-        <input id="email" type="email" autocomplete="email" required placeholder="tu@correo.com">
-
-        <label for="password">Contraseña</label>
-        <input id="password" type="password" autocomplete="current-password" required minlength="6" placeholder="Mínimo 6 caracteres">
-
-        <button class="btn btn-primary btn-block" type="button" id="signupBtn">Crear cuenta</button>
-        <button class="btn btn-light btn-block" type="submit">Iniciar sesión</button>
-      </form>
-
-      <p id="authMessage" role="status" aria-live="polite"></p>
-      <p class="muted" style="font-size:12px">Al registrarte, es posible que debas confirmar tu correo electrónico.</p>
-    </div>
-  </section>
-
-  <!-- Panel -->
-  <div class="app-layout hidden" id="appScreen">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-mark">N</div>
-        <span>NYCE</span>
-      </div>
-
-      <div class="menu-label">Menú principal</div>
-      <nav class="nav-list" aria-label="Navegación principal">
-        <button class="nav-btn active" data-page="home"><span class="nav-icon">⌂</span> Inicio</button>
-        <button class="nav-btn" data-page="courses"><span class="nav-icon">▤</span> Mis cursos</button>
-        <button class="nav-btn" data-page="tasks"><span class="nav-icon">✓</span> Mis tareas</button>
-        <button class="nav-btn" data-page="progress"><span class="nav-icon">◔</span> Mi progreso</button>
-      </nav>
-
-      <div class="sidebar-bottom">
-        <div class="help-card">
-          <strong>✨ Sigue aprendiendo</strong>
-          <div>Avanza poco a poco. Cada lección cuenta.</div>
-        </div>
-        <button class="nav-btn" id="logoutBtn"><span class="nav-icon">↪</span> Cerrar sesión</button>
-      </div>
-    </aside>
-
-    <main class="main-area">
-      <header class="topbar">
-        <h2 id="pageTitle">Inicio</h2>
-        <div class="user-chip">
-          <div class="avatar" id="avatar">N</div>
-          <div class="user-name" id="userName">Estudiante</div>
-        </div>
-      </header>
-
-      <div class="content">
-        <!-- Inicio -->
-        <section class="page-view active" id="page-home">
-          <div class="welcome-banner">
-            <div>
-              <h1 id="welcomeTitle">¡Hola!</h1>
-              <p>Qué bueno tenerte aquí. ¿Listo para aprender algo nuevo hoy?</p>
-            </div>
-            <div class="banner-art" aria-hidden="true">🎓</div>
-          </div>
-
-          <div class="section-heading">
-            <div>
-              <h2>Tu resumen</h2>
-              <p>Un vistazo a tu espacio de aprendizaje</p>
-            </div>
-          </div>
-
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-top"><span class="muted">Mis cursos</span><span class="stat-icon lavender">📚</span></div>
-              <div class="stat-value" id="courseCount">4</div>
-              <div class="stat-label">Cursos de demostración</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-top"><span class="muted">Tareas pendientes</span><span class="stat-icon peach">📝</span></div>
-              <div class="stat-value" id="pendingCount">3</div>
-              <div class="stat-label">Por completar</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-top"><span class="muted">Tareas listas</span><span class="stat-icon mint">✓</span></div>
-              <div class="stat-value" id="doneCount">0</div>
-              <div class="stat-label">Marcadas como completadas</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-top"><span class="muted">Progreso general</span><span class="stat-icon blue">📈</span></div>
-              <div class="stat-value" id="overallProgress">35%</div>
-              <div class="stat-label">Ejemplo visual inicial</div>
-            </div>
-          </div>
-
-          <div class="two-columns">
-            <div>
-              <div class="section-heading">
-                <div><h2>Continúa aprendiendo</h2><p>Explora tus materias</p></div>
-                <button class="btn btn-light" data-go="courses">Ver cursos</button>
-              </div>
-              <div class="course-grid" id="homeCourses"></div>
-            </div>
-            <div>
-              <div class="section-heading">
-                <div><h2>Tu lista de tareas</h2><p>Marca las actividades que termines</p></div>
-              </div>
-              <div class="panel-card" id="homeTasks"></div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Cursos -->
-        <section class="page-view" id="page-courses">
-          <div class="section-heading">
-            <div><h2>Mis cursos</h2><p>Materias para explorar y practicar.</p></div>
-          </div>
-          <div class="course-grid" id="allCourses"></div>
-          <p class="page-note">Estos cursos son ejemplos de interfaz. Todavía no contienen lecciones reales ni están vinculados a un profesor.</p>
-        </section>
-
-        <!-- Tareas -->
-        <section class="page-view" id="page-tasks">
-          <div class="section-heading">
-            <div><h2>Mis tareas</h2><p>Marca cada actividad cuando la hayas terminado.</p></div>
-          </div>
-          <div class="panel-card" id="allTasks"></div>
-          <p class="page-note">Las marcas de tareas funcionan en esta página, pero todavía no se guardan en la base de datos.</p>
-        </section>
-
-        <!-- Progreso -->
-        <section class="page-view" id="page-progress">
-          <div class="section-heading">
-            <div><h2>Mi progreso</h2><p>Tu avance de ejemplo por materia.</p></div>
-          </div>
-          <div class="panel-card">
-            <h3>Progreso por curso</h3>
-            <div id="progressCourses"></div>
-          </div>
-          <div class="panel-card" style="margin-top:18px">
-            <h3>Resumen de actividades</h3>
-            <p class="muted">Tareas completadas: <strong id="progressDone">0</strong></p>
-            <p class="muted">Tareas pendientes: <strong id="progressPending">3</strong></p>
-          </div>
-          <p class="page-note">Los porcentajes de cursos son ilustrativos y no representan calificaciones reales.</p>
-        </section>
-      </div>
-    </main>
+      <label for="email">Correo electrónico</label>
+      <input id="email" type="email" autocomplete="email" required placeholder="tu@correo.com">
+      <label for="password">Contraseña</label>
+      <input id="password" type="password" required minlength="6" autocomplete="current-password" placeholder="Mínimo 6 caracteres">
+      <button class="btn" id="authButton" type="submit" style="width:100%">Entrar a NYCE</button>
+    </form>
+    <p id="authMessage" class="muted" role="status"></p>
+    <button id="toggleAuth" class="btn light" style="width:100%">Crear una cuenta nueva</button>
+    <p class="muted" style="font-size:12px">Al registrarte, puede ser necesario confirmar tu correo electrónico.</p>
   </div>
+</section>
 
-  <script>
-    // IMPORTANTE: conserva aquí los valores reales de tu proyecto Supabase.
-    const SUPABASE_URL = "https://zemgfahecttvuhfghogl.supabase.co";
-    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_s1O9sJ1pNEdFVCUBEQZnUw_5E2n6qS9";
+<div id="appScreen" class="app hidden">
+  <aside class="sidebar">
+    <div class="logo" style="padding:8px 12px 18px">✦ NYCE</div>
+    <button class="active" data-page="home">🏠 Inicio</button>
+    <button data-page="courses">📚 Mis cursos</button>
+    <button data-page="tasks">📝 Mis tareas</button>
+    <button data-page="progress">📈 Mi progreso</button>
+    <button data-page="account">👤 Mi cuenta</button>
+  </aside>
 
-    const authScreen = document.getElementById("authScreen");
-    const appScreen = document.getElementById("appScreen");
-    const authMessage = document.getElementById("authMessage");
+  <main class="main">
+    <header class="top">
+      <strong id="pageTitle">Inicio</strong>
+      <span id="userLabel" class="muted"></span>
+    </header>
 
-    let supabaseClient = null;
-    let currentUser = null;
+    <div class="content">
+      <section id="home" class="panel active">
+        <h1 id="greeting">¡Hola! 👋</h1>
+        <p class="muted">Este es tu espacio para aprender, avanzar y descubrir tu potencial.</p>
+        <div class="cards">
+          <div class="card"><span class="muted">Mis cursos</span><h1>3</h1><span class="tag">Aprende a tu ritmo</span></div>
+          <div class="card"><span class="muted">Tareas pendientes</span><h1>2</h1><span class="tag">Organiza tu tiempo</span></div>
+          <div class="card"><span class="muted">Progreso general</span><h1>35%</h1><div class="progress"><div style="width:35%"></div></div></div>
+        </div>
+        <div class="card">
+          <h2>¡Continúa aprendiendo!</h2>
+          <p class="muted">Entra a tus cursos, revisa tus tareas y celebra cada avance.</p>
+          <button class="btn" data-go="courses">Ver mis cursos →</button>
+        </div>
+      </section>
 
-    if (
-      SUPABASE_URL.startsWith("https://") &&
-      !SUPABASE_URL.includes("PEGA_AQUI") &&
-      !SUPABASE_URL.endsWith("/rest/v1") &&
-      SUPABASE_PUBLISHABLE_KEY.length > 20 &&
-      !SUPABASE_PUBLISHABLE_KEY.includes("PEGA_AQUI")
-    ) {
-      supabaseClient = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-      );
-    }
+      <section id="courses" class="panel">
+        <h1>Mis cursos 📚</h1>
+        <p class="muted">Explora tus espacios de aprendizaje.</p>
+        <div class="cards">
+          <article class="card"><span class="tag">Matemáticas</span><h2>Matemáticas básicas</h2><p class="muted">Números, operaciones y resolución de problemas.</p><div class="progress"><div style="width:45%"></div></div><p>45% completado</p></article>
+          <article class="card"><span class="tag">Ciencias</span><h2>Explorando la ciencia</h2><p class="muted">Descubre el mundo a través de preguntas y experimentos.</p><div class="progress"><div style="width:30%"></div></div><p>30% completado</p></article>
+          <article class="card"><span class="tag">Tecnología</span><h2>Creatividad digital</h2><p class="muted">Ideas, tecnología y pensamiento creativo.</p><div class="progress"><div style="width:60%"></div></div><p>60% completado</p></article>
+        </div>
+      </section>
 
-    // Datos de demostración: luego podemos guardarlos en Supabase.
-    const courses = [
-      { id: 1, title: "Matemáticas", teacher: "Curso de ejemplo", icon: "📐", color: "#eeedff", progress: 45 },
-      { id: 2, title: "Ciencias naturales", teacher: "Curso de ejemplo", icon: "🔬", color: "#e0f8ef", progress: 30 },
-      { id: 3, title: "Lengua y literatura", teacher: "Curso de ejemplo", icon: "📖", color: "#fff0e4", progress: 65 },
-      { id: 4, title: "Tecnología", teacher: "Curso de ejemplo", icon: "💻", color: "#e6f2ff", progress: 20 }
-    ];
+      <section id="tasks" class="panel">
+        <h1>Mis tareas 📝</h1>
+        <p class="muted">Organiza las actividades de ejemplo.</p>
+        <div class="card">
+          <div class="task"><strong>Ejercicios de matemáticas</strong><p class="muted">Resolver los ejercicios de práctica.</p><span class="tag">Pendiente</span> <button class="btn light taskDone">Marcar completada</button></div>
+          <div class="task"><strong>Lectura de ciencias</strong><p class="muted">Leer el material y anotar tus ideas.</p><span class="tag">Pendiente</span> <button class="btn light taskDone">Marcar completada</button></div>
+          <div class="task"><strong>Proyecto creativo</strong><p class="muted">Actividad de ejemplo.</p><span class="tag">Completada</span></div>
+        </div>
+        <p class="muted">Estas tareas son demostrativas y aún no se sincronizan con una base de datos.</p>
+      </section>
 
-    const tasks = [
-      { id: 1, title: "Repasar ejercicios de matemáticas", course: "Matemáticas", due: "Fecha por definir", done: false },
-      { id: 2, title: "Leer el tema de ciencias", course: "Ciencias naturales", due: "Fecha por definir", done: false },
-      { id: 3, title: "Preparar un resumen de lectura", course: "Lengua y literatura", due: "Fecha por definir", done: false }
-    ];
+      <section id="progress" class="panel">
+        <h1>Mi progreso 📈</h1>
+        <p class="muted">Un resumen de ejemplo de tus avances.</p>
+        <div class="card">
+          <h2>Matemáticas básicas — 45%</h2><div class="progress"><div style="width:45%"></div></div>
+          <h2>Ciencias — 30%</h2><div class="progress"><div style="width:30%"></div></div>
+          <h2>Creatividad digital — 60%</h2><div class="progress"><div style="width:60%"></div></div>
+        </div>
+      </section>
 
-    function escapeHTML(value) {
-      return String(value).replace(/[&<>"']/g, function (char) {
-        return {
-          "&": "&amp;", "<": "&lt;", ">": "&gt;",
-          '"': "&quot;", "'": "&#39;"
-        }[char];
-      });
-    }
+      <section id="account" class="panel">
+        <h1>Mi cuenta 👤</h1>
+        <div class="card">
+          <p><strong>Nombre:</strong> <span id="accountName"></span></p>
+          <p><strong>Correo:</strong> <span id="accountEmail"></span></p>
+          <button id="logoutButton" class="btn">Cerrar sesión</button>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
 
-    function renderCourse(course) {
-      return `
-        <article class="course-card">
-          <div class="course-cover" style="background:${course.color}">
-            <span>${course.icon}</span>
-            <small>${course.progress}%</small>
-          </div>
-          <h3>${escapeHTML(course.title)}</h3>
-          <p>${escapeHTML(course.teacher)}</p>
-          <div class="progress-track">
-            <div class="progress-fill" style="width:${course.progress}%"></div>
-          </div>
-          <div class="progress-label"><span>Progreso</span><strong>${course.progress}%</strong></div>
-        </article>`;
-    }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://zemgfahecttvuhfghogl.supabase.co";
+const SUPABASE_KEY = "sb_publishable_s1O9sJ1pNEdFVCUBEQZnUw_5E2n6qS9";
 
-    function renderTask(task) {
-      return `
-        <div class="task-row ${task.done ? "task-done" : ""}">
-          <input class="task-check" type="checkbox" data-task-id="${task.id}"
-            ${task.done ? "checked" : ""}
-            aria-label="Marcar ${escapeHTML(task.title)} como completada">
-          <div>
-            <div class="task-title">${escapeHTML(task.title)}</div>
-            <div class="task-meta">${escapeHTML(task.course)} · ${escapeHTML(task.due)}</div>
-            <span class="badge ${task.done ? "badge-done" : ""}">
-              ${task.done ? "Completada" : "Pendiente"}
-            </span>
-          </div>
-        </div>`;
-    }
+let db = null;
+let registering = false;
 
-    function renderTasks(container) {
-      container.innerHTML = tasks.map(renderTask).join("");
-    }
+const authScreen = document.getElementById("authScreen");
+const appScreen = document.getElementById("appScreen");
+const authMessage = document.getElementById("authMessage");
 
-    function updateStats() {
-      const done = tasks.filter(task => task.done).length;
-      const pending = tasks.length - done;
-      document.getElementById("courseCount").textContent = courses.length;
-      document.getElementById("pendingCount").textContent = pending;
-      document.getElementById("doneCount").textContent = done;
-      document.getElementById("overallProgress").textContent =
-        Math.round(courses.reduce((sum, course) => sum + course.progress, 0) / courses.length) + "%";
-      document.getElementById("progressDone").textContent = done;
-      document.getElementById("progressPending").textContent = pending;
-    }
+function showMessage(message) {
+  authMessage.textContent = message;
+}
 
-    function renderProgressCourses() {
-      document.getElementById("progressCourses").innerHTML = courses.map(course => `
-        <div style="padding:14px 0">
-          <div class="progress-label" style="font-size:14px;margin:0 0 9px">
-            <strong>${escapeHTML(course.title)}</strong><span>${course.progress}%</span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" style="width:${course.progress}%"></div>
-          </div>
-        </div>`).join("");
-    }
+function showPage(page) {
+  document.querySelectorAll(".panel").forEach(el =>
+    el.classList.toggle("active", el.id === page)
+  );
+  document.querySelectorAll("[data-page]").forEach(el =>
+    el.classList.toggle("active", el.dataset.page === page)
+  );
+  const titles = {
+    home:"Inicio",
+    courses:"Mis cursos",
+    tasks:"Mis tareas",
+    progress:"Mi progreso",
+    account:"Mi cuenta"
+  };
+  document.getElementById("pageTitle").textContent = titles[page] || "NYCE";
+}
 
-    function renderAll() {
-      document.getElementById("homeCourses").innerHTML = courses.slice(0, 2).map(renderCourse).join("");
-      document.getElementById("allCourses").innerHTML = courses.map(renderCourse).join("");
-      renderTasks(document.getElementById("homeTasks"));
-      renderTasks(document.getElementById("allTasks"));
-      renderProgressCourses();
-      updateStats();
-    }
+function enterApp(user) {
+  const name =
+    user.user_metadata?.full_name ||
+    user.email?.split("@")[0] ||
+    "Estudiante";
 
-    function showPage(page) {
-      const titles = {
-        home: "Inicio",
-        courses: "Mis cursos",
-        tasks: "Mis tareas",
-        progress: "Mi progreso"
-      };
+  authScreen.classList.add("hidden");
+  appScreen.classList.remove("hidden");
+  document.getElementById("greeting").textContent = "¡Hola, " + name + "! 👋";
+  document.getElementById("userLabel").textContent = name;
+  document.getElementById("accountName").textContent = name;
+  document.getElementById("accountEmail").textContent = user.email || "";
+  showPage("home");
+}
 
-      document.querySelectorAll(".page-view").forEach(section => {
-        section.classList.toggle("active", section.id === "page-" + page);
-      });
+function showLogin() {
+  appScreen.classList.add("hidden");
+  authScreen.classList.remove("hidden");
+}
 
-      document.querySelectorAll(".nav-btn[data-page]").forEach(button => {
-        button.classList.toggle("active", button.dataset.page === page);
-      });
+document.getElementById("toggleAuth").addEventListener("click", () => {
+  registering = !registering;
+  document.getElementById("authTitle").textContent =
+    registering ? "Crea tu cuenta NYCE" : "¡Bienvenido a NYCE!";
+  document.getElementById("authDescription").textContent =
+    registering ? "Regístrate para acceder a tu espacio educativo." :
+    "Tu espacio para aprender, descubrir y avanzar.";
+  document.getElementById("nameField").classList.toggle("hidden", !registering);
+  document.getElementById("fullName").required = registering;
+  document.getElementById("authButton").textContent =
+    registering ? "Crear cuenta" : "Entrar a NYCE";
+  document.getElementById("toggleAuth").textContent =
+    registering ? "Ya tengo una cuenta" : "Crear una cuenta nueva";
+  document.getElementById("password").autocomplete =
+    registering ? "new-password" : "current-password";
+  showMessage("");
+});
 
-      document.getElementById("pageTitle").textContent = titles[page] || "Inicio";
-    }
+document.getElementById("authForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (!db) {
+    showMessage("Falta configurar Supabase. Revisa la URL y la Publishable key en el código.");
+    return;
+  }
 
-    function enterApp(user) {
-      currentUser = user;
-      const name = user.user_metadata?.full_name || user.email?.split("@")[0] || "Estudiante";
-      const safeName = escapeHTML(name);
-      document.getElementById("welcomeTitle").textContent = "¡Hola, " + name + "!";
-      document.getElementById("userName").textContent = name;
-      document.getElementById("avatar").textContent = name.trim().charAt(0).toUpperCase() || "N";
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const fullName = document.getElementById("fullName").value.trim();
+  const button = document.getElementById("authButton");
+  button.disabled = true;
+  showMessage("Un momento, estamos procesando tu solicitud…");
 
-      authScreen.classList.add("hidden");
-      appScreen.classList.remove("hidden");
-      authMessage.textContent = "";
-      renderAll();
-      showPage("home");
-    }
-
-    function leaveApp() {
-      currentUser = null;
-      appScreen.classList.add("hidden");
-      authScreen.classList.remove("hidden");
-    }
-
-    document.querySelectorAll(".nav-btn[data-page]").forEach(button => {
-      button.addEventListener("click", () => showPage(button.dataset.page));
-    });
-
-    document.querySelectorAll("[data-go]").forEach(button => {
-      button.addEventListener("click", () => showPage(button.dataset.go));
-    });
-
-    document.addEventListener("change", event => {
-      const checkbox = event.target.closest("[data-task-id]");
-      if (!checkbox) return;
-      const task = tasks.find(item => item.id === Number(checkbox.dataset.taskId));
-      if (!task) return;
-      task.done = checkbox.checked;
-      renderAll();
-    });
-
-    document.getElementById("signupBtn").addEventListener("click", async () => {
-      if (!supabaseClient) {
-        authMessage.textContent = "Revisa SUPABASE_URL y SUPABASE_PUBLISHABLE_KEY en el código.";
-        return;
-      }
-
-      const name = document.getElementById("fullName").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-
-      if (!name || !email || password.length < 6) {
-        authMessage.textContent = "Escribe tu nombre, correo y una contraseña de al menos 6 caracteres.";
-        return;
-      }
-
-      authMessage.textContent = "Creando tu cuenta…";
-      const { data, error } = await supabaseClient.auth.signUp({
+  try {
+    let result;
+    if (registering) {
+      result = await db.auth.signUp({
         email,
         password,
-        options: {
-          data: { full_name: name },
-          emailRedirectTo: window.location.origin + window.location.pathname
-        }
+        options: { data: { full_name: fullName } }
       });
-
-      if (error) {
-        authMessage.textContent = "No se pudo crear la cuenta: " + error.message;
-      } else if (data.session) {
-        enterApp(data.user);
-      } else {
-        authMessage.textContent = "Cuenta creada. Confirma tu correo y después inicia sesión.";
-      }
-    });
-
-    document.getElementById("authForm").addEventListener("submit", async event => {
-      event.preventDefault();
-
-      if (!supabaseClient) {
-        authMessage.textContent = "Revisa la URL y la clave publicable de Supabase en el código.";
-        return;
-      }
-
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-
-      authMessage.textContent = "Iniciando sesión…";
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) {
-        authMessage.textContent = "No se pudo iniciar sesión: " + error.message;
-      } else {
-        enterApp(data.user);
-      }
-    });
-
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      if (!supabaseClient) {
-        leaveApp();
-        return;
-      }
-
-      const { error } = await supabaseClient.auth.signOut();
-      if (error) {
-        alert("No se pudo cerrar sesión: " + error.message);
-        return;
-      }
-      leaveApp();
-    });
-
-    if (supabaseClient) {
-      supabaseClient.auth.getSession().then(({ data, error }) => {
-        if (error) {
-          authMessage.textContent = "No se pudo comprobar la sesión. Inicia sesión otra vez.";
-        } else if (data.session) {
-          enterApp(data.session.user);
-        }
-      });
+    } else {
+      result = await db.auth.signInWithPassword({ email, password });
     }
-  </script>
+
+    if (result.error) throw result.error;
+
+    if (registering && !result.data.session) {
+      showMessage("Cuenta creada. Revisa tu correo para confirmar el registro y después inicia sesión.");
+    } else if (result.data.user) {
+      enterApp(result.data.user);
+    }
+  } catch (error) {
+    showMessage("No se pudo completar la solicitud: " + error.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+document.querySelectorAll("[data-page]").forEach(button => {
+  button.addEventListener("click", () => showPage(button.dataset.page));
+});
+document.querySelectorAll("[data-go]").forEach(button => {
+  button.addEventListener("click", () => showPage(button.dataset.go));
+});
+
+document.querySelectorAll(".taskDone").forEach(button => {
+  button.addEventListener("click", () => {
+    const task = button.closest(".task");
+    const tag = task.querySelector(".tag");
+    tag.textContent = "Completada";
+    button.remove();
+  });
+});
+
+document.getElementById("logoutButton").addEventListener("click", async () => {
+  if (db) {
+    const { error } = await db.auth.signOut();
+    if (error) {
+      alert("No se pudo cerrar la sesión: " + error.message);
+      return;
+    }
+  }
+  showLogin();
+  showMessage("Has cerrado sesión.");
+});
+
+async function start() {
+  if (
+    !window.supabase ||
+    SUPABASE_URL.includes("PEGA_AQUI") ||
+    SUPABASE_KEY.includes("PEGA_AQUI")
+  ) {
+    showMessage("El panel está preparado. Falta configurar la URL y la Publishable key de Supabase.");
+    return;
+  }
+
+  try {
+    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const { data, error } = await db.auth.getSession();
+    if (error) throw error;
+    if (data.session?.user) enterApp(data.session.user);
+
+    db.auth.onAuthStateChange((event, session) => {
+      if (session?.user) enterApp(session.user);
+      else if (event === "SIGNED_OUT") showLogin();
+    });
+  } catch (error) {
+    showMessage("No se pudo conectar con Supabase: " + error.message);
+  }
+}
+
+start();
+</script>
 </body>
 </html>
