@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AulaNova | Plataforma Educativa Inteligente</title>
+<style>
+:root {
+  --primary:#5b5ce2; --dark:#202344; --muted:#747b91;
+  --bg:#f5f6fc; --white:#fff; --border:#e8eaf3;
+  --green:#16a779; --orange:#f5a623; --red:#e85d75;
+}
+* {box-sizing:border-box}
+body {margin:0;font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--dark)}
+button,input,select {font:inherit}
+button {cursor:pointer}
+.app {display:flex;min-height:100vh}
+.sidebar {width:245px;background:#fff;border-right:1px solid var(--border);padding:25px 16px;display:flex;flex-direction:column;flex-shrink:0}
+.brand {display:flex;align-items:center;gap:10px;padding:0 10px 30px;font-weight:800;font-size:21px}
+.brand-icon {background:var(--primary);color:white;padding:9px;border-radius:12px}
+.nav-label {font-size:11px;color:#9ba1b3;font-weight:800;letter-spacing:1.4px;padding:12px}
+.nav {display:flex;align-items:center;gap:12px;padding:12px;border:0;background:transparent;color:#69718a;border-radius:10px;width:100%;text-align:left;margin-bottom:5px}
+.nav:hover,.nav.active {background:#eeefff;color:var(--primary);font-weight:700}
+.sidebar-bottom {margin-top:auto;padding:12px}
+.main {flex:1;min-width:0}
+.topbar {height:76px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 30px;gap:12px}
+.topbar h3 {margin:0;font-size:17px}
+.top-actions {display:flex;align-items:center;gap:12px}
+.role-select {border:1px solid var(--border);padding:9px;border-radius:9px;background:#fff;color:var(--dark)}
+.avatar {background:#dcdcff;color:var(--primary);border-radius:50%;width:38px;height:38px;display:grid;place-items:center;font-weight:800}
+.content {padding:30px;max-width:1500px;margin:auto}
+.welcome {display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:25px}
+h1 {font-size:28px;margin:0 0 8px}
+p {color:var(--muted);line-height:1.55}
+.welcome p {margin:0}
+.btn {background:var(--primary);color:white;border:0;border-radius:9px;padding:11px 15px;font-weight:650}
+.btn:hover {filter:brightness(.95)}
+.btn-light {background:#eeefff;color:var(--primary)}
+.cards {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:22px}
+.card {background:#fff;border:1px solid var(--border);border-radius:15px;padding:20px;min-width:0}
+.stat-head {display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
+.stat-icon {width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#eeefff;font-size:20px}
+.stat-value {font-size:29px;font-weight:800;margin:16px 0 6px}
+.positive {color:var(--green);font-size:12px}
+.small {font-size:12px;color:var(--muted)}
+.grid-main {display:grid;grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr);gap:18px;margin-bottom:20px}
+.card-title {display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px}
+.card-title h2 {font-size:16px;margin:0}
+select,.field {padding:9px 11px;border:1px solid var(--border);border-radius:8px;background:white;color:var(--dark);max-width:100%}
+.chart {height:220px;display:flex;align-items:flex-end;justify-content:space-around;gap:14px;border-bottom:1px solid var(--border);padding:10px 5px 0}
+.bar-group {display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:9px;flex:1}
+.bar {width:min(35px,75%);min-height:5px;border-radius:7px 7px 2px 2px;background:linear-gradient(180deg,#8282ff,#5b5ce2);transition:height .4s}
+.bar-label {font-size:11px;color:var(--muted);padding-bottom:7px}
+.progress-item {margin:18px 0}
+.progress-row {display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:8px}
+.track {height:8px;background:#eff0f7;border-radius:10px;overflow:hidden}
+.fill {height:100%;border-radius:10px;background:var(--primary)}
+.recommendation {display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}
+.recommendation:last-child {border-bottom:0}
+.rec-icon {width:39px;height:39px;flex-shrink:0;display:grid;place-items:center;border-radius:11px;background:#fff3d9}
+.rec-icon.purple {background:#eeefff}
+.rec-icon.green {background:#e0f8ed}
+.rec-icon.red {background:#ffe9ed}
+.rec-title {font-weight:700;font-size:13px;margin-bottom:5px}
+.rec-text {font-size:12px;color:var(--muted);line-height:1.5}
+.table-wrap {overflow-x:auto}
+table {border-collapse:collapse;width:100%;font-size:13px}
+th,td {text-align:left;padding:14px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+th {font-size:11px;color:var(--muted);font-weight:700}
+.status {border-radius:20px;padding:5px 9px;font-size:11px;background:#e0f8ed;color:#14835f}
+.status.warn {background:#fff2d8;color:#9c6a0b}
+.status.low {background:#ffe8ed;color:#bd4058}
+.section {display:none}
+.section.active {display:block}
+.pill {display:inline-block;background:#eeefff;color:var(--primary);border-radius:7px;padding:6px 9px;font-size:12px;font-weight:700}
+.achievement-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.achievement {text-align:center;padding:24px 12px}
+.medal {font-size:35px;margin-bottom:12px}
+.achievement h3 {font-size:14px;margin:8px}
+.mobile-menu {display:none}
+.empty {padding:28px;text-align:center;color:var(--muted)}
+.footer {text-align:center;color:#969caf;font-size:11px;padding:25px}
+.notice {background:#fff5dd;border:1px solid #f6e4ae;padding:12px 15px;border-radius:10px;font-size:12px;color:#74561a;margin-bottom:20px;line-height:1.5}
+.form-row {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.form-row label {font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:7px}
+@media(max-width:1050px) {
+ .sidebar{width:205px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .grid-main{grid-template-columns:1fr}.content{padding:22px}
+}
+@media(max-width:650px) {
+ .sidebar{display:none}.topbar{padding:0 15px;height:65px}.mobile-menu{display:block}
+ .content{padding:17px}.welcome{align-items:flex-start;flex-direction:column}
+ h1{font-size:23px}.cards{gap:10px}.card{padding:14px}.stat-value{font-size:24px}
+ .top-actions{gap:7px}.role-select{max-width:145px;font-size:12px}
+ .achievement-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><span class="brand-icon">✦</span> AulaNova</div>
+  <div class="nav-label">ESPACIO ACADÉMICO</div>
+  <button class="nav active" data-page="dashboard">▦ &nbsp; Panel principal</button>
+  <button class="nav" data-page="grades">▤ &nbsp; Calificaciones</button>
+  <button class="nav" data-page="subjects">▧ &nbsp; Asignaturas</button>
+  <button class="nav" data-page="recommendations">✧ &nbsp; Refuerzo inteligente</button>
+  <div class="nav-label">CRECIMIENTO</div>
+  <button class="nav" data-page="achievements">♜ &nbsp; Logros y niveles</button>
+  <button class="nav" data-page="reports">▥ &nbsp; Informes</button>
+  <div class="nav-label">COMUNIDAD</div>
+  <button class="nav" data-page="people">♧ &nbsp; Comunidad escolar</button>
+  <div class="sidebar-bottom">
+    <div class="card" style="padding:14px;background:#f7f7ff">
+      <div style="font-size:13px;font-weight:700">✦ Tu progreso importa</div>
+      <p style="font-size:11px;margin-bottom:0">Cada paso cuenta para alcanzar tus metas.</p>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="nav mobile-menu" id="mobileMenu" aria-label="Abrir menú">☰</button>
+    <h3 id="pageTitle">Panel principal</h3>
+  </div>
+  <div class="top-actions">
+    <select class="role-select" id="roleSelect" aria-label="Seleccionar perfil">
+      <option value="student">🎓 Estudiante</option>
+      <option value="teacher">📚 Docente</option>
+      <option value="parent">👨‍👩‍👧 Padre de familia</option>
+    </select>
+    <div class="avatar" id="avatar">ES</div>
+  </div>
+</header>
+
+<div class="content">
+<div class="notice">Modo de demostración: los datos son ficticios y se guardan únicamente en esta sesión del navegador. Todavía no hay cuentas reales ni una base de datos conectada.</div>
+
+<section class="section active" id="dashboard">
+  <div class="welcome">
+    <div><h1 id="welcomeTitle">¡Hola, estudiante! 👋</h1><p id="welcomeText">Este es tu espacio para aprender, avanzar y descubrir tu potencial.</p></div>
+    <button class="btn" onclick="showPage('grades')">Ver calificaciones →</button>
+  </div>
+  <div class="cards" id="stats">
+    <div class="card"><div class="stat-head">Promedio general <span class="stat-icon">◎</span></div><div class="stat-value">4.2/5</div><div class="positive">↑ Buen progreso</div></div>
+    <div class="card"><div class="stat-head">Asignaturas <span class="stat-icon">▤</span></div><div class="stat-value">6</div><div class="small">En seguimiento</div></div>
+    <div class="card"><div class="stat-head">Logros obtenidos <span class="stat-icon">♜</span></div><div class="stat-value">8</div><div class="positive">¡Sigue avanzando!</div></div>
+    <div class="card"><div class="stat-head">Actividades <span class="stat-icon">✓</span></div><div class="stat-value">24</div><div class="small">Completadas en el ejemplo</div></div>
+  </div>
+  <div class="grid-main">
+    <div class="card">
+      <div class="card-title"><h2>Rendimiento académico</h2><span class="pill">Por asignatura</span></div>
+      <div class="chart" id="chart"></div>
+      <div class="small" style="margin-top:14px">Escala de ejemplo de 0 a 5. Los datos deben reemplazarse por calificaciones reales.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><h2>Recomendaciones de aprendizaje</h2><span>✧</span></div>
+      <div id="miniRecommendations"></div>
+      <button class="btn btn-light" style="width:100%;margin-top:10px" onclick="showPage('recommendations')">Ver todas las recomendaciones</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><h2>Últimas calificaciones</h2><button class="btn btn-light" onclick="showPage('grades')">Ver todas</button></div>
+    <div class="table-wrap"><table><thead><tr><th>ASIGNATURA</th><th>ACTIVIDAD</th><th>NOTA</th><th>ESTADO</th></tr></thead><tbody id="recentGrades"></tbody></table></div>
+  </div>
+</section>
+
+<section class="section" id="grades">
+  <div class="welcome"><div><h1>Calificaciones</h1><p>Consulta y registra resultados académicos.</p></div><button class="btn" onclick="openGradeForm()">+ Añadir nota</button></div>
+  <div class="card"><div class="table-wrap"><table><thead><tr><th>ASIGNATURA</th><th>ACTIVIDAD</th><th>NOTA / 5</th><th>ESTADO</th></tr></thead><tbody id="allGrades"></tbody></table></div></div>
+  <div class="card" id="gradeForm" style="display:none;margin-top:18px">
+    <h2 style="font-size:17px">Nueva calificación</h2>
+    <form id="newGradeForm">
+      <div class="form-row">
+        <label>Asignatura<input class="field" name="subject" required placeholder="Ej. Matemáticas"></label>
+        <label>Actividad<input class="field" name="activity" required placeholder="Ej. Evaluación 1"></label>
+        <label>Nota (0 a 5)<input class="field" name="score" type="number" min="0" max="5" step=".1" required></label>
+        <label>Fecha<input class="field" name="date" type="date" required></label>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px"><button class="btn">Guardar nota</button><button class="btn btn-light" type="button" onclick="document.getElementById('gradeForm').style.display='none'">Cancelar</button></div>
+    </form>
+  </div>
+</section>
+
+<section class="section" id="subjects">
+  <div class="welcome"><div><h1>Asignaturas</h1><p>Explora tus materias y su progreso.</p></div><button class="btn" onclick="addSubject()">+ Añadir asignatura</button></div>
+  <div class="cards" id="subjectCards"></div>
+</section>
+
+<section class="section" id="recommendations">
+  <div class="welcome"><div><h1>Refuerzo inteligente ✧</h1><p>Sugerencias basadas en las notas de demostración.</p></div></div>
+  <div class="notice">Estas recomendaciones se calculan mediante reglas sencillas a partir de las calificaciones registradas. No son todavía recomendaciones generadas por un modelo de IA.</div>
+  <div class="card" id="recommendationList"></div>
+</section>
+
+<section class="section" id="achievements">
+  <div class="welcome"><div><h1>Logros y niveles</h1><p>Reconocemos la constancia, el esfuerzo y la curiosidad.</p></div></div>
+  <div class="cards">
+    <div class="card"><div class="stat-head">Nivel actual <span class="stat-icon">♜</span></div><div class="stat-value">Nivel 3</div><div class="small">Explorador del conocimiento</div></div>
+    <div class="card"><div class="stat-head">Puntos de experiencia <span class="stat-icon">✧</span></div><div class="stat-value" id="xpValue">240 XP</div><div class="small">Puntos de demostración</div></div>
+    <div class="card"><div class="stat-head">Insignias <span class="stat-icon">🏅</span></div><div class="stat-value">4</div><div class="small">De 8 disponibles</div></div>
+    <div class="card"><div class="stat-head">Próximo nivel <span class="stat-icon">↑</span></div><div class="stat-value">60 XP</div><div class="small">Para alcanzar el nivel 4</div></div>
+  </div>
+  <div class="achievement-grid" id="achievementGrid"></div>
+</section>
+
+<section class="section" id="reports">
+  <div class="welcome"><div><h1>Informes académicos</h1><p>Resumen del desempeño y evolución.</p></div><button class="btn" onclick="window.print()">Imprimir / Guardar PDF</button></div>
+  <div class="cards" id="reportStats"></div>
+  <div class="card"><h2 style="font-size:16px">Resumen por asignatura</h2><div class="table-wrap"><table><thead><tr><th>ASIGNATURA</th><th>PROMEDIO</th><th>SEGUIMIENTO</th></tr></thead><tbody id="reportTable"></tbody></table></div></div>
+</section>
+
+<section class="section" id="people">
+  <div class="welcome"><div><h1>Comunidad escolar</h1><p>Un espacio para acompañar el proceso educativo.</p></div></div>
+  <div class="cards">
+    <div class="card"><div class="stat-icon">🎓</div><h3>Estudiantes</h3><p>Consultar calificaciones, metas, logros y recursos de refuerzo.</p><button class="btn btn-light" onclick="setRole('student')">Vista de estudiante</button></div>
+    <div class="card"><div class="stat-icon">📚</div><h3>Docentes</h3><p>Organizar asignaturas, revisar resultados y orientar el aprendizaje.</p><button class="btn btn-light" onclick="setRole('teacher')">Vista de docente</button></div>
+    <div class="card"><div class="stat-icon">👨‍👩‍👧</div><h3>Familias</h3><p>Acompañar el progreso académico y conocer áreas de apoyo.</p><button class="btn btn-light" onclick="setRole('parent')">Vista de familia</button></div>
+  </div>
+  <div class="card"><h2 style="font-size:16px">Próximas funciones</h2><p>Mensajería segura, vinculación real entre acudientes y estudiantes, gestión de cursos, permisos y sincronización con plataformas académicas.</p></div>
+</section>
+
+<div class="footer">AulaNova · Prototipo educativo · Versión 0.1</div>
+</div>
+</main>
+</div>
+
+<script>
+const demoGrades = [
+ {subject:"Matemáticas",activity:"Evaluación de álgebra",score:3.2,date:"2026-10-10"},
+ {subject:"Ciencias",activity:"Laboratorio",score:4.6,date:"2026-10-12"},
+ {subject:"Lengua",activity:"Comprensión lectora",score:4.3,date:"2026-10-14"},
+ {subject:"Historia",activity:"Proyecto histórico",score:4.5,date:"2026-10-15"},
+ {subject:"Inglés",activity:"Vocabulario",score:3.8,date:"2026-10-17"},
+ {subject:"Tecnología",activity:"Proyecto digital",score:4.8,date:"2026-10-19"}
+];
+let grades = demoGrades.map(g=>({...g}));
+let subjects = ["Matemáticas","Ciencias","Lengua","Historia","Inglés","Tecnología"];
+const roleInfo = {
+ student:{name:"estudiante",avatar:"ES",welcome:"¡Hola, estudiante! 👋",text:"Este es tu espacio para aprender, avanzar y descubrir tu potencial."},
+ teacher:{name:"docente",avatar:"DO",welcome:"¡Hola, docente! 👋",text:"Revisa resultados, identifica necesidades y acompaña el aprendizaje."},
+ parent:{name:"familiar",avatar:"FA",welcome:"¡Hola, familia! 👋",text:"Consulta el progreso académico y descubre cómo acompañar el aprendizaje."}
+};
+let currentRole = "student";
+const titles = {dashboard:"Panel principal",grades:"Calificaciones",subjects:"Asignaturas",recommendations:"Refuerzo inteligente",achievements:"Logros y niveles",reports:"Informes",people:"Comunidad escolar"};
+function average(arr){return arr.length?arr.reduce((a,g)=>a+Number(g.score),0)/arr.length:0}
+function avgSubject(s){return average(grades.filter(g=>g.subject===s))}
+function status(score){return score>=4?'<span class="status">Buen desempeño</span>':score>=3?'<span class="status warn">Puede mejorar</span>':'<span class="status low">Necesita refuerzo</span>'}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function showPage(page){
+ document.querySelectorAll(".section").forEach(s=>s.classList.toggle("active",s.id===page));
+ document.querySelectorAll(".nav[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+ document.getElementById("pageTitle").textContent=titles[page]||"AulaNova";
+ document.querySelector(".sidebar").style.display="";
+ if(page==="grades")renderGrades();
+ if(page==="subjects")renderSubjects();
+ if(page==="recommendations")renderRecommendations();
+ if(page==="reports")renderReports();
+}
+document.querySelectorAll(".nav[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+document.getElementById("mobileMenu").addEventListener("click",()=>{
+ const s=document.querySelector(".sidebar");
+ s.style.display=s.style.display==="flex"?"none":"flex";
+ s.style.position="absolute";s.style.zIndex="5";s.style.height="100vh";s.style.boxShadow="0 0 30px #0002";
+});
+function setRole(role){
+ currentRole=role;
+ document.getElementById("roleSelect").value=role;
+ renderRole();
+ showPage("dashboard");
+}
+document.getElementById("roleSelect").addEventListener("change",e=>{currentRole=e.target.value;renderRole()});
+function renderRole(){
+ const r=roleInfo[currentRole];
+ document.getElementById("welcomeTitle").textContent=r.welcome;
+ document.getElementById("welcomeText").textContent=r.text;
+ document.getElementById("avatar").textContent=r.avatar;
+ const labels={student:["Promedio general","Asignaturas","Logros obtenidos","Actividades"],teacher:["Estudiantes de ejemplo","Asignaturas","Promedio de clase","Notas registradas"],parent:["Promedio acompañado","Asignaturas","Áreas destacadas","Notas registradas"]};
+ const avg=average(grades);
+ const vals=currentRole==="student"?[avg.toFixed(1)+"/5",subjects.length,8,24]:
+ currentRole==="teacher"?["24",subjects.length,avg.toFixed(1)+"/5",grades.length]:
+ [avg.toFixed(1)+"/5",subjects.length,grades.filter(g=>g.score>=4).length,grades.length];
+ document.getElementById("stats").innerHTML=labels[currentRole].map((l,i)=>`<div class="card"><div class="stat-head">${l}<span class="stat-icon">${["◎","▤","♜","✓"][i]}</span></div><div class="stat-value">${vals[i]}</div><div class="small">${currentRole==="teacher"&&i===0?"Cantidad ficticia":currentRole==="parent"?"Datos de demostración":"Resumen de ejemplo"}</div></div>`).join("");
+ renderDashboard();
+}
+function renderDashboard(){
+ document.getElementById("chart").innerHTML=subjects.map(s=>{
+ let v=avgSubject(s);
+ return `<div class="bar-group"><div class="bar" title="${v.toFixed(1)}/5" style="height:${v/5*78}%"></div><div class="bar-label">${escapeHTML(s)}</div></div>`;
+ }).join("");
+ document.getElementById("recentGrades").innerHTML=grades.slice(-4).reverse().map(g=>`<tr><td>${escapeHTML(g.subject)}</td><td>${escapeHTML(g.activity)}</td><td><strong>${Number(g.score).toFixed(1)}</strong></td><td>${status(Number(g.score))}</td></tr>`).join("");
+ document.getElementById("miniRecommendations").innerHTML=makeRecommendations().slice(0,3).map(rec=>`<div class="recommendation"><div class="rec-icon ${rec.color}">${rec.icon}</div><div><div class="rec-title">${escapeHTML(rec.title)}</div><div class="rec-text">${escapeHTML(rec.text)}</div></div></div>`).join("");
+}
+function renderGrades(){
+ document.getElementById("allGrades").innerHTML=grades.slice().reverse().map(g=>`<tr><td>${escapeHTML(g.subject)}</td><td>${escapeHTML(g.activity)}</td><td><strong>${Number(g.score).toFixed(1)}</strong></td><td>${status(Number(g.score))}</td></tr>`).join("")||'<tr><td colspan="4">Todavía no hay calificaciones.</td></tr>';
+}
+function openGradeForm(){document.getElementById("gradeForm").style.display="block";document.getElementById("gradeForm").scrollIntoView({behavior:"smooth",block:"center"})}
+document.getElementById("newGradeForm").addEventListener("submit",e=>{
+ e.preventDefault();const f=new FormData(e.target);
+ const g={subject:f.get("subject").trim(),activity:f.get("activity").trim(),score:Number(f.get("score")),date:f.get("date")};
+ if(!g.subject||!g.activity||g.score<0||g.score>5)return;
+ grades.push(g);if(!subjects.includes(g.subject))subjects.push(g.subject);
+ e.target.reset();document.getElementById("gradeForm").style.display="none";
+ renderRole();renderGrades();showPage("grades");
+});
+function addSubject(){
+ const s=prompt("Nombre de la nueva asignatura:");
+ if(s&&s.trim()&&!subjects.includes(s.trim())){subjects.push(s.trim());renderSubjects();renderDashboard()}
+}
+function renderSubjects(){
+ document.getElementById("subjectCards").innerHTML=subjects.map((s,i)=>{
+ const a=avgSubject(s);
+ return `<div class="card"><div class="stat-head">Asignatura <span class="stat-icon">${["∑","⚗","✎","⌛","🌐","⌘"][i%6]}</span></div><h3>${escapeHTML(s)}</h3><div class="stat-value">${grades.some(g=>g.subject===s)?a.toFixed(1)+"/5":"—"}</div><div class="track"><div class="fill" style="width:${a/5*100}%"></div></div><p>${grades.some(g=>g.subject===s)?"Promedio de las notas registradas":"Sin calificaciones registradas"}</p><button class="btn btn-light" onclick="showPage('grades')">Ver calificaciones</button></div>`;
+ }).join("");
+}
+function makeRecommendations(){
+ return subjects.map(s=>({s,score:avgSubject(s)})).filter(x=>grades.some(g=>g.subject===x.s)).sort((a,b)=>a.score-b.score).map(x=>{
+ if(x.score<3){return {icon:"📌",color:"red",title:"Refuerzo prioritario: "+x.s,text:"Revisa los conceptos fundamentales y solicita acompañamiento para resolver tus dudas."}}
+ if(x.score<4){return {icon:"🎯",color:"purple",title:"Practica un poco más: "+x.s,text:"Realiza ejercicios cortos, revisa los errores y comprueba tu progreso."}}
+ return {icon:"🌟",color:"green",title:"Continúa avanzando en "+x.s,text:"Tu resultado de ejemplo es favorable. Intenta actividades de mayor dificultad para profundizar."}
+ });
+}
+function renderRecommendations(){
+ document.getElementById("recommendationList").innerHTML=makeRecommendations().map(r=>`<div class="recommendation"><div class="rec-icon ${r.color}">${r.icon}</div><div><div class="rec-title">${escapeHTML(r.title)}</div><div class="rec-text">${escapeHTML(r.text)}</div></div></div>`).join("")||'<div class="empty">Registra calificaciones para ver sugerencias.</div>';
+}
+function renderReports(){
+ const a=average(grades);
+ document.getElementById("reportStats").innerHTML=[["Promedio general",a.toFixed(2)+"/5"],["Notas registradas",grades.length],["Asignaturas",subjects.length],["Notas iguales o superiores a 4",grades.filter(g=>g.score>=4).length]].map(x=>`<div class="card"><div class="small">${x[0]}</div><div class="stat-value">${x[1]}</div></div>`).join("");
+ document.getElementById("reportTable").innerHTML=subjects.map(s=>{const n=grades.filter(g=>g.subject===s).length;const a=avgSubject(s);return `<tr><td>${escapeHTML(s)}</td><td>${n?a.toFixed(2)+"/5":"Sin datos"}</td><td>${n?status(a):"Pendiente"}</td></tr>`}).join("");
+}
+const medals=[["🏅","Buen comienzo","Explora las herramientas de aprendizaje."],["📚","Lector constante","Dedica tiempo a la lectura."],["🎯","Meta cumplida","Completa una actividad de aprendizaje."],["🌟","Excelencia","Mantén resultados académicos favorables."],["🧠","Mente curiosa","Investiga un tema nuevo."],["🤝","Gran compañero","Colabora y comparte conocimientos."]];
+document.getElementById("achievementGrid").innerHTML=medals.map((m,i)=>`<div class="card achievement"><div class="medal">${m[0]}</div><h3>${m[1]}</h3><p class="small">${m[2]}</p><span class="pill">${i<4?"Ejemplo de insignia":"Por desbloquear"}</span></div>`).join("");
+function renderAll(){renderRole();renderGrades();renderSubjects();renderRecommendations();renderReports()}
+renderAll();
+</script>
+</body>
+</html>
