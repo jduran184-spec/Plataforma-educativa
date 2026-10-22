@@ -295,10 +295,8 @@ h2 { font-size: 19px; }
 
     <div class="content">
 
-      <!-- INICIO -->
       <section id="home" class="panel active">
         <h1 id="greeting">¡Hola! 👋</h1>
-
         <p class="muted">
           Este es tu espacio para aprender, avanzar y descubrir tu potencial.
         </p>
@@ -319,9 +317,7 @@ h2 { font-size: 19px; }
           <div class="card">
             <span class="muted">Progreso general</span>
             <h1>35%</h1>
-            <div class="progress">
-              <div style="width:35%"></div>
-            </div>
+            <div class="progress"><div style="width:35%"></div></div>
           </div>
         </div>
 
@@ -339,7 +335,6 @@ h2 { font-size: 19px; }
         </div>
       </section>
 
-      <!-- CURSOS -->
       <section id="courses" class="panel">
         <h1>Mis cursos 📚</h1>
         <p class="muted">Explora tus espacios de aprendizaje.</p>
@@ -377,7 +372,6 @@ h2 { font-size: 19px; }
         </div>
       </section>
 
-      <!-- TAREAS -->
       <section id="tasks" class="panel">
         <h1>Mis tareas 📝</h1>
         <p class="muted">Organiza las actividades de ejemplo.</p>
@@ -413,7 +407,6 @@ h2 { font-size: 19px; }
         </p>
       </section>
 
-      <!-- PROGRESO -->
       <section id="progress" class="panel">
         <h1>Mi progreso 📈</h1>
         <p class="muted">Un resumen de ejemplo de tus avances.</p>
@@ -421,19 +414,15 @@ h2 { font-size: 19px; }
         <div class="card">
           <h2>Matemáticas básicas — 45%</h2>
           <div class="progress"><div style="width:45%"></div></div>
-
           <h2>Ciencias — 30%</h2>
           <div class="progress"><div style="width:30%"></div></div>
-
           <h2>Creatividad digital — 60%</h2>
           <div class="progress"><div style="width:60%"></div></div>
         </div>
       </section>
 
-      <!-- TUTOR IA -->
       <section id="tutor" class="panel">
         <h1>🤖 Tutor IA de NYCE</h1>
-
         <p class="muted">
           Pregunta lo que quieras aprender. Te explicaré los conceptos paso a paso.
         </p>
@@ -441,15 +430,8 @@ h2 { font-size: 19px; }
         <div class="card">
           <form id="tutorForm">
             <label for="tutorQuestion">¿Qué quieres aprender hoy?</label>
-
-            <textarea
-              id="tutorQuestion"
-              rows="4"
-              maxlength="1000"
-              required
-              placeholder="Ej.: Explícame las fracciones con ejemplos."
-            ></textarea>
-
+            <textarea id="tutorQuestion" rows="4" maxlength="1000"
+              required placeholder="Ej.: Explícame las fracciones con ejemplos."></textarea>
             <button id="tutorButton" class="btn" type="submit">
               Preguntar al tutor
             </button>
@@ -460,10 +442,8 @@ h2 { font-size: 19px; }
         </div>
       </section>
 
-      <!-- CUENTA -->
       <section id="account" class="panel">
         <h1>Mi cuenta 👤</h1>
-
         <div class="card">
           <p><strong>Nombre:</strong> <span id="accountName"></span></p>
           <p><strong>Correo:</strong> <span id="accountEmail"></span></p>
@@ -477,7 +457,6 @@ h2 { font-size: 19px; }
   </main>
 </div>
 
-<!-- LIBRERÍA DE SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -511,11 +490,8 @@ function showPage(page) {
     const active = button.dataset.page === page;
     button.classList.toggle("active", active);
 
-    if (active) {
-      button.setAttribute("aria-current", "page");
-    } else {
-      button.removeAttribute("aria-current");
-    }
+    if (active) button.setAttribute("aria-current", "page");
+    else button.removeAttribute("aria-current");
   });
 
   const titles = {
@@ -527,8 +503,7 @@ function showPage(page) {
     account: "Mi cuenta"
   };
 
-  document.getElementById("pageTitle").textContent =
-    titles[page] || "NYCE";
+  document.getElementById("pageTitle").textContent = titles[page] || "NYCE";
 }
 
 function enterApp(user) {
@@ -540,12 +515,10 @@ function enterApp(user) {
   authScreen.classList.add("hidden");
   appScreen.classList.remove("hidden");
 
-  document.getElementById("greeting").textContent =
-    "¡Hola, " + name + "! 👋";
+  document.getElementById("greeting").textContent = "¡Hola, " + name + "! 👋";
   document.getElementById("userLabel").textContent = name;
   document.getElementById("accountName").textContent = name;
-  document.getElementById("accountEmail").textContent =
-    user.email || "";
+  document.getElementById("accountEmail").textContent = user.email || "";
 
   showPage("home");
 }
@@ -557,6 +530,8 @@ function showLogin() {
 
 /* CAMBIAR ENTRE INICIO DE SESIÓN Y REGISTRO */
 document.getElementById("toggleAuth").addEventListener("click", () => {
+  alert("El botón Crear cuenta sí funciona");
+
   registering = !registering;
 
   document.getElementById("authTitle").textContent =
@@ -567,11 +542,7 @@ document.getElementById("toggleAuth").addEventListener("click", () => {
       ? "Regístrate para acceder a tu espacio educativo."
       : "Tu espacio para aprender, descubrir y avanzar.";
 
-  document.getElementById("nameField").classList.toggle(
-    "hidden",
-    !registering
-  );
-
+  document.getElementById("nameField").classList.toggle("hidden", !registering);
   document.getElementById("fullName").required = registering;
 
   document.getElementById("authButton").textContent =
@@ -587,85 +558,60 @@ document.getElementById("toggleAuth").addEventListener("click", () => {
 });
 
 /* REGISTRO E INICIO DE SESIÓN */
-document.getElementById("authForm").addEventListener(
-  "submit",
-  async event => {
-    event.preventDefault();
+document.getElementById("authForm").addEventListener("submit", async event => {
+  event.preventDefault();
 
-    if (!db) {
-      showMessage(
-        "No se ha conectado con Supabase. Recarga la página e inténtalo de nuevo."
-      );
-      return;
-    }
-
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-    const fullName = document.getElementById("fullName").value.trim();
-    const button = document.getElementById("authButton");
-
-    button.disabled = true;
-    showMessage("Un momento, estamos procesando tu solicitud…");
-
-    try {
-      let result;
-
-      if (registering) {
-        result = await db.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { full_name: fullName }
-          }
-        });
-      } else {
-        result = await db.auth.signInWithPassword({
-          email,
-          password
-        });
-      }
-
-      if (result.error) {
-        throw result.error;
-      }
-
-      if (registering && !result.data.session) {
-        showMessage(
-          "Cuenta creada. Revisa tu correo para confirmar el registro y después inicia sesión."
-        );
-      } else if (result.data.user) {
-        enterApp(result.data.user);
-        showMessage("");
-      } else {
-        showMessage(
-          "La solicitud terminó, pero no se recibió una sesión. Revisa tu correo si necesitas confirmar la cuenta."
-        );
-      }
-    } catch (error) {
-      console.error("Error de autenticación:", error);
-
-      showMessage(
-        "No se pudo completar la solicitud: " +
-        (error.message || "Error desconocido.")
-      );
-    } finally {
-      button.disabled = false;
-    }
+  if (!db) {
+    showMessage("No se ha conectado con Supabase. Recarga la página e inténtalo de nuevo.");
+    return;
   }
-);
 
-/* NAVEGACIÓN DEL MENÚ */
-document.querySelectorAll(".sidebar [data-page]").forEach(button => {
-  button.addEventListener("click", () => {
-    showPage(button.dataset.page);
-  });
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const fullName = document.getElementById("fullName").value.trim();
+  const button = document.getElementById("authButton");
+
+  button.disabled = true;
+  showMessage("Un momento, estamos procesando tu solicitud…");
+
+  try {
+    let result;
+
+    if (registering) {
+      result = await db.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: fullName } }
+      });
+    } else {
+      result = await db.auth.signInWithPassword({ email, password });
+    }
+
+    if (result.error) throw result.error;
+
+    if (registering && !result.data.session) {
+      showMessage("Cuenta creada. Revisa tu correo para confirmar el registro y después inicia sesión.");
+    } else if (result.data.user) {
+      enterApp(result.data.user);
+      showMessage("");
+    } else {
+      showMessage("La solicitud terminó, pero no se recibió una sesión. Revisa tu correo si necesitas confirmar la cuenta.");
+    }
+  } catch (error) {
+    console.error("Error de autenticación:", error);
+    showMessage("No se pudo completar la solicitud: " + (error.message || "Error desconocido."));
+  } finally {
+    button.disabled = false;
+  }
 });
 
-/* BOTONES PARA IR A OTRAS PÁGINAS */
+/* NAVEGACIÓN */
+document.querySelectorAll(".sidebar [data-page]").forEach(button => {
+  button.addEventListener("click", () => showPage(button.dataset.page));
+});
+
 document.querySelectorAll("[data-go]").forEach(button => {
-  button.addEventListener("click", () => {
-    showPage(button.dataset.go);
-  });
+  button.addEventListener("click", () => showPage(button.dataset.go));
 });
 
 /* MARCAR TAREAS */
@@ -673,129 +619,99 @@ document.querySelectorAll(".taskDone").forEach(button => {
   button.addEventListener("click", () => {
     const task = button.closest(".task");
     const tag = task.querySelector(".tag");
-
     tag.textContent = "Completada";
     button.remove();
   });
 });
 
-/* TUTOR IA: LLAMADA A LA FUNCIÓN DE SUPABASE */
-document.getElementById("tutorForm").addEventListener(
-  "submit",
-  async event => {
-    event.preventDefault();
+/* TUTOR IA */
+document.getElementById("tutorForm").addEventListener("submit", async event => {
+  event.preventDefault();
 
-    const question =
-      document.getElementById("tutorQuestion").value.trim();
-    const button = document.getElementById("tutorButton");
-    const status = document.getElementById("tutorStatus");
-    const answer = document.getElementById("tutorAnswer");
+  const question = document.getElementById("tutorQuestion").value.trim();
+  const button = document.getElementById("tutorButton");
+  const status = document.getElementById("tutorStatus");
+  const answer = document.getElementById("tutorAnswer");
 
-    if (!question) {
-      status.textContent = "Escribe una pregunta primero.";
-      return;
-    }
-
-    if (!db) {
-      status.textContent = "No se ha conectado con Supabase.";
-      return;
-    }
-
-    button.disabled = true;
-    status.textContent = "El tutor está preparando tu respuesta…";
-    answer.textContent = "";
-
-    try {
-      const { data, error } = await db.functions.invoke(
-        "smart-action",
-        { body: { question } }
-      );
-
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-
-      if (!data?.answer) {
-        throw new Error("No se recibió una respuesta del tutor.");
-      }
-
-      answer.textContent = data.answer;
-      status.textContent = "Respuesta del tutor:";
-    } catch (error) {
-      console.error("Error del tutor:", error);
-
-      let detalle = error?.message || String(error);
-
-      if (error?.context) {
-        try {
-          const respuesta = await error.context.json();
-          detalle += " | " + JSON.stringify(respuesta);
-        } catch (_) {
-          // Conserva el mensaje original.
-        }
-      }
-
-      status.textContent = "Error del tutor: " + detalle;
-    } finally {
-      button.disabled = false;
-    }
+  if (!question) {
+    status.textContent = "Escribe una pregunta primero.";
+    return;
   }
-);
+
+  if (!db) {
+    status.textContent = "No se ha conectado con Supabase.";
+    return;
+  }
+
+  button.disabled = true;
+  status.textContent = "El tutor está preparando tu respuesta…";
+  answer.textContent = "";
+
+  try {
+    const { data, error } = await db.functions.invoke("smart-action", {
+      body: { question }
+    });
+
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
+    if (!data?.answer) throw new Error("No se recibió una respuesta del tutor.");
+
+    answer.textContent = data.answer;
+    status.textContent = "Respuesta del tutor:";
+  } catch (error) {
+    console.error("Error del tutor:", error);
+    let detalle = error?.message || String(error);
+
+    if (error?.context) {
+      try {
+        const respuesta = await error.context.json();
+        detalle += " | " + JSON.stringify(respuesta);
+      } catch (_) {}
+    }
+
+    status.textContent = "Error del tutor: " + detalle;
+  } finally {
+    button.disabled = false;
+  }
+});
 
 /* CERRAR SESIÓN */
-document.getElementById("logoutButton").addEventListener(
-  "click",
-  async () => {
-    if (db) {
-      const { error } = await db.auth.signOut();
+document.getElementById("logoutButton").addEventListener("click", async () => {
+  if (db) {
+    const { error } = await db.auth.signOut();
 
-      if (error) {
-        alert("No se pudo cerrar la sesión: " + error.message);
-        return;
-      }
+    if (error) {
+      alert("No se pudo cerrar la sesión: " + error.message);
+      return;
     }
-
-    showLogin();
-    showMessage("Has cerrado sesión.");
   }
-);
+
+  showLogin();
+  showMessage("Has cerrado sesión.");
+});
 
 /* INICIALIZAR SUPABASE */
 async function start() {
   if (!window.supabase) {
-    showMessage(
-      "No se pudo cargar la librería de Supabase. Comprueba tu conexión a internet y recarga la página."
-    );
+    showMessage("No se pudo cargar la librería de Supabase. Comprueba tu conexión a internet y recarga la página.");
     return;
   }
 
   try {
-    db = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const { data, error } = await db.auth.getSession();
-
     if (error) throw error;
 
-    if (data.session?.user) {
-      enterApp(data.session.user);
-    }
+    if (data.session?.user) enterApp(data.session.user);
 
     db.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        enterApp(session.user);
-      } else if (event === "SIGNED_OUT") {
-        showLogin();
-      }
+      if (session?.user) enterApp(session.user);
+      else if (event === "SIGNED_OUT") showLogin();
     });
   } catch (error) {
     console.error("Error al iniciar Supabase:", error);
-
-    showMessage(
-      "No se pudo conectar con Supabase: " +
-      (error.message || "Error desconocido.")
-    );
+    showMessage("No se pudo conectar con Supabase: " + (error.message || "Error desconocido."));
   }
 }
 
