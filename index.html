@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -13,17 +14,21 @@
   --bg: #f5f6fc;
   --border: #e8eaf3;
 }
+
 * { box-sizing: border-box; }
+
 body {
   margin: 0;
   font-family: system-ui, Arial, sans-serif;
   background: var(--bg);
   color: var(--dark);
 }
+
 button, input, textarea { font: inherit; }
 button { cursor: pointer; }
 button:disabled { opacity: .5; cursor: wait; }
 .hidden { display: none !important; }
+
 .btn {
   border: 0;
   background: var(--primary);
@@ -32,7 +37,9 @@ button:disabled { opacity: .5; cursor: wait; }
   border-radius: 10px;
   font-weight: 700;
 }
+
 .light { background: #eeefff; color: var(--primary); }
+
 input, textarea {
   width: 100%;
   padding: 12px;
@@ -40,6 +47,7 @@ input, textarea {
   border-radius: 9px;
   margin: 6px 0 14px;
 }
+
 .auth {
   min-height: 100vh;
   display: grid;
@@ -47,6 +55,7 @@ input, textarea {
   padding: 20px;
   background: linear-gradient(135deg, #eeefff, #f9fbff);
 }
+
 .authbox {
   background: white;
   padding: 30px;
@@ -54,9 +63,20 @@ input, textarea {
   width: min(100%, 420px);
   box-shadow: 0 12px 45px #20234412;
 }
-.logo { font-size: 27px; font-weight: 900; color: var(--primary); }
+
+.logo {
+  font-size: 27px;
+  font-weight: 900;
+  color: var(--primary);
+}
+
 .muted { color: var(--muted); line-height: 1.6; }
-.app { display: flex; min-height: 100vh; }
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
 .sidebar {
   width: 230px;
   background: white;
@@ -64,6 +84,7 @@ input, textarea {
   padding: 22px 14px;
   flex-shrink: 0;
 }
+
 .sidebar button {
   display: block;
   width: 100%;
@@ -75,12 +96,15 @@ input, textarea {
   background: white;
   color: var(--dark);
 }
+
 .sidebar button.active,
 .sidebar button:hover {
   background: #eeefff;
   color: var(--primary);
 }
+
 .main { flex: 1; min-width: 0; }
+
 .top {
   background: white;
   padding: 18px 25px;
@@ -90,15 +114,23 @@ input, textarea {
   gap: 12px;
   border-bottom: 1px solid var(--border);
 }
-.content { padding: 26px; max-width: 1250px; margin: auto; }
+
+.content {
+  padding: 26px;
+  max-width: 1250px;
+  margin: auto;
+}
+
 .panel { display: none; }
 .panel.active { display: block; }
+
 .cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   margin: 20px 0;
 }
+
 .card {
   background: white;
   border: 1px solid var(--border);
@@ -106,15 +138,22 @@ input, textarea {
   padding: 20px;
   min-width: 0;
 }
+
 h1 { font-size: 28px; margin: 0 0 8px; }
 h2 { font-size: 19px; }
+
 .progress {
   height: 9px;
   background: #eeeef7;
   border-radius: 10px;
   overflow: hidden;
 }
-.progress div { height: 100%; background: var(--primary); }
+
+.progress div {
+  height: 100%;
+  background: var(--primary);
+}
+
 .tag {
   display: inline-block;
   padding: 5px 9px;
@@ -123,14 +162,21 @@ h2 { font-size: 19px; }
   border-radius: 7px;
   font-size: 12px;
 }
-.task { padding: 14px 0; border-bottom: 1px solid var(--border); }
+
+.task {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
 .task:last-child { border: 0; }
+
 .notice {
   padding: 12px;
   background: #fff5dd;
   border-radius: 9px;
   font-size: 13px;
 }
+
 .answer {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -138,17 +184,44 @@ h2 { font-size: 19px; }
   line-height: 1.7;
   margin-top: 12px;
 }
+
+/* MENÚ RESPONSIVE: TABLETS Y CELULARES */
 @media (max-width: 750px) {
-  .app { display: block; }
+  .app {
+    display: block;
+  }
+
   .sidebar {
     width: 100%;
     display: flex;
-    overflow-x: auto;
+    flex-wrap: wrap;
+    overflow-x: visible;
     padding: 8px;
+    gap: 4px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
   }
-  .sidebar .logo { display: none; }
-  .sidebar button { white-space: nowrap; width: auto; flex-shrink: 0; }
-  .cards { grid-template-columns: 1fr; }
+
+  .sidebar .logo {
+    display: block;
+    width: 100%;
+    padding: 8px 12px !important;
+  }
+
+  .sidebar button {
+    white-space: normal;
+    width: auto;
+    flex: 1 1 calc(50% - 8px);
+    min-width: 0;
+    margin: 0;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
   .content { padding: 17px; }
   .top { padding: 14px; }
   .authbox { padding: 23px; }
@@ -162,7 +235,11 @@ h2 { font-size: 19px; }
 <section id="authScreen" class="auth">
   <div class="authbox">
     <div class="logo">✦ NYCE</div>
-    <h1 id="authTitle" style="margin-top:24px">¡Bienvenido a NYCE!</h1>
+
+    <h1 id="authTitle" style="margin-top:24px">
+      ¡Bienvenido a NYCE!
+    </h1>
+
     <p class="muted" id="authDescription">
       Tu espacio para aprender, descubrir y avanzar.
     </p>
@@ -170,7 +247,8 @@ h2 { font-size: 19px; }
     <form id="authForm">
       <div id="nameField" class="hidden">
         <label for="fullName">Tu nombre</label>
-        <input id="fullName" autocomplete="name" placeholder="Escribe tu nombre">
+        <input id="fullName" autocomplete="name"
+          placeholder="Escribe tu nombre">
       </div>
 
       <label for="email">Correo electrónico</label>
@@ -178,17 +256,21 @@ h2 { font-size: 19px; }
         required placeholder="tu@correo.com">
 
       <label for="password">Contraseña</label>
-      <input id="password" type="password" autocomplete="current-password"
-        required minlength="6" placeholder="Mínimo 6 caracteres">
+      <input id="password" type="password"
+        autocomplete="current-password"
+        required minlength="6"
+        placeholder="Mínimo 6 caracteres">
 
-      <button class="btn" id="authButton" type="submit" style="width:100%">
+      <button class="btn" id="authButton"
+        type="submit" style="width:100%">
         Entrar a NYCE
       </button>
     </form>
 
     <p id="authMessage" class="muted" role="status"></p>
 
-    <button id="toggleAuth" class="btn light" style="width:100%">
+    <button id="toggleAuth" class="btn light"
+      type="button" style="width:100%">
       Crear una cuenta nueva
     </button>
 
@@ -202,12 +284,13 @@ h2 { font-size: 19px; }
 <div id="appScreen" class="app hidden">
   <aside class="sidebar">
     <div class="logo" style="padding:8px 12px 18px">✦ NYCE</div>
-    <button class="active" data-page="home">🏠 Inicio</button>
-    <button data-page="courses">📚 Mis cursos</button>
-    <button data-page="tasks">📝 Mis tareas</button>
-    <button data-page="progress">📈 Mi progreso</button>
-    <button data-page="tutor">🤖 Tutor IA</button>
-    <button data-page="account">👤 Mi cuenta</button>
+
+    <button type="button" class="active" data-page="home">🏠 Inicio</button>
+    <button type="button" data-page="courses">📚 Mis cursos</button>
+    <button type="button" data-page="tasks">📝 Mis tareas</button>
+    <button type="button" data-page="progress">📈 Mi progreso</button>
+    <button type="button" data-page="tutor">🤖 Tutor IA</button>
+    <button type="button" data-page="account">👤 Mi cuenta</button>
   </aside>
 
   <main class="main">
@@ -221,6 +304,7 @@ h2 { font-size: 19px; }
       <!-- INICIO -->
       <section id="home" class="panel active">
         <h1 id="greeting">¡Hola! 👋</h1>
+
         <p class="muted">
           Este es tu espacio para aprender, avanzar y descubrir tu potencial.
         </p>
@@ -241,7 +325,9 @@ h2 { font-size: 19px; }
           <div class="card">
             <span class="muted">Progreso general</span>
             <h1>35%</h1>
-            <div class="progress"><div style="width:35%"></div></div>
+            <div class="progress">
+              <div style="width:35%"></div>
+            </div>
           </div>
         </div>
 
@@ -250,8 +336,12 @@ h2 { font-size: 19px; }
           <p class="muted">
             Entra a tus cursos, revisa tus tareas y celebra cada avance.
           </p>
-          <button class="btn" data-go="courses">Ver mis cursos →</button>
-          <button class="btn light" data-go="tutor">Preguntar al Tutor IA →</button>
+          <button class="btn" type="button" data-go="courses">
+            Ver mis cursos →
+          </button>
+          <button class="btn light" type="button" data-go="tutor">
+            Preguntar al Tutor IA →
+          </button>
         </div>
       </section>
 
@@ -264,7 +354,9 @@ h2 { font-size: 19px; }
           <article class="card">
             <span class="tag">Matemáticas</span>
             <h2>Matemáticas básicas</h2>
-            <p class="muted">Números, operaciones y resolución de problemas.</p>
+            <p class="muted">
+              Números, operaciones y resolución de problemas.
+            </p>
             <div class="progress"><div style="width:45%"></div></div>
             <p>45% completado</p>
           </article>
@@ -301,14 +393,18 @@ h2 { font-size: 19px; }
             <strong>Ejercicios de matemáticas</strong>
             <p class="muted">Resolver los ejercicios de práctica.</p>
             <span class="tag">Pendiente</span>
-            <button class="btn light taskDone">Marcar completada</button>
+            <button type="button" class="btn light taskDone">
+              Marcar completada
+            </button>
           </div>
 
           <div class="task">
             <strong>Lectura de ciencias</strong>
             <p class="muted">Leer el material y anotar tus ideas.</p>
             <span class="tag">Pendiente</span>
-            <button class="btn light taskDone">Marcar completada</button>
+            <button type="button" class="btn light taskDone">
+              Marcar completada
+            </button>
           </div>
 
           <div class="task">
@@ -340,45 +436,46 @@ h2 { font-size: 19px; }
         </div>
       </section>
 
-      
-<!-- TUTOR IA -->
-<section id="tutor" class="panel">
-  <h1>🤖 Tutor IA de NYCE</h1>
+      <!-- TUTOR IA -->
+      <section id="tutor" class="panel">
+        <h1>🤖 Tutor IA de NYCE</h1>
 
-  <p class="muted">
-    Pregunta lo que quieras aprender. Te explicaré los conceptos paso a paso.
-  </p>
+        <p class="muted">
+          Pregunta lo que quieras aprender. Te explicaré los conceptos paso a paso.
+        </p>
 
-  <div class="card">
-    <form id="tutorForm">
-      <label for="tutorQuestion">¿Qué quieres aprender hoy?</label>
+        <div class="card">
+          <form id="tutorForm">
+            <label for="tutorQuestion">¿Qué quieres aprender hoy?</label>
 
-      <textarea
-        id="tutorQuestion"
-        rows="4"
-        maxlength="1000"
-        required
-        placeholder="Ej.: Explícame las fracciones con ejemplos."
-      ></textarea>
+            <textarea
+              id="tutorQuestion"
+              rows="4"
+              maxlength="1000"
+              required
+              placeholder="Ej.: Explícame las fracciones con ejemplos."
+            ></textarea>
 
-      <button id="tutorButton" class="btn" type="submit">
-        Preguntar al tutor
-      </button>
-    </form>
+            <button id="tutorButton" class="btn" type="submit">
+              Preguntar al tutor
+            </button>
+          </form>
 
-    <p id="tutorStatus" class="muted" role="status"></p>
-    <div id="tutorAnswer" class="answer"></div>
-  </div>
-</section>
-
+          <p id="tutorStatus" class="muted" role="status"></p>
+          <div id="tutorAnswer" class="answer"></div>
+        </div>
+      </section>
 
       <!-- CUENTA -->
       <section id="account" class="panel">
         <h1>Mi cuenta 👤</h1>
+
         <div class="card">
           <p><strong>Nombre:</strong> <span id="accountName"></span></p>
           <p><strong>Correo:</strong> <span id="accountEmail"></span></p>
-          <button id="logoutButton" class="btn">Cerrar sesión</button>
+          <button id="logoutButton" class="btn" type="button">
+            Cerrar sesión
+          </button>
         </div>
       </section>
 
@@ -404,12 +501,26 @@ function showMessage(message) {
 }
 
 function showPage(page) {
-  document.querySelectorAll(".panel").forEach(el => {
-    el.classList.toggle("active", el.id === page);
+  const target = document.getElementById(page);
+
+  if (!target || !target.classList.contains("panel")) {
+    console.error("No se encontró la página:", page);
+    return;
+  }
+
+  document.querySelectorAll(".panel").forEach(panel => {
+    panel.classList.toggle("active", panel.id === page);
   });
 
-  document.querySelectorAll("[data-page]").forEach(el => {
-    el.classList.toggle("active", el.dataset.page === page);
+  document.querySelectorAll(".sidebar [data-page]").forEach(button => {
+    const active = button.dataset.page === page;
+    button.classList.toggle("active", active);
+
+    if (active) {
+      button.setAttribute("aria-current", "page");
+    } else {
+      button.removeAttribute("aria-current");
+    }
   });
 
   const titles = {
@@ -421,7 +532,8 @@ function showPage(page) {
     account: "Mi cuenta"
   };
 
-  document.getElementById("pageTitle").textContent = titles[page] || "NYCE";
+  document.getElementById("pageTitle").textContent =
+    titles[page] || "NYCE";
 }
 
 function enterApp(user) {
@@ -433,10 +545,12 @@ function enterApp(user) {
   authScreen.classList.add("hidden");
   appScreen.classList.remove("hidden");
 
-  document.getElementById("greeting").textContent = "¡Hola, " + name + "! 👋";
+  document.getElementById("greeting").textContent =
+    "¡Hola, " + name + "! 👋";
   document.getElementById("userLabel").textContent = name;
   document.getElementById("accountName").textContent = name;
-  document.getElementById("accountEmail").textContent = user.email || "";
+  document.getElementById("accountEmail").textContent =
+    user.email || "";
 
   showPage("home");
 }
@@ -457,7 +571,11 @@ document.getElementById("toggleAuth").addEventListener("click", () => {
       ? "Regístrate para acceder a tu espacio educativo."
       : "Tu espacio para aprender, descubrir y avanzar.";
 
-  document.getElementById("nameField").classList.toggle("hidden", !registering);
+  document.getElementById("nameField").classList.toggle(
+    "hidden",
+    !registering
+  );
+
   document.getElementById("fullName").required = registering;
 
   document.getElementById("authButton").textContent =
@@ -472,132 +590,174 @@ document.getElementById("toggleAuth").addEventListener("click", () => {
   showMessage("");
 });
 
-document.getElementById("authForm").addEventListener("submit", async event => {
-  event.preventDefault();
+document.getElementById("authForm").addEventListener(
+  "submit",
+  async event => {
+    event.preventDefault();
 
-  if (!db) {
-    showMessage("No se ha conectado con Supabase. Revisa la configuración.");
-    return;
-  }
-
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const fullName = document.getElementById("fullName").value.trim();
-  const button = document.getElementById("authButton");
-
-  button.disabled = true;
-  showMessage("Un momento, estamos procesando tu solicitud…");
-
-  try {
-    let result;
-
-    if (registering) {
-      result = await db.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: fullName } }
-      });
-    } else {
-      result = await db.auth.signInWithPassword({ email, password });
-    }
-
-    if (result.error) throw result.error;
-
-    if (registering && !result.data.session) {
+    if (!db) {
       showMessage(
-        "Cuenta creada. Revisa tu correo para confirmar el registro y después inicia sesión."
+        "No se ha conectado con Supabase. Revisa la configuración."
       );
-    } else if (result.data.user) {
-      enterApp(result.data.user);
+      return;
     }
-  } catch (error) {
-    showMessage("No se pudo completar la solicitud: " + error.message);
-  } finally {
-    button.disabled = false;
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const fullName = document.getElementById("fullName").value.trim();
+    const button = document.getElementById("authButton");
+
+    button.disabled = true;
+    showMessage("Un momento, estamos procesando tu solicitud…");
+
+    try {
+      let result;
+
+      if (registering) {
+        result = await db.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: fullName }
+          }
+        });
+      } else {
+        result = await db.auth.signInWithPassword({
+          email,
+          password
+        });
+      }
+
+      if (result.error) throw result.error;
+
+      if (registering && !result.data.session) {
+        showMessage(
+          "Cuenta creada. Revisa tu correo para confirmar el registro y después inicia sesión."
+        );
+      } else if (result.data.user) {
+        enterApp(result.data.user);
+      }
+    } catch (error) {
+      showMessage(
+        "No se pudo completar la solicitud: " +
+        (error.message || "Error desconocido.")
+      );
+    } finally {
+      button.disabled = false;
+    }
   }
+);
+
+/* NAVEGACIÓN DEL MENÚ */
+document.querySelectorAll(".sidebar [data-page]").forEach(button => {
+  button.addEventListener("click", () => {
+    showPage(button.dataset.page);
+  });
 });
 
-document.querySelectorAll("[data-page]").forEach(button => {
-  button.addEventListener("click", () => showPage(button.dataset.page));
-});
-
+/* BOTONES PARA IR A OTRAS PÁGINAS */
 document.querySelectorAll("[data-go]").forEach(button => {
-  button.addEventListener("click", () => showPage(button.dataset.go));
+  button.addEventListener("click", () => {
+    showPage(button.dataset.go);
+  });
 });
 
+/* MARCAR TAREAS */
 document.querySelectorAll(".taskDone").forEach(button => {
   button.addEventListener("click", () => {
     const task = button.closest(".task");
     const tag = task.querySelector(".tag");
+
     tag.textContent = "Completada";
     button.remove();
   });
 });
 
-// CONEXIÓN DEL TUTOR IA CON LA FUNCIÓN DE SUPABASE
-document.getElementById("tutorForm").addEventListener("submit", async event => {
-  event.preventDefault();
+/* TUTOR IA: LLAMADA A LA FUNCIÓN DE SUPABASE */
+document.getElementById("tutorForm").addEventListener(
+  "submit",
+  async event => {
+    event.preventDefault();
 
-  const question = document.getElementById("tutorQuestion").value.trim();
-  const button = document.getElementById("tutorButton");
-  const status = document.getElementById("tutorStatus");
-  const answer = document.getElementById("tutorAnswer");
+    const question =
+      document.getElementById("tutorQuestion").value.trim();
+    const button = document.getElementById("tutorButton");
+    const status = document.getElementById("tutorStatus");
+    const answer = document.getElementById("tutorAnswer");
 
-  if (!question) return;
-
-  if (!db) {
-    status.textContent = "No se ha conectado con Supabase.";
-    return;
-  }
-
-  button.disabled = true;
-  status.textContent = "El tutor está preparando tu respuesta…";
-  answer.textContent = "";
-
-  try {
-    const { data, error } = await db.functions.invoke("smart-action", {
-      body: { question }
-    });
-
-    if (error) throw error;
-    if (data?.error) throw new Error(data.error);
-    if (!data?.answer) throw new Error("No se recibió una respuesta.");
-
-    answer.textContent = data.answer;
-    status.textContent = "Respuesta del tutor:";
-  } catch (error) {
-    console.error("Error del tutor:", error);
-    status.textContent =
-      "No pudimos obtener una respuesta. Inténtalo de nuevo.";
-  } finally {
-    button.disabled = false;
-  }
-});
-
-document.getElementById("logoutButton").addEventListener("click", async () => {
-  if (db) {
-    const { error } = await db.auth.signOut();
-
-    if (error) {
-      alert("No se pudo cerrar la sesión: " + error.message);
+    if (!question) {
+      status.textContent = "Escribe una pregunta primero.";
       return;
     }
+
+    if (!db) {
+      status.textContent = "No se ha conectado con Supabase.";
+      return;
+    }
+
+    button.disabled = true;
+    status.textContent = "El tutor está preparando tu respuesta…";
+    answer.textContent = "";
+
+    try {
+      const { data, error } = await db.functions.invoke(
+        "smart-action",
+        { body: { question } }
+      );
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      if (!data?.answer) {
+        throw new Error("No se recibió una respuesta del tutor.");
+      }
+
+      answer.textContent = data.answer;
+      status.textContent = "Respuesta del tutor:";
+    } catch (error) {
+      console.error("Error del tutor:", error);
+      status.textContent =
+        "No pudimos obtener una respuesta. Inténtalo de nuevo.";
+    } finally {
+      button.disabled = false;
+    }
   }
+);
 
-  showLogin();
-  showMessage("Has cerrado sesión.");
-});
+/* CERRAR SESIÓN */
+document.getElementById("logoutButton").addEventListener(
+  "click",
+  async () => {
+    if (db) {
+      const { error } = await db.auth.signOut();
 
+      if (error) {
+        alert("No se pudo cerrar la sesión: " + error.message);
+        return;
+      }
+    }
+
+    showLogin();
+    showMessage("Has cerrado sesión.");
+  }
+);
+
+/* INICIALIZAR SUPABASE */
 async function start() {
   if (!window.supabase) {
-    showMessage("No se pudo cargar Supabase. Recarga la página e inténtalo de nuevo.");
+    showMessage(
+      "No se pudo cargar Supabase. Recarga la página e inténtalo de nuevo."
+    );
     return;
   }
 
   try {
-    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    db = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
 
     const { data, error } = await db.auth.getSession();
+
     if (error) throw error;
 
     if (data.session?.user) {
@@ -612,7 +772,10 @@ async function start() {
       }
     });
   } catch (error) {
-    showMessage("No se pudo conectar con Supabase: " + error.message);
+    showMessage(
+      "No se pudo conectar con Supabase: " +
+      (error.message || "Error desconocido.")
+    );
   }
 }
 
