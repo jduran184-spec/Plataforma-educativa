@@ -1,187 +1,940 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NYCE | Plataforma educativa</title>
-<style>
-:root{--primary:#5b5ce2;--dark:#202344;--muted:#747b91;--bg:#f5f6fc;--border:#e8eaf3;--green:#16834a}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--dark)}
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-button:disabled{opacity:.5;cursor:wait}
-.hidden{display:none!important}
-.btn{border:0;background:var(--primary);color:#fff;padding:11px 16px;border-radius:10px;font-weight:700}
-.light{background:#eeefff;color:var(--primary)}
-.danger{background:#fff0f0;color:#a32222}
-input,textarea,select{width:100%;padding:12px;border:1px solid var(--border);border-radius:9px;margin:6px 0 14px;background:white;color:var(--dark)}
-.auth{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#eeefff,#f9fbff)}
-.authbox{background:white;padding:30px;border-radius:20px;width:min(100%,460px);box-shadow:0 12px 45px #20234412}
-.logo{font-size:27px;font-weight:900;color:var(--primary)}
-.muted{color:var(--muted);line-height:1.6}
-.app{display:flex;min-height:100vh}
-.sidebar{width:245px;background:white;border-right:1px solid var(--border);padding:22px 14px;flex-shrink:0}
-.sidebar button{display:block;width:100%;text-align:left;padding:13px;margin:5px 0;border:0;border-radius:9px;background:white;color:var(--dark)}
-.sidebar button.active,.sidebar button:hover{background:#eeefff;color:var(--primary)}
-.main{flex:1;min-width:0}
-.top{background:white;padding:18px 25px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
-.content{padding:26px;max-width:1250px;margin:auto}
-.panel{display:none}
-.panel.active{display:block}
-.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:20px 0}
-.card{background:white;border:1px solid var(--border);border-radius:15px;padding:20px;min-width:0}
-h1{font-size:28px;margin:0 0 8px}
-h2{font-size:19px}
-.progress{height:9px;background:#eeeef7;border-radius:10px;overflow:hidden}
-.progress div{height:100%;background:var(--primary)}
-.tag{display:inline-block;padding:5px 9px;background:#eeefff;color:var(--primary);border-radius:7px;font-size:12px}
-.notice{padding:12px;background:#fff5dd;border-radius:9px;font-size:13px}
-.answer{white-space:pre-wrap;overflow-wrap:anywhere;color:var(--dark);line-height:1.7;margin-top:12px}
-.role-chip{display:inline-block;background:#f0f1f8;border-radius:99px;padding:5px 10px;font-size:12px;font-weight:700}
-.section-note{font-size:13px;color:var(--muted);line-height:1.5}
-.empty{padding:16px;border:1px dashed var(--border);border-radius:10px;color:var(--muted)}
-label{font-weight:600;font-size:14px}
-@media(max-width:750px){
-  .app{display:block}
-  .sidebar{width:100%;display:flex;flex-wrap:wrap;overflow-x:visible;padding:8px;gap:4px;border-right:0;border-bottom:1px solid var(--border)}
-  .sidebar .logo{display:block;width:100%;padding:8px 12px!important}
-  .sidebar button{white-space:normal;width:auto;flex:1 1 calc(50% - 8px);min-width:0;margin:0;text-align:center;overflow-wrap:anywhere}
-  .cards{grid-template-columns:1fr}
-  .content{padding:17px}
-  .top{padding:14px}
-  .authbox{padding:23px}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NYCE | Plataforma educativa</title>
+
+  <style>
+    :root {
+      --primary: #5b5ce2;
+      --dark: #202344;
+      --muted: #747b91;
+      --bg: #f5f6fc;
+      --border: #e8eaf3;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+    }
+
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { opacity: .6; cursor: wait; }
+    .hidden { display: none !important; }
+
+    .btn {
+      border: 0;
+      background: var(--primary);
+      color: white;
+      padding: 11px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    .light { background: #eeefff; color: var(--primary); }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      margin: 6px 0 14px;
+      background: white;
+      color: var(--dark);
+    }
+
+    label { font-weight: 600; font-size: 14px; }
+
+    .auth {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #eeefff, #f9fbff);
+    }
+
+    .authbox {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      width: min(100%, 460px);
+      box-shadow: 0 12px 45px #20234412;
+    }
+
+    .logo {
+      font-size: 27px;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .section-note {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .app { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 245px;
+      background: white;
+      border-right: 1px solid var(--border);
+      padding: 22px 14px;
+      flex-shrink: 0;
+    }
+
+    .sidebar button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 13px;
+      margin: 5px 0;
+      border: 0;
+      border-radius: 9px;
+      background: white;
+      color: var(--dark);
+    }
+
+    .sidebar button.active,
+    .sidebar button:hover {
+      background: #eeefff;
+      color: var(--primary);
+    }
+
+    .main { flex: 1; min-width: 0; }
+
+    .top {
+      background: white;
+      padding: 18px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .content {
+      padding: 26px;
+      max-width: 1250px;
+      margin: auto;
+    }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 20px;
+      min-width: 0;
+      margin-bottom: 14px;
+    }
+
+    h1 { font-size: 28px; margin: 0 0 8px; }
+    h2 { font-size: 19px; }
+
+    .progress {
+      height: 9px;
+      background: #eeeef7;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress div {
+      height: 100%;
+      background: var(--primary);
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 9px;
+      background: #eeefff;
+      color: var(--primary);
+      border-radius: 7px;
+      font-size: 12px;
+    }
+
+    .role-chip {
+      display: inline-block;
+      background: #f0f1f8;
+      border-radius: 99px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: 6px;
+    }
+
+    .notice {
+      padding: 12px;
+      background: #fff5dd;
+      border-radius: 9px;
+      font-size: 13px;
+    }
+
+    .answer {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.7;
+      margin-top: 12px;
+    }
+
+    .empty {
+      padding: 16px;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 750px) {
+      .app { display: block; }
+
+      .sidebar {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        padding: 8px;
+        gap: 4px;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .sidebar .logo {
+        width: 100%;
+        padding: 8px 12px !important;
+      }
+
+      .sidebar button {
+        width: auto;
+        flex: 1 1 calc(50% - 8px);
+        min-width: 0;
+        margin: 0;
+        text-align: center;
+        overflow-wrap: anywhere;
+      }
+
+      .cards { grid-template-columns: 1fr; }
+      .content { padding: 17px; }
+      .top { padding: 14px; }
+      .authbox { padding: 23px; }
+    }
+  </style>
 </head>
+
 <body>
 
-<section id="authScreen" class="auth">
-  <div class="authbox">
-    <div class="logo">✦ NYCE</div>
-    <h1 id="authTitle" style="margin-top:24px">¡Bienvenido a NYCE!</h1>
-    <p class="muted" id="authDescription">Tu espacio para aprender, descubrir y avanzar.</p>
+  <!-- INICIO DE SESIÓN Y REGISTRO -->
+  <section id="authScreen" class="auth">
+    <div class="authbox">
+      <div class="logo">✦ NYCE</div>
 
-    <form id="authForm">
-      <div id="nameField" class="hidden">
-        <label for="fullName">Tu nombre</label>
-        <input id="fullName" autocomplete="name" placeholder="Escribe tu nombre">
+      <h1 id="authTitle" style="margin-top:24px">¡Bienvenido a NYCE!</h1>
+      <p id="authDescription" class="muted">
+        Tu espacio para aprender, descubrir y avanzar.
+      </p>
+
+      <form id="authForm">
+        <div id="nameField" class="hidden">
+          <label for="fullName">Tu nombre</label>
+          <input id="fullName" autocomplete="name" placeholder="Escribe tu nombre">
+        </div>
+
+        <div id="roleField" class="hidden">
+          <label for="signupRole">Tipo de cuenta</label>
+          <select id="signupRole">
+            <option value="student">Estudiante</option>
+            <option value="parent">Padre de familia</option>
+          </select>
+          <p class="section-note">
+            Las cuentas docentes y administrativas deben ser asignadas
+            por una persona autorizada.
+          </p>
+        </div>
+
+        <label for="email">Correo electrónico</label>
+        <input
+          id="email"
+          type="email"
+          autocomplete="email"
+          required
+          placeholder="tu@correo.com"
+        >
+
+        <label for="password">Contraseña</label>
+        <input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          required
+          minlength="6"
+          placeholder="Mínimo 6 caracteres"
+        >
+
+        <button id="authButton" class="btn" type="submit" style="width:100%">
+          Entrar a NYCE
+        </button>
+      </form>
+
+      <p id="authMessage" class="muted" role="status" aria-live="polite"></p>
+
+      <button id="toggleAuth" class="btn light" type="button" style="width:100%">
+        Crear una cuenta nueva
+      </button>
+
+      <p class="muted" style="font-size:12px">
+        Si el registro lo requiere, confirma tu correo electrónico.
+      </p>
+    </div>
+  </section>
+
+  <!-- APLICACIÓN -->
+  <div id="appScreen" class="app hidden">
+    <aside class="sidebar">
+      <div class="logo" style="padding:8px 12px 18px">✦ NYCE</div>
+      <div id="roleNav"></div>
+      <button type="button" data-page="account">👤 Mi cuenta</button>
+      <button type="button" id="logoutButton">🚪 Cerrar sesión</button>
+    </aside>
+
+    <main class="main">
+      <header class="top">
+        <strong id="pageTitle">Inicio</strong>
+        <div>
+          <span id="roleBadge" class="role-chip"></span>
+          <span id="userLabel" class="muted"></span>
+        </div>
+      </header>
+
+      <div class="content">
+
+        <!-- ESTUDIANTE: INICIO -->
+        <section id="student-home" class="panel">
+          <h1 id="greeting">¡Hola! 👋</h1>
+          <p class="muted">Tu espacio para aprender, avanzar y descubrir tu potencial.</p>
+
+          <div class="cards">
+            <div class="card">
+              <span class="muted">Mis cursos</span>
+              <h1>3</h1>
+              <span class="tag">Ejemplo visual</span>
+            </div>
+            <div class="card">
+              <span class="muted">Tareas pendientes</span>
+              <h1>2</h1>
+              <span class="tag">Ejemplo visual</span>
+            </div>
+            <div class="card">
+              <span class="muted">Progreso general</span>
+              <h1>35%</h1>
+              <div class="progress"><div style="width:35%"></div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>¡Continúa aprendiendo!</h2>
+            <p class="muted">Entra a tus cursos, revisa tus tareas y pregunta al tutor.</p>
+            <button class="btn" data-go="student-courses">Ver mis cursos →</button>
+            <button class="btn light" data-go="student-tutor">Preguntar al Tutor IA →</button>
+          </div>
+        </section>
+
+        <!-- ESTUDIANTE: CURSOS -->
+        <section id="student-courses" class="panel">
+          <h1>Mis cursos 📚</h1>
+          <p class="muted">Estos cursos son ejemplos; todavía no están conectados a datos reales.</p>
+
+          <div class="cards">
+            <article class="card">
+              <span class="tag">Matemáticas</span>
+              <h2>Matemáticas básicas</h2>
+              <p class="muted">Números, operaciones y resolución de problemas.</p>
+              <div class="progress"><div style="width:45%"></div></div>
+              <p>45% de ejemplo</p>
+            </article>
+
+            <article class="card">
+              <span class="tag">Ciencias</span>
+              <h2>Explorando la ciencia</h2>
+              <p class="muted">Descubre el mundo a través de preguntas y experimentos.</p>
+              <div class="progress"><div style="width:30%"></div></div>
+              <p>30% de ejemplo</p>
+            </article>
+
+            <article class="card">
+              <span class="tag">Tecnología</span>
+              <h2>Creatividad digital</h2>
+              <p class="muted">Ideas, tecnología y pensamiento creativo.</p>
+              <div class="progress"><div style="width:60%"></div></div>
+              <p>60% de ejemplo</p>
+            </article>
+          </div>
+        </section>
+
+        <!-- ESTUDIANTE: TAREAS -->
+        <section id="student-tasks" class="panel">
+          <h1>Mis asignaciones 📝</h1>
+          <div class="card">
+            <p class="muted">Aquí aparecerán las asignaciones cuando las conectemos a Supabase.</p>
+            <div class="empty">Aún no hay asignaciones conectadas a tu cuenta.</div>
+          </div>
+        </section>
+
+        <!-- ESTUDIANTE: PROGRESO -->
+        <section id="student-progress" class="panel">
+          <h1>Mi progreso 📈</h1>
+          <div class="card">
+            <p class="muted">Las calificaciones reales se mostrarán cuando conectemos las tablas correspondientes.</p>
+            <div class="empty">Todavía no hay calificaciones vinculadas.</div>
+          </div>
+        </section>
+
+        <!-- TUTOR IA -->
+        <section id="student-tutor" class="panel">
+          <h1>🤖 Tutor IA de NYCE</h1>
+          <p class="muted">Pregunta lo que quieras aprender. Te explicaré los conceptos paso a paso.</p>
+
+          <div class="card">
+            <form id="tutorForm">
+              <label for="tutorQuestion">¿Qué quieres aprender hoy?</label>
+              <textarea
+                id="tutorQuestion"
+                rows="4"
+                maxlength="1000"
+                required
+                placeholder="Ej.: Explícame las fracciones con ejemplos."
+              ></textarea>
+              <button id="tutorButton" class="btn" type="submit">
+                Preguntar al tutor
+              </button>
+            </form>
+            <p id="tutorStatus" class="muted" role="status" aria-live="polite"></p>
+            <div id="tutorAnswer" class="answer"></div>
+          </div>
+        </section>
+
+        <!-- DOCENTE: INICIO -->
+        <section id="teacher-home" class="panel">
+          <h1>Área docente 👩‍🏫</h1>
+          <p class="muted">Administra tus cursos y acompaña el progreso de tus estudiantes.</p>
+
+          <div class="cards">
+            <div class="card"><span class="muted">Cursos</span><h1>—</h1><span class="tag">Por conectar</span></div>
+            <div class="card"><span class="muted">Asignaciones</span><h1>—</h1><span class="tag">Por conectar</span></div>
+            <div class="card"><span class="muted">Calificaciones</span><h1>—</h1><span class="tag">Por conectar</span></div>
+          </div>
+
+          <div class="notice">
+            Los datos y permisos reales deben conectarse a tablas de Supabase antes de usar esta sección con estudiantes.
+          </div>
+        </section>
+
+        <!-- DOCENTE: ASIGNACIONES -->
+        <section id="teacher-assignments" class="panel">
+          <h1>Asignaciones y notas 📝</h1>
+          <p class="muted">Espacio de demostración para preparar una asignación y una nota.</p>
+
+          <div class="card">
+            <form id="gradeDemoForm">
+              <label for="assignmentTitle">Nombre de la asignación</label>
+              <input id="assignmentTitle" required placeholder="Ej.: Taller de ciencias">
+
+              <label for="studentEmailDemo">Correo del estudiante (referencia)</label>
+              <input id="studentEmailDemo" type="email" placeholder="estudiante@colegio.edu">
+
+              <label for="gradeDemo">Nota</label>
+              <input id="gradeDemo" type="number" min="0" max="5" step="0.1" placeholder="Ej.: 4.5">
+
+              <button class="btn" type="submit">Vista previa de la nota</button>
+            </form>
+
+            <p id="gradeDemoStatus" class="muted" role="status"></p>
+            <p class="section-note">
+              Esta vista previa no guarda ni publica calificaciones.
+            </p>
+          </div>
+        </section>
+
+        <!-- FAMILIA -->
+        <section id="parent-home" class="panel">
+          <h1>Área de familia 👨‍👩‍👧</h1>
+          <p class="muted">Consulta el acompañamiento académico cuando se conecten los datos del estudiante.</p>
+          <div class="card">
+            <div class="empty">
+              Todavía no hay estudiantes vinculados a esta cuenta.
+            </div>
+          </div>
+        </section>
+
+        <!-- ADMINISTRACIÓN -->
+        <section id="admin-home" class="panel">
+          <h1>Administración ⚙️</h1>
+          <p class="muted">Área administrativa de NYCE.</p>
+          <div class="notice">
+            Los permisos administrativos deben configurarse de forma segura en Supabase. Esta página no concede permisos por sí sola.
+          </div>
+        </section>
+
+        <!-- MI CUENTA -->
+        <section id="account" class="panel">
+          <h1>Mi cuenta 👤</h1>
+          <div class="card">
+            <p><strong>Nombre:</strong> <span id="accountName">—</span></p>
+            <p><strong>Correo:</strong> <span id="accountEmail">—</span></p>
+            <p><strong>Tipo de cuenta:</strong> <span id="accountRole">—</span></p>
+            <p class="section-note">
+              Si necesitas cambiar tu rol, debe hacerlo una persona autorizada desde el sistema de administración.
+            </p>
+            <button id="accountLogout" class="btn light" type="button">Cerrar sesión</button>
+          </div>
+        </section>
+
       </div>
-
-      <div id="roleField" class="hidden">
-        <label for="signupRole">Tipo de cuenta</label>
-        <select id="signupRole">
-          <option value="student">Estudiante</option>
-          <option value="parent">Padre de familia</option>
-        </select>
-        <p class="section-note">Las cuentas de docente y administrativo deben ser aprobadas por una persona autorizada.</p>
-      </div>
-
-      <label for="email">Correo electrónico</label>
-      <input id="email" type="email" autocomplete="email" required placeholder="tu@correo.com">
-
-      <label for="password">Contraseña</label>
-      <input id="password" type="password" autocomplete="current-password" required minlength="6" placeholder="Mínimo 6 caracteres">
-
-      <button class="btn" id="authButton" type="submit" style="width:100%">Entrar a NYCE</button>
-    </form>
-
-    <p id="authMessage" class="muted" role="status"></p>
-    <button id="toggleAuth" class="btn light" type="button" style="width:100%">Crear una cuenta nueva</button>
-    <p class="muted" style="font-size:12px">Puede ser necesario confirmar tu correo electrónico. El rol administrativo no se puede solicitar desde el registro.</p>
+    </main>
   </div>
-</section>
 
-<div id="appScreen" class="app hidden">
-  <aside class="sidebar">
-    <div class="logo" style="padding:8px 12px 18px">✦ NYCE</div>
-    <div id="roleNav"></div>
-    <button type="button" data-page="account">👤 Mi cuenta</button>
-  </aside>
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <main class="main">
-    <header class="top">
-      <strong id="pageTitle">Inicio</strong>
-      <span>
-        <span id="roleBadge" class="role-chip"></span>
-        <span id="userLabel" class="muted"></span>
-      </span>
-    </header>
+  <script>
+    "use strict";
 
-    <div class="content">
-      <section id="student-home" class="panel">
-        <h1 id="greeting">¡Hola! 👋</h1>
-        <p class="muted">Tu espacio para aprender, avanzar y descubrir tu potencial.</p>
-        <div class="cards">
-          <div class="card"><span class="muted">Mis cursos</span><h1>3</h1><span class="tag">Ejemplo visual</span></div>
-          <div class="card"><span class="muted">Tareas pendientes</span><h1>2</h1><span class="tag">Ejemplo visual</span></div>
-          <div class="card"><span class="muted">Progreso general</span><h1>35%</h1><div class="progress"><div style="width:35%"></div></div></div>
-        </div>
-        <div class="card">
-          <h2>¡Continúa aprendiendo!</h2>
-          <p class="muted">Entra a tus cursos, revisa tus tareas y pregunta al tutor.</p>
-          <button class="btn" data-go="student-courses">Ver mis cursos →</button>
-          <button class="btn light" data-go="student-tutor">Preguntar al Tutor IA →</button>
-        </div>
-      </section>
+    // Configuración del proyecto Supabase.
+    const SUPABASE_URL = "https://zemgfahecttvuhfghogl.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_s1O9sJ1pNEdFVCUBEQZnUw_5E2n6qS9";
 
-      <section id="student-courses" class="panel">
-        <h1>Mis cursos 📚</h1>
-        <p class="muted">Estos cursos son ejemplos de diseño; todavía no están conectados a datos reales.</p>
-        <div class="cards">
-          <article class="card"><span class="tag">Matemáticas</span><h2>Matemáticas básicas</h2><p class="muted">Números, operaciones y resolución de problemas.</p><div class="progress"><div style="width:45%"></div></div><p>45% de ejemplo</p></article>
-          <article class="card"><span class="tag">Ciencias</span><h2>Explorando la ciencia</h2><p class="muted">Descubre el mundo a través de preguntas y experimentos.</p><div class="progress"><div style="width:30%"></div></div><p>30% de ejemplo</p></article>
-          <article class="card"><span class="tag">Tecnología</span><h2>Creatividad digital</h2><p class="muted">Ideas, tecnología y pensamiento creativo.</p><div class="progress"><div style="width:60%"></div></div><p>60% de ejemplo</p></article>
-        </div>
-      </section>
+    const db = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
 
-      <section id="student-tasks" class="panel">
-        <h1>Mis asignaciones 📝</h1>
-        <div class="card"><p class="muted">Aquí aparecerán las asignaciones reales cuando las conectemos a Supabase.</p><div class="empty">Aún no hay asignaciones conectadas a tu cuenta.</div></div>
-      </section>
+    const $ = (id) => document.getElementById(id);
 
-      <section id="student-progress" class="panel">
-        <h1>Mi progreso 📈</h1>
-        <div class="card"><p class="muted">Las calificaciones reales se mostrarán aquí cuando conectemos las tablas de asignaciones y notas.</p><div class="empty">Todavía no hay calificaciones vinculadas.</div></div>
-      </section>
+    let isSignup = false;
+    let currentUser = null;
+    let currentRole = "student";
+    let currentPage = null;
 
-      <section id="student-tutor" class="panel">
-        <h1>🤖 Tutor IA de NYCE</h1>
-        <p class="muted">Pregunta lo que quieras aprender. Te explicaré los conceptos paso a paso.</p>
-        <div class="card">
-          <form id="tutorForm">
-            <label for="tutorQuestion">¿Qué quieres aprender hoy?</label>
-            <textarea id="tutorQuestion" rows="4" maxlength="1000" required placeholder="Ej.: Explícame las fracciones con ejemplos."></textarea>
-            <button id="tutorButton" class="btn" type="submit">Preguntar al tutor</button>
-          </form>
-          <p id="tutorStatus" class="muted" role="status"></p>
-          <div id="tutorAnswer" class="answer"></div>
-        </div>
-      </section>
+    const roleNames = {
+      student: "Estudiante",
+      teacher: "Docente",
+      parent: "Familia",
+      admin: "Administración"
+    };
 
-      <section id="teacher-home" class="panel">
-        <h1>Área docente 👩‍🏫</h1>
-        <p class="muted">Administra tus cursos y acompaña el progreso de tus estudiantes.</p>
-        <div class="cards">
-          <div class="card"><span class="muted">Cursos</span><h1>—</h1><span class="tag">Por conectar</span></div>
-          <div class="card"><span class="muted">Asignaciones</span><h1>—</h1><span class="tag">Por conectar</span></div>
-          <div class="card"><span class="muted">Calificaciones</span><h1>—</h1><span class="tag">Por conectar</span></div>
-        </div>
-        <div class="notice">La interfaz está preparada; los datos y permisos reales deben conectarse a tablas de Supabase antes de usarla con estudiantes.</div>
-      </section>
+    const rolePages = {
+      student: [
+        ["student-home", "🏠 Inicio"],
+        ["student-courses", "📚 Mis cursos"],
+        ["student-tasks", "📝 Mis asignaciones"],
+        ["student-progress", "📈 Mi progreso"],
+        ["student-tutor", "🤖 Tutor IA"]
+      ],
+      teacher: [
+        ["teacher-home", "🏠 Inicio docente"],
+        ["teacher-assignments", "📝 Asignaciones y notas"]
+      ],
+      parent: [
+        ["parent-home", "👨‍👩‍👧 Área de familia"]
+      ],
+      admin: [
+        ["admin-home", "⚙️ Administración"]
+      ]
+    };
 
-      <section id="teacher-assignments" class="panel">
-        <h1>Asignaciones y notas 📝</h1>
-        <p class="muted">Espacio para crear actividades y registrar notas. Aún no guarda datos.</p>
-        <div class="card">
-          <form id="gradeDemoForm">
-            <label for="assignmentTitle">Nombre de la asignación</label>
-            <input id="assignmentTitle" placeholder="Ej.: Taller de ciencias">
-            <label for="studentEmailDemo">Correo del estudiante (referencia)</label>
-            <input id="studentEmailDemo" type="email" placeholder="estudiante@colegio.edu">
-            <label for="gradeDemo">Nota</label>
-            <input id="gradeDemo" type="number" min="0" max="5" step="0.1" placeholder="Ej.: 4.5">
-            <button class="btn" type="submit">Vista previa de la nota</button>
-          </form>
-          <p id="gradeDemoStatus" class="muted"></p>
-          <p class="section-note">Esta vista previa no guarda ni publica cal
+    function setMessage(message, isError = false) {
+      $("authMessage").textContent = message;
+      $("authMessage").style.color = isError ? "#a32222" : "";
+    }
+
+    function setAuthMode(signup) {
+      isSignup = signup;
+
+      $("nameField").classList.toggle("hidden", !signup);
+      $("roleField").classList.toggle("hidden", !signup);
+
+      $("fullName").required = signup;
+
+      $("authTitle").textContent = signup
+        ? "Crea tu cuenta en NYCE"
+        : "¡Bienvenido a NYCE!";
+
+      $("authDescription").textContent = signup
+        ? "Completa tus datos para comenzar."
+        : "Tu espacio para aprender, descubrir y avanzar.";
+
+      $("authButton").textContent = signup
+        ? "Crear cuenta"
+        : "Entrar a NYCE";
+
+      $("toggleAuth").textContent = signup
+        ? "Ya tengo una cuenta"
+        : "Crear una cuenta nueva";
+
+      $("password").autocomplete = signup ? "new-password" : "current-password";
+      setMessage("");
+    }
+
+    $("toggleAuth").addEventListener("click", () => {
+      setAuthMode(!isSignup);
+    });
+
+    function friendlyAuthError(error) {
+      const message = String(error?.message || "").toLowerCase();
+
+      if (message.includes("invalid login credentials")) {
+        return "El correo o la contraseña no son correctos. Verifica tus datos e inténtalo de nuevo.";
+      }
+
+      if (message.includes("email not confirmed")) {
+        return "Debes confirmar tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada.";
+      }
+
+      if (message.includes("already registered") ||
+          message.includes("user already registered")) {
+        return "Ese correo ya tiene una cuenta. Vuelve al inicio de sesión.";
+      }
+
+      if (message.includes("rate limit")) {
+        return "Se han realizado demasiados intentos. Espera un poco e inténtalo de nuevo.";
+      }
+
+      if (message.includes("failed to fetch") ||
+          message.includes("network")) {
+        return "No se pudo conectar. Revisa tu conexión a internet e inténtalo otra vez.";
+      }
+
+      return error?.message || "Ocurrió un error. Inténtalo de nuevo.";
+    }
+
+    $("authForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const email = $("email").value.trim();
+      const password = $("password").value;
+      const button = $("authButton");
+
+      button.disabled = true;
+      setMessage(isSignup ? "Creando tu cuenta..." : "Iniciando sesión...");
+
+      try {
+        if (isSignup) {
+          const fullName = $("fullName").value.trim();
+          const requestedRole = $("signupRole").value;
+
+          if (!fullName) {
+            setMessage("Escribe tu nombre para continuar.", true);
+            return;
+          }
+
+          const { data, error } = await db.auth.signUp({
+            email,
+            password,
+            options: {
+              data: {
+                full_name: fullName,
+                role: requestedRole
+              }
+            }
+          });
+
+          if (error) throw error;
+
+          if (data.session) {
+            await loadUser(data.user);
+          } else {
+            setMessage(
+              "Tu cuenta se creó. Revisa tu correo para confirmar la cuenta y después inicia sesión."
+            );
+          }
+        } else {
+          const { data, error } = await db.auth.signInWithPassword({
+            email,
+            password
+          });
+
+          if (error) throw error;
+
+          if (data.user) {
+            await loadUser(data.user);
+          } else {
+            setMessage("No se pudo iniciar sesión. Inténtalo de nuevo.", true);
+          }
+        }
+      } catch (error) {
+        console.error("Error de autenticación:", error);
+        setMessage(friendlyAuthError(error), true);
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    function buildNavigation(role) {
+      const nav = $("roleNav");
+      nav.replaceChildren();
+
+      const pages = rolePages[role] || rolePages.student;
+
+      pages.forEach(([pageId, label], index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.page = pageId;
+        button.textContent = label;
+
+        if (index === 0) button.classList.add("active");
+
+        button.addEventListener("click", () => showPage(pageId));
+        nav.appendChild(button);
+      });
+    }
+
+    function showPage(pageId) {
+      const allowedPages = (rolePages[currentRole] || rolePages.student)
+        .map(([id]) => id);
+
+      // Cada rol solo puede abrir sus páginas autorizadas.
+      if (pageId !== "account" && !allowedPages.includes(pageId)) {
+        pageId = allowedPages[0];
+      }
+
+      if (pageId === "account") {
+        $("pageTitle").textContent = "Mi cuenta";
+      } else {
+        const navButton = document.querySelector(
+          '#roleNav button[data-page="' + pageId + '"]'
+        );
+
+        $("pageTitle").textContent = navButton
+          ? navButton.textContent
+          : "NYCE";
+      }
+
+      document.querySelectorAll(".panel").forEach(panel => {
+        panel.classList.toggle("active", panel.id === pageId);
+      });
+
+      document.querySelectorAll("#roleNav button").forEach(button => {
+        button.classList.toggle("active", button.dataset.page === pageId);
+      });
+
+      document.querySelectorAll(".sidebar button[data-page='account']")
+        .forEach(button => {
+          button.classList.toggle("active", pageId === "account");
+        });
+
+      currentPage = pageId;
+    }
+
+    async function loadUser(user) {
+      if (!user) return;
+
+      currentUser = user;
+
+      let profile = null;
+
+      const { data, error } = await db
+        .from("profiles")
+        .select("full_name, role")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error("No se pudo consultar el perfil:", error);
+        throw new Error(
+          "Tu sesión está activa, pero no pudimos consultar tu perfil. Verifica la tabla profiles y sus permisos RLS."
+        );
+      }
+
+      profile = data;
+
+      // No conceder permisos elevados si falta el perfil.
+      if (!profile) {
+        throw new Error(
+          "No encontramos tu perfil en la tabla profiles. Pide ayuda al administrador de NYCE."
+        );
+      }
+
+      const validRoles = ["student", "teacher", "parent", "admin"];
+
+      currentRole = validRoles.includes(profile.role)
+        ? profile.role
+        : "student";
+
+      const name = profile.full_name || user.user_metadata?.full_name || "Usuario";
+
+      $("userLabel").textContent = name;
+      $("roleBadge").textContent = roleNames[currentRole];
+      $("accountName").textContent = name;
+      $("accountEmail").textContent = user.email || "—";
+      $("accountRole").textContent = roleNames[currentRole];
+      $("greeting").textContent = "¡Hola, " + name + "! 👋";
+
+      buildNavigation(currentRole);
+
+      $("authScreen").classList.add("hidden");
+      $("appScreen").classList.remove("hidden");
+
+      showPage((rolePages[currentRole] || rolePages.student)[0][0]);
+    }
+
+    async function logout() {
+      $("logoutButton").disabled = true;
+
+      try {
+        const { error } = await db.auth.signOut();
+        if (error) throw error;
+
+        currentUser = null;
+        currentRole = "student";
+        currentPage = null;
+
+        $("appScreen").classList.add("hidden");
+        $("authScreen").classList.remove("hidden");
+        $("password").value = "";
+        setAuthMode(false);
+      } catch (error) {
+        console.error("Error al cerrar sesión:", error);
+        alert("No se pudo cerrar la sesión. Inténtalo de nuevo.");
+      } finally {
+        $("logoutButton").disabled = false;
+      }
+    }
+
+    $("logoutButton").addEventListener("click", logout);
+    $("accountLogout").addEventListener("click", logout);
+
+    // CORRECCIÓN: botón Mi cuenta.
+    document.querySelectorAll('.sidebar [data-page="account"]')
+      .forEach(button => {
+        button.addEventListener("click", () => showPage("account"));
+      });
+
+    // Botones para navegar desde las tarjetas.
+    document.querySelectorAll("[data-go]").forEach(button => {
+      button.addEventListener("click", () => showPage(button.dataset.go));
+    });
+
+    // Vista previa de la nota: no guarda datos.
+    $("gradeDemoForm").addEventListener("submit", event => {
+      event.preventDefault();
+
+      const title = $("assignmentTitle").value.trim();
+      const email = $("studentEmailDemo").value.trim();
+      const grade = $("gradeDemo").value;
+
+      let message = "Vista previa: " + title + ".";
+
+      if (email) message += " Estudiante: " + email + ".";
+      if (grade !== "") message += " Nota: " + grade + "/5.";
+
+      $("gradeDemoStatus").textContent =
+        message + " No se guardó ningún dato.";
+    });
+
+    // Tutor IA: utiliza la Edge Function smart-action de Supabase.
+    $("tutorForm").addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const question = $("tutorQuestion").value.trim();
+
+      if (!question) {
+        $("tutorStatus").textContent = "Escribe una pregunta antes de continuar.";
+        return;
+      }
+
+      if (question.length > 1000) {
+        $("tutorStatus").textContent = "La pregunta no puede superar los 1000 caracteres.";
+        return;
+      }
+
+      const button = $("tutorButton");
+      button.disabled = true;
+      $("tutorStatus").textContent = "El tutor está preparando tu respuesta...";
+      $("tutorAnswer").textContent = "";
+
+      try {
+        const { data, error } = await db.functions.invoke("smart-action", {
+          body: { question }
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        // Admite varias estructuras de respuesta habituales.
+        const answer =
+          data?.answer ??
+          data?.text ??
+          data?.response ??
+          data?.result ??
+          data?.message;
+
+        if (typeof answer === "string" && answer.trim()) {
+          $("tutorAnswer").textContent = answer;
+          $("tutorStatus").textContent = "Respuesta del tutor:";
+        } else {
+          console.error("Respuesta inesperada del tutor:", data);
+          $("tutorStatus").textContent =
+            "El tutor respondió con un formato inesperado. Revisa la función smart-action de Supabase.";
+        }
+      } catch (error) {
+        console.error("Error del Tutor IA:", error);
+        $("tutorStatus").textContent =
+          "No pudimos obtener una respuesta. Inténtalo de nuevo en un momento. Si continúa, revisa los registros de smart-action en Supabase.";
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    // Restaurar la sesión si la persona ya había iniciado sesión.
+    async function initializeApp() {
+      const { data, error } = await db.auth.getSession();
+
+      if (error) {
+        console.error("No se pudo recuperar la sesión:", error);
+        return;
+      }
+
+      if (data.session?.user) {
+        try {
+          await loadUser(data.session.user);
+        } catch (error) {
+          console.error("No se pudo cargar el perfil:", error);
+          $("appScreen").classList.add("hidden");
+          $("authScreen").classList.remove("hidden");
+          setMessage(error.message, true);
+        }
+      }
+    }
+
+    // Manejar expiración y cierre de sesión.
+    db.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") {
+        currentUser = null;
+        $("appScreen").classList.add("hidden");
+        $("authScreen").classList.remove("hidden");
+      }
+    });
+
+    initializeApp();
+  </script>
+</body>
+</html>
