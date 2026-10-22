@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 <html lang="es">
-<head>
+<head>7
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AulaNova | Plataforma Educativa Inteligente</title>
@@ -335,5 +335,96 @@ document.getElementById("achievementGrid").innerHTML=medals.map((m,i)=>`<div cla
 function renderAll(){renderRole();renderGrades();renderSubjects();renderRecommendations();renderReports()}
 renderAll();
 </script>
+
+<!-- Pantalla de bienvenida de AulaNova -->
+<style>
+  #aulanova-login {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #eeeaff, #f8f7ff, #e2e8ff);
+    font-family: Arial, sans-serif;
+    color: #29234b;
+  }
+  #aulanova-login .login-card {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 390px;
+    padding: 32px;
+    border-radius: 24px;
+    background: white;
+    box-shadow: 0 18px 55px #40308020;
+  }
+  #aulanova-login h1 {
+    margin: 0 0 8px;
+    color: #6558d9;
+    font-size: 32px;
+  }
+  #aulanova-login p { color: #6c6880; line-height: 1.5; }
+  #aulanova-login label {
+    display: block;
+    margin: 18px 0 7px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  #aulanova-login input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #dedbea;
+    border-radius: 10px;
+    font-size: 16px;
+  }
+  #aulanova-login button {
+    width: 100%;
+    margin-top: 22px;
+    padding: 14px;
+    border: 0;
+    border-radius: 10px;
+    background: #6558d9;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  #aulanova-login .login-note {
+    font-size: 12px;
+    text-align: center;
+  }
+</style>
+
+<div id="aulanova-login">
+  <form class="login-card" id="aulanova-form">
+    <h1>✦ AulaNova</h1>
+    <p>Tu futuro comienza aprendiendo.</p>
+    <p>Inicia sesión para entrar a tu espacio educativo.</p>
+
+    <label for="aulanova-user">Usuario o correo</label>
+    <input id="aulanova-user" name="username"
+      autocomplete="username" required
+      placeholder="Escribe tu usuario">
+
+    <label for="aulanova-password">Contraseña</label>
+    <input id="aulanova-password" name="password"
+      type="password" autocomplete="current-password"
+      required placeholder="Escribe tu contraseña">
+
+    <button type="submit">Entrar a AulaNova →</button>
+    <p class="login-note">Estudiantes · Docentes · Familias</p>
+  </form>
+</div>
+
+<script>
+  document.getElementById("aulanova-form")
+    .addEventListener("submit", function(event) {
+      event.preventDefault();
+      alert("La pantalla está lista, pero todavía falta conectar un sistema seguro de inicio de sesión. No se ha validado tu cuenta.");
+    });
+</script>
+
 </body>
 </html>
