@@ -714,10 +714,24 @@ document.getElementById("tutorForm").addEventListener(
       answer.textContent = data.answer;
       status.textContent = "Respuesta del tutor:";
     } catch (error) {
-      console.error("Error del tutor:", error);
-      status.textContent =
-        "No pudimos obtener una respuesta. Inténtalo de nuevo.";
-    } finally {
+  console.error("Error del tutor:", error);
+
+  let detalle = error?.message || String(error);
+
+  try {
+    if (error?.context instanceof Response) {
+      const respuesta = await error.context.clone().json();
+      detalle = respuesta.error || detalle;
+      if (respuesta.status) {
+        detalle += " (estado " + respuesta.status + ")";
+      }
+    }
+  } catch (_) {
+    // Conserva el mensaje original si no hay más detalles.
+  }
+
+  status.textContent = "Error del tutor: " + detalle;
+} finally {
       button.disabled = false;
     }
   }
