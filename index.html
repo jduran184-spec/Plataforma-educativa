@@ -185,11 +185,8 @@ h2 { font-size: 19px; }
   margin-top: 12px;
 }
 
-/* MENÚ RESPONSIVE: TABLETS Y CELULARES */
 @media (max-width: 750px) {
-  .app {
-    display: block;
-  }
+  .app { display: block; }
 
   .sidebar {
     width: 100%;
@@ -218,10 +215,7 @@ h2 { font-size: 19px; }
     overflow-wrap: anywhere;
   }
 
-  .cards {
-    grid-template-columns: 1fr;
-  }
-
+  .cards { grid-template-columns: 1fr; }
   .content { padding: 17px; }
   .top { padding: 14px; }
   .authbox { padding: 23px; }
@@ -483,6 +477,7 @@ h2 { font-size: 19px; }
   </main>
 </div>
 
+<!-- LIBRERÍA DE SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -560,6 +555,7 @@ function showLogin() {
   authScreen.classList.remove("hidden");
 }
 
+/* CAMBIAR ENTRE INICIO DE SESIÓN Y REGISTRO */
 document.getElementById("toggleAuth").addEventListener("click", () => {
   registering = !registering;
 
@@ -590,6 +586,7 @@ document.getElementById("toggleAuth").addEventListener("click", () => {
   showMessage("");
 });
 
+/* REGISTRO E INICIO DE SESIÓN */
 document.getElementById("authForm").addEventListener(
   "submit",
   async event => {
@@ -597,7 +594,7 @@ document.getElementById("authForm").addEventListener(
 
     if (!db) {
       showMessage(
-        "No se ha conectado con Supabase. Revisa la configuración."
+        "No se ha conectado con Supabase. Recarga la página e inténtalo de nuevo."
       );
       return;
     }
@@ -628,7 +625,9 @@ document.getElementById("authForm").addEventListener(
         });
       }
 
-      if (result.error) throw result.error;
+      if (result.error) {
+        throw result.error;
+      }
 
       if (registering && !result.data.session) {
         showMessage(
@@ -636,8 +635,15 @@ document.getElementById("authForm").addEventListener(
         );
       } else if (result.data.user) {
         enterApp(result.data.user);
+        showMessage("");
+      } else {
+        showMessage(
+          "La solicitud terminó, pero no se recibió una sesión. Revisa tu correo si necesitas confirmar la cuenta."
+        );
       }
     } catch (error) {
+      console.error("Error de autenticación:", error);
+
       showMessage(
         "No se pudo completar la solicitud: " +
         (error.message || "Error desconocido.")
@@ -707,6 +713,7 @@ document.getElementById("tutorForm").addEventListener(
 
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
+
       if (!data?.answer) {
         throw new Error("No se recibió una respuesta del tutor.");
       }
@@ -714,20 +721,20 @@ document.getElementById("tutorForm").addEventListener(
       answer.textContent = data.answer;
       status.textContent = "Respuesta del tutor:";
     } catch (error) {
-  console.error("Error del tutor:", error);
+      console.error("Error del tutor:", error);
 
-  let detalle = error?.message || String(error);
+      let detalle = error?.message || String(error);
 
-  if (error?.context) {
-    try {
-      const respuesta = await error.context.json();
-      detalle += " | " + JSON.stringify(respuesta);
-    } catch (_) {
-      // Conserva el mensaje original.
-    }
-  }
+      if (error?.context) {
+        try {
+          const respuesta = await error.context.json();
+          detalle += " | " + JSON.stringify(respuesta);
+        } catch (_) {
+          // Conserva el mensaje original.
+        }
+      }
 
-       status.textContent = "Error del tutor: " + detalle;
+      status.textContent = "Error del tutor: " + detalle;
     } finally {
       button.disabled = false;
     }
@@ -756,7 +763,7 @@ document.getElementById("logoutButton").addEventListener(
 async function start() {
   if (!window.supabase) {
     showMessage(
-      "No se pudo cargar Supabase. Recarga la página e inténtalo de nuevo."
+      "No se pudo cargar la librería de Supabase. Comprueba tu conexión a internet y recarga la página."
     );
     return;
   }
@@ -783,6 +790,8 @@ async function start() {
       }
     });
   } catch (error) {
+    console.error("Error al iniciar Supabase:", error);
+
     showMessage(
       "No se pudo conectar con Supabase: " +
       (error.message || "Error desconocido.")
