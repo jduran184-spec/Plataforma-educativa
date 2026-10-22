@@ -1,430 +1,349 @@
 
 <!DOCTYPE html>
 <html lang="es">
-<head>7
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AulaNova | Plataforma Educativa Inteligente</title>
+<meta name="theme-color" content="#6558d9">
+<title>AulaNova | Tu espacio para aprender</title>
 <style>
-:root {
-  --primary:#5b5ce2; --dark:#202344; --muted:#747b91;
-  --bg:#f5f6fc; --white:#fff; --border:#e8eaf3;
-  --green:#16a779; --orange:#f5a623; --red:#e85d75;
+:root{--primary:#6558d9;--primary-dark:#5144c2;--ink:#292544;--muted:#77748e;--bg:#f7f6fc;--card:#fff;--line:#e9e6f3;--lav:#eeeaff}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select{font:inherit}button{cursor:pointer}
+.hidden{display:none!important}
+#login-screen{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;background:linear-gradient(135deg,#f0edff,#faf9ff,#e8efff)}
+.login-art{padding:clamp(25px,6vw,75px);display:flex;flex-direction:column;justify-content:space-between;min-height:100vh}
+.brand{display:flex;align-items:center;gap:12px;font-size:23px;font-weight:800}
+.brand-mark{width:44px;height:44px;display:grid;place-items:center;background:var(--primary);color:white;border-radius:14px;font-size:24px}
+.hero-copy{max-width:550px}
+.eyebrow{display:inline-block;border:1px solid #ded8ff;background:white;padding:9px 13px;border-radius:30px;color:var(--primary-dark);font-size:12px;font-weight:bold}
+.hero-copy h1{font-size:clamp(38px,5vw,65px);line-height:1.05;letter-spacing:-2px;margin:22px 0 16px}
+.hero-copy h1 span{color:var(--primary)}
+.hero-copy p{font-size:17px;line-height:1.7;color:#6f6b88;max-width:450px}
+.feature-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:25px}
+.feature-pills span{background:white;border:1px solid #e7e2fb;border-radius:12px;padding:11px;font-size:13px}
+.login-side{display:grid;place-items:center;padding:25px}
+.login-card{width:min(100%,430px);background:white;border:1px solid white;border-radius:25px;padding:clamp(24px,4vw,40px);box-shadow:0 24px 65px #42317b1a}
+.login-card h2{font-size:27px;margin:0 0 8px}
+.subcopy{color:var(--muted);font-size:14px;line-height:1.6}
+.field{margin:17px 0}
+.field label{display:block;font-size:13px;font-weight:bold;margin-bottom:8px}
+.field input,.field select{width:100%;border:1px solid #e2dfed;background:white;padding:14px;border-radius:11px;outline:none;color:var(--ink)}
+.field input:focus,.field select:focus{border-color:var(--primary);box-shadow:0 0 0 3px #6558d91c}
+.password-wrap{position:relative}
+.password-wrap input{padding-right:75px}
+.show-password{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--primary);font-size:12px;font-weight:bold;padding:8px}
+.primary-btn{width:100%;border:0;background:var(--primary);color:white;padding:14px;border-radius:11px;font-weight:bold}
+.primary-btn:hover{background:var(--primary-dark)}
+.login-note{font-size:12px;color:#858199;line-height:1.6;text-align:center;margin-top:16px}
+.demo-note{margin-top:16px;padding:12px;background:#f5f3ff;border-radius:11px;color:#625b89;font-size:12px;line-height:1.5}
+.error-message{color:#b42318;font-size:13px;margin-top:10px}
+#app-screen{min-height:100vh}
+.topbar{min-height:72px;background:white;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:12px 25px;gap:12px;position:sticky;top:0;z-index:10}
+.topbar-left,.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar .brand{font-size:19px}.topbar .brand-mark{width:38px;height:38px;border-radius:12px}
+.role-chip{font-size:12px;font-weight:bold;color:var(--primary-dark);background:var(--lav);padding:8px 11px;border-radius:20px}
+.avatar{width:39px;height:39px;border-radius:50%;background:#e7e2ff;color:var(--primary-dark);display:grid;place-items:center;font-weight:bold}
+.logout-btn{border:1px solid var(--line);background:white;color:#625d7b;padding:9px 12px;border-radius:10px;font-size:13px;font-weight:bold}
+.layout{max-width:1400px;margin:auto;display:grid;grid-template-columns:225px 1fr;min-height:calc(100vh - 72px)}
+.sidebar{padding:23px 15px;border-right:1px solid var(--line);background:white}
+.nav-label{padding:8px 12px;color:#9a96ac;font-size:10px;font-weight:bold;letter-spacing:1px;text-transform:uppercase}
+.nav-btn{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;text-align:left;padding:12px;border-radius:11px;color:#6d6885;font-weight:bold;font-size:14px;margin:3px 0}
+.nav-btn.active,.nav-btn:hover{background:#f0edff;color:var(--primary-dark)}
+.sidebar-bottom{margin-top:30px;padding:15px;background:#f7f5ff;border-radius:14px;color:#716b91;font-size:12px;line-height:1.6}
+.main{padding:clamp(18px,3vw,36px);min-width:0}
+.welcome-row{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:24px}
+.welcome-row h1{margin:0 0 8px;font-size:clamp(25px,3vw,34px);letter-spacing:-1px}
+.welcome-row p{margin:0;color:var(--muted);font-size:14px}
+.date-pill{background:white;border:1px solid var(--line);padding:10px 12px;border-radius:11px;font-size:12px;color:#77718f}
+.grid{display:grid;gap:16px}
+.stats{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:21px}
+.card{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0;box-shadow:0 3px 12px #33276605}
+.stat-top{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:12px;font-weight:bold}
+.stat-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#f0edff;font-size:18px}
+.stat-value{font-size:29px;font-weight:800;margin:14px 0 5px}
+.stat-foot{font-size:12px;color:#7b7692}
+.content-grid{grid-template-columns:minmax(0,1.35fr) minmax(260px,.8fr)}
+.section-title{font-size:17px;margin:0 0 17px}
+.subject-row{display:flex;align-items:center;gap:12px;margin:17px 0}
+.subject-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:19px;background:#f1efff;flex-shrink:0}
+.subject-info{flex:1;min-width:0}
+.subject-info strong{display:block;font-size:13px}
+.subject-info small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.progress{height:7px;background:#efedf5;border-radius:30px;overflow:hidden;margin-top:9px}
+.progress span{display:block;height:100%;border-radius:30px;background:var(--primary)}
+.grade{font-size:14px;font-weight:bold;min-width:34px;text-align:right}
+.task{display:flex;gap:11px;padding:13px 0;border-bottom:1px solid #f0eef6}
+.task:last-child{border-bottom:0}
+.task-dot{width:10px;height:10px;background:#ffbd66;border-radius:50%;margin-top:5px;flex-shrink:0}
+.task strong{font-size:13px;display:block}
+.task small{font-size:11px;color:var(--muted);display:block;margin-top:4px}
+.achievement{background:linear-gradient(130deg,#6558d9,#897cf1);color:white;border-radius:18px;padding:21px;margin-top:16px}
+.achievement h3{margin:8px 0;font-size:18px}
+.achievement p{font-size:12px;line-height:1.6;color:#f0edff;margin:0}
+.page-section{display:none}
+.page-section.active{display:block}
+.table-wrap{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse;min-width:420px}
+.data-table th,.data-table td{text-align:left;padding:14px 10px;border-bottom:1px solid var(--line);font-size:13px}
+.data-table th{color:var(--muted);font-size:11px;text-transform:uppercase}
+.info-banner{background:#f0edff;color:#51469b;border-radius:13px;padding:15px;font-size:13px;line-height:1.6;margin-bottom:18px}
+.profile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.mobile-nav{display:none}
+@media(max-width:900px){
+#login-screen{grid-template-columns:1fr}
+.login-art{min-height:auto;padding:27px 24px 10px}
+.hero-copy h1{font-size:42px}.hero-copy p{font-size:15px}
+.login-art .feature-pills,.login-art .footer-copy{display:none}
+.login-side{padding:18px 20px 30px}
+.layout{grid-template-columns:1fr}.sidebar{display:none}
+.main{padding:20px 15px 95px}
+.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+.content-grid{grid-template-columns:1fr}
+.topbar{padding:10px 15px}
+.mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:20;background:white;border-top:1px solid var(--line);justify-content:space-around;padding:7px 3px}
+.mobile-nav .nav-btn{width:auto;display:flex;flex-direction:column;gap:4px;font-size:10px;padding:8px 7px;margin:0}
+.mobile-nav .nav-btn span:first-child{font-size:18px}
+.date-pill{display:none}
 }
-* {box-sizing:border-box}
-body {margin:0;font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--dark)}
-button,input,select {font:inherit}
-button {cursor:pointer}
-.app {display:flex;min-height:100vh}
-.sidebar {width:245px;background:#fff;border-right:1px solid var(--border);padding:25px 16px;display:flex;flex-direction:column;flex-shrink:0}
-.brand {display:flex;align-items:center;gap:10px;padding:0 10px 30px;font-weight:800;font-size:21px}
-.brand-icon {background:var(--primary);color:white;padding:9px;border-radius:12px}
-.nav-label {font-size:11px;color:#9ba1b3;font-weight:800;letter-spacing:1.4px;padding:12px}
-.nav {display:flex;align-items:center;gap:12px;padding:12px;border:0;background:transparent;color:#69718a;border-radius:10px;width:100%;text-align:left;margin-bottom:5px}
-.nav:hover,.nav.active {background:#eeefff;color:var(--primary);font-weight:700}
-.sidebar-bottom {margin-top:auto;padding:12px}
-.main {flex:1;min-width:0}
-.topbar {height:76px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 30px;gap:12px}
-.topbar h3 {margin:0;font-size:17px}
-.top-actions {display:flex;align-items:center;gap:12px}
-.role-select {border:1px solid var(--border);padding:9px;border-radius:9px;background:#fff;color:var(--dark)}
-.avatar {background:#dcdcff;color:var(--primary);border-radius:50%;width:38px;height:38px;display:grid;place-items:center;font-weight:800}
-.content {padding:30px;max-width:1500px;margin:auto}
-.welcome {display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:25px}
-h1 {font-size:28px;margin:0 0 8px}
-p {color:var(--muted);line-height:1.55}
-.welcome p {margin:0}
-.btn {background:var(--primary);color:white;border:0;border-radius:9px;padding:11px 15px;font-weight:650}
-.btn:hover {filter:brightness(.95)}
-.btn-light {background:#eeefff;color:var(--primary)}
-.cards {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:22px}
-.card {background:#fff;border:1px solid var(--border);border-radius:15px;padding:20px;min-width:0}
-.stat-head {display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
-.stat-icon {width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#eeefff;font-size:20px}
-.stat-value {font-size:29px;font-weight:800;margin:16px 0 6px}
-.positive {color:var(--green);font-size:12px}
-.small {font-size:12px;color:var(--muted)}
-.grid-main {display:grid;grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr);gap:18px;margin-bottom:20px}
-.card-title {display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px}
-.card-title h2 {font-size:16px;margin:0}
-select,.field {padding:9px 11px;border:1px solid var(--border);border-radius:8px;background:white;color:var(--dark);max-width:100%}
-.chart {height:220px;display:flex;align-items:flex-end;justify-content:space-around;gap:14px;border-bottom:1px solid var(--border);padding:10px 5px 0}
-.bar-group {display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:9px;flex:1}
-.bar {width:min(35px,75%);min-height:5px;border-radius:7px 7px 2px 2px;background:linear-gradient(180deg,#8282ff,#5b5ce2);transition:height .4s}
-.bar-label {font-size:11px;color:var(--muted);padding-bottom:7px}
-.progress-item {margin:18px 0}
-.progress-row {display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:8px}
-.track {height:8px;background:#eff0f7;border-radius:10px;overflow:hidden}
-.fill {height:100%;border-radius:10px;background:var(--primary)}
-.recommendation {display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}
-.recommendation:last-child {border-bottom:0}
-.rec-icon {width:39px;height:39px;flex-shrink:0;display:grid;place-items:center;border-radius:11px;background:#fff3d9}
-.rec-icon.purple {background:#eeefff}
-.rec-icon.green {background:#e0f8ed}
-.rec-icon.red {background:#ffe9ed}
-.rec-title {font-weight:700;font-size:13px;margin-bottom:5px}
-.rec-text {font-size:12px;color:var(--muted);line-height:1.5}
-.table-wrap {overflow-x:auto}
-table {border-collapse:collapse;width:100%;font-size:13px}
-th,td {text-align:left;padding:14px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
-th {font-size:11px;color:var(--muted);font-weight:700}
-.status {border-radius:20px;padding:5px 9px;font-size:11px;background:#e0f8ed;color:#14835f}
-.status.warn {background:#fff2d8;color:#9c6a0b}
-.status.low {background:#ffe8ed;color:#bd4058}
-.section {display:none}
-.section.active {display:block}
-.pill {display:inline-block;background:#eeefff;color:var(--primary);border-radius:7px;padding:6px 9px;font-size:12px;font-weight:700}
-.achievement-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
-.achievement {text-align:center;padding:24px 12px}
-.medal {font-size:35px;margin-bottom:12px}
-.achievement h3 {font-size:14px;margin:8px}
-.mobile-menu {display:none}
-.empty {padding:28px;text-align:center;color:var(--muted)}
-.footer {text-align:center;color:#969caf;font-size:11px;padding:25px}
-.notice {background:#fff5dd;border:1px solid #f6e4ae;padding:12px 15px;border-radius:10px;font-size:12px;color:#74561a;margin-bottom:20px;line-height:1.5}
-.form-row {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.form-row label {font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:7px}
-@media(max-width:1050px) {
- .sidebar{width:205px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}
- .grid-main{grid-template-columns:1fr}.content{padding:22px}
-}
-@media(max-width:650px) {
- .sidebar{display:none}.topbar{padding:0 15px;height:65px}.mobile-menu{display:block}
- .content{padding:17px}.welcome{align-items:flex-start;flex-direction:column}
- h1{font-size:23px}.cards{gap:10px}.card{padding:14px}.stat-value{font-size:24px}
- .top-actions{gap:7px}.role-select{max-width:145px;font-size:12px}
- .achievement-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:420px){
+.stats{gap:9px}.card{padding:15px}.stat-value{font-size:25px}
+.topbar .brand{font-size:17px}.role-chip{display:none}
+.welcome-row h1{font-size:25px}.profile-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
-<div class="app">
-<aside class="sidebar">
-  <div class="brand"><span class="brand-icon">✦</span> AulaNova</div>
-  <div class="nav-label">ESPACIO ACADÉMICO</div>
-  <button class="nav active" data-page="dashboard">▦ &nbsp; Panel principal</button>
-  <button class="nav" data-page="grades">▤ &nbsp; Calificaciones</button>
-  <button class="nav" data-page="subjects">▧ &nbsp; Asignaturas</button>
-  <button class="nav" data-page="recommendations">✧ &nbsp; Refuerzo inteligente</button>
-  <div class="nav-label">CRECIMIENTO</div>
-  <button class="nav" data-page="achievements">♜ &nbsp; Logros y niveles</button>
-  <button class="nav" data-page="reports">▥ &nbsp; Informes</button>
-  <div class="nav-label">COMUNIDAD</div>
-  <button class="nav" data-page="people">♧ &nbsp; Comunidad escolar</button>
-  <div class="sidebar-bottom">
-    <div class="card" style="padding:14px;background:#f7f7ff">
-      <div style="font-size:13px;font-weight:700">✦ Tu progreso importa</div>
-      <p style="font-size:11px;margin-bottom:0">Cada paso cuenta para alcanzar tus metas.</p>
+
+<section id="login-screen">
+  <div class="login-art">
+    <div class="brand"><div class="brand-mark">✦</div><span>AulaNova</span></div>
+    <div class="hero-copy">
+      <div class="eyebrow">✧ TU ESPACIO PARA CRECER</div>
+      <h1>Aprender hoy.<br><span>Brillar mañana.</span></h1>
+      <p>Organiza tus clases, descubre tus avances y celebra cada paso de tu camino académico.</p>
+      <div class="feature-pills"><span>📚 Tus asignaturas</span><span>🌱 Tu progreso</span><span>🏆 Tus logros</span></div>
     </div>
+    <div class="footer-copy" style="font-size:12px;color:#8983a5">Una experiencia educativa para estudiantes, docentes y familias.</div>
   </div>
-</aside>
 
-<main class="main">
-<header class="topbar">
-  <div style="display:flex;align-items:center;gap:12px">
-    <button class="nav mobile-menu" id="mobileMenu" aria-label="Abrir menú">☰</button>
-    <h3 id="pageTitle">Panel principal</h3>
-  </div>
-  <div class="top-actions">
-    <select class="role-select" id="roleSelect" aria-label="Seleccionar perfil">
-      <option value="student">🎓 Estudiante</option>
-      <option value="teacher">📚 Docente</option>
-      <option value="parent">👨‍👩‍👧 Padre de familia</option>
-    </select>
-    <div class="avatar" id="avatar">ES</div>
-  </div>
-</header>
-
-<div class="content">
-<div class="notice">Modo de demostración: los datos son ficticios y se guardan únicamente en esta sesión del navegador. Todavía no hay cuentas reales ni una base de datos conectada.</div>
-
-<section class="section active" id="dashboard">
-  <div class="welcome">
-    <div><h1 id="welcomeTitle">¡Hola, estudiante! 👋</h1><p id="welcomeText">Este es tu espacio para aprender, avanzar y descubrir tu potencial.</p></div>
-    <button class="btn" onclick="showPage('grades')">Ver calificaciones →</button>
-  </div>
-  <div class="cards" id="stats">
-    <div class="card"><div class="stat-head">Promedio general <span class="stat-icon">◎</span></div><div class="stat-value">4.2/5</div><div class="positive">↑ Buen progreso</div></div>
-    <div class="card"><div class="stat-head">Asignaturas <span class="stat-icon">▤</span></div><div class="stat-value">6</div><div class="small">En seguimiento</div></div>
-    <div class="card"><div class="stat-head">Logros obtenidos <span class="stat-icon">♜</span></div><div class="stat-value">8</div><div class="positive">¡Sigue avanzando!</div></div>
-    <div class="card"><div class="stat-head">Actividades <span class="stat-icon">✓</span></div><div class="stat-value">24</div><div class="small">Completadas en el ejemplo</div></div>
-  </div>
-  <div class="grid-main">
-    <div class="card">
-      <div class="card-title"><h2>Rendimiento académico</h2><span class="pill">Por asignatura</span></div>
-      <div class="chart" id="chart"></div>
-      <div class="small" style="margin-top:14px">Escala de ejemplo de 0 a 5. Los datos deben reemplazarse por calificaciones reales.</div>
-    </div>
-    <div class="card">
-      <div class="card-title"><h2>Recomendaciones de aprendizaje</h2><span>✧</span></div>
-      <div id="miniRecommendations"></div>
-      <button class="btn btn-light" style="width:100%;margin-top:10px" onclick="showPage('recommendations')">Ver todas las recomendaciones</button>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title"><h2>Últimas calificaciones</h2><button class="btn btn-light" onclick="showPage('grades')">Ver todas</button></div>
-    <div class="table-wrap"><table><thead><tr><th>ASIGNATURA</th><th>ACTIVIDAD</th><th>NOTA</th><th>ESTADO</th></tr></thead><tbody id="recentGrades"></tbody></table></div>
-  </div>
-</section>
-
-<section class="section" id="grades">
-  <div class="welcome"><div><h1>Calificaciones</h1><p>Consulta y registra resultados académicos.</p></div><button class="btn" onclick="openGradeForm()">+ Añadir nota</button></div>
-  <div class="card"><div class="table-wrap"><table><thead><tr><th>ASIGNATURA</th><th>ACTIVIDAD</th><th>NOTA / 5</th><th>ESTADO</th></tr></thead><tbody id="allGrades"></tbody></table></div></div>
-  <div class="card" id="gradeForm" style="display:none;margin-top:18px">
-    <h2 style="font-size:17px">Nueva calificación</h2>
-    <form id="newGradeForm">
-      <div class="form-row">
-        <label>Asignatura<input class="field" name="subject" required placeholder="Ej. Matemáticas"></label>
-        <label>Actividad<input class="field" name="activity" required placeholder="Ej. Evaluación 1"></label>
-        <label>Nota (0 a 5)<input class="field" name="score" type="number" min="0" max="5" step=".1" required></label>
-        <label>Fecha<input class="field" name="date" type="date" required></label>
+  <div class="login-side">
+    <form class="login-card" id="login-form">
+      <h2>¡Qué bueno tenerte aquí!</h2>
+      <p class="subcopy">Escribe tus datos para entrar a tu espacio de aprendizaje.</p>
+      <div class="field">
+        <label for="username">Usuario o correo electrónico</label>
+        <input id="username" name="username" autocomplete="username" required placeholder="Ej. maria123">
       </div>
-      <div style="display:flex;gap:10px;margin-top:16px"><button class="btn">Guardar nota</button><button class="btn btn-light" type="button" onclick="document.getElementById('gradeForm').style.display='none'">Cancelar</button></div>
+      <div class="field">
+        <label for="password">Contraseña</label>
+        <div class="password-wrap">
+          <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Tu contraseña">
+          <button class="show-password" type="button" id="toggle-password">Mostrar</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="role">Voy a entrar como</label>
+        <select id="role" name="role">
+          <option value="Estudiante">🎒 Estudiante</option>
+          <option value="Docente">👩‍🏫 Docente</option>
+          <option value="Padre o madre">👨‍👩‍👧 Padre o madre</option>
+        </select>
+      </div>
+      <button class="primary-btn" type="submit">Entrar a AulaNova →</button>
+      <div id="login-error" class="error-message hidden" role="alert"></div>
+      <div class="demo-note"><strong>Versión de demostración:</strong> puedes escribir cualquier usuario y contraseña para explorar el diseño. No uses contraseñas reales; todavía no hay cuentas ni autenticación conectadas.</div>
+      <p class="login-note">Esta versión es una demostración local de la plataforma.</p>
     </form>
   </div>
 </section>
 
-<section class="section" id="subjects">
-  <div class="welcome"><div><h1>Asignaturas</h1><p>Explora tus materias y su progreso.</p></div><button class="btn" onclick="addSubject()">+ Añadir asignatura</button></div>
-  <div class="cards" id="subjectCards"></div>
-</section>
+<section id="app-screen" class="hidden">
+  <header class="topbar">
+    <div class="topbar-left"><div class="brand"><div class="brand-mark">✦</div><span>AulaNova</span></div></div>
+    <div class="topbar-right">
+      <span class="role-chip" id="role-chip">Estudiante</span>
+      <div class="avatar" id="avatar">A</div>
+      <button class="logout-btn" id="logout" type="button">Salir ↗</button>
+    </div>
+  </header>
 
-<section class="section" id="recommendations">
-  <div class="welcome"><div><h1>Refuerzo inteligente ✧</h1><p>Sugerencias basadas en las notas de demostración.</p></div></div>
-  <div class="notice">Estas recomendaciones se calculan mediante reglas sencillas a partir de las calificaciones registradas. No son todavía recomendaciones generadas por un modelo de IA.</div>
-  <div class="card" id="recommendationList"></div>
-</section>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-label">Espacio personal</div>
+      <button class="nav-btn active" data-page="inicio" type="button"><span>⌂</span> Inicio</button>
+      <button class="nav-btn" data-page="asignaturas" type="button"><span>▤</span> Asignaturas</button>
+      <button class="nav-btn" data-page="tareas" type="button"><span>✓</span> Tareas</button>
+      <button class="nav-btn" data-page="logros" type="button"><span>♧</span> Logros</button>
+      <button class="nav-btn" data-page="perfil" type="button"><span>◉</span> Mi perfil</button>
+      <div class="sidebar-bottom"><strong>Un paso a la vez ✨</strong><br>Tu esfuerzo de hoy construye las oportunidades de mañana.</div>
+    </aside>
 
-<section class="section" id="achievements">
-  <div class="welcome"><div><h1>Logros y niveles</h1><p>Reconocemos la constancia, el esfuerzo y la curiosidad.</p></div></div>
-  <div class="cards">
-    <div class="card"><div class="stat-head">Nivel actual <span class="stat-icon">♜</span></div><div class="stat-value">Nivel 3</div><div class="small">Explorador del conocimiento</div></div>
-    <div class="card"><div class="stat-head">Puntos de experiencia <span class="stat-icon">✧</span></div><div class="stat-value" id="xpValue">240 XP</div><div class="small">Puntos de demostración</div></div>
-    <div class="card"><div class="stat-head">Insignias <span class="stat-icon">🏅</span></div><div class="stat-value">4</div><div class="small">De 8 disponibles</div></div>
-    <div class="card"><div class="stat-head">Próximo nivel <span class="stat-icon">↑</span></div><div class="stat-value">60 XP</div><div class="small">Para alcanzar el nivel 4</div></div>
+    <main class="main">
+      <section id="page-inicio" class="page-section active">
+        <div class="welcome-row">
+          <div><h1 id="welcome-title">¡Hola! 👋</h1><p>Este es un resumen de tu espacio académico.</p></div>
+          <div class="date-pill" id="today-date"></div>
+        </div>
+        <div class="grid stats">
+          <div class="card"><div class="stat-top"><span>Promedio general</span><div class="stat-icon">📈</div></div><div class="stat-value">4,2/5</div><div class="stat-foot">Sigue aprendiendo a tu ritmo</div></div>
+          <div class="card"><div class="stat-top"><span>Tareas pendientes</span><div class="stat-icon">📝</div></div><div class="stat-value">3</div><div class="stat-foot">Organiza tus prioridades</div></div>
+          <div class="card"><div class="stat-top"><span>Racha de estudio</span><div class="stat-icon">🔥</div></div><div class="stat-value">5 días</div><div class="stat-foot">¡Vas construyendo un hábito!</div></div>
+          <div class="card"><div class="stat-top"><span>Puntos de aprendizaje</span><div class="stat-icon">⭐</div></div><div class="stat-value">240</div><div class="stat-foot">Cada esfuerzo cuenta</div></div>
+        </div>
+        <div class="grid content-grid">
+          <div class="card">
+            <h2 class="section-title">Tu progreso por asignatura</h2>
+            <div class="subject-row"><div class="subject-icon">➗</div><div class="subject-info"><strong>Matemáticas</strong><small>Buen trabajo, sigue practicando</small><div class="progress"><span style="width:86%"></span></div></div><div class="grade">4,3</div></div>
+            <div class="subject-row"><div class="subject-icon" style="background:#e7f7ef">🧪</div><div class="subject-info"><strong>Ciencias</strong><small>Vas avanzando con constancia</small><div class="progress"><span style="width:90%;background:#35a879"></span></div></div><div class="grade">4,5</div></div>
+            <div class="subject-row"><div class="subject-icon" style="background:#fff1df">📖</div><div class="subject-info"><strong>Lengua</strong><small>Practica un poco cada semana</small><div class="progress"><span style="width:78%;background:#e9a34b"></span></div></div><div class="grade">3,9</div></div>
+            <div class="subject-row"><div class="subject-icon" style="background:#e5f1ff">🌎</div><div class="subject-info"><strong>Historia</strong><small>Buen progreso en clase</small><div class="progress"><span style="width:84%;background:#5897e8"></span></div></div><div class="grade">4,2</div></div>
+          </div>
+          <div>
+            <div class="card">
+              <h2 class="section-title">Próximas tareas</h2>
+              <div class="task"><div class="task-dot"></div><div><strong>Ejercicios de álgebra</strong><small>Matemáticas · Próximamente</small></div></div>
+              <div class="task"><div class="task-dot" style="background:#9b8af5"></div><div><strong>Lectura del capítulo 4</strong><small>Lengua · En proceso</small></div></div>
+              <div class="task"><div class="task-dot" style="background:#5eafe2"></div><div><strong>Resumen de ecosistemas</strong><small>Ciencias · Por entregar</small></div></div>
+            </div>
+            <div class="achievement"><div style="font-size:27px">🏆</div><h3>¡Cada paso cuenta!</h3><p>Completa una tarea y sigue sumando experiencia. El progreso se construye poco a poco.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="page-asignaturas" class="page-section">
+        <div class="welcome-row"><div><h1>Mis asignaturas 📚</h1><p>Consulta el resumen de tus materias.</p></div></div>
+        <div class="card table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Asignatura</th><th>Nota de ejemplo</th><th>Progreso</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td>Matemáticas</td><td>4,3 / 5</td><td>86%</td><td>En curso</td></tr>
+              <tr><td>Ciencias</td><td>4,5 / 5</td><td>90%</td><td>En curso</td></tr>
+              <tr><td>Lengua</td><td>3,9 / 5</td><td>78%</td><td>En curso</td></tr>
+              <tr><td>Historia</td><td>4,2 / 5</td><td>84%</td><td>En curso</td></tr>
+            </tbody>
+          </table>
+          <p class="login-note">Estas calificaciones son datos de demostración, no notas reales.</p>
+        </div>
+      </section>
+
+      <section id="page-tareas" class="page-section">
+        <div class="welcome-row"><div><h1>Mis tareas ✓</h1><p>Una lista para ayudarte a organizarte.</p></div></div>
+        <div class="info-banner">Consejo: empieza por una tarea pequeña y marca tu avance cuando termines.</div>
+        <div class="card">
+          <div class="task"><div class="task-dot"></div><div><strong>Ejercicios de álgebra</strong><small>Matemáticas · Pendiente</small></div></div>
+          <div class="task"><div class="task-dot" style="background:#9b8af5"></div><div><strong>Lectura del capítulo 4</strong><small>Lengua · En proceso</small></div></div>
+          <div class="task"><div class="task-dot" style="background:#5eafe2"></div><div><strong>Resumen de ecosistemas</strong><small>Ciencias · Pendiente</small></div></div>
+          <div class="task"><div class="task-dot" style="background:#55b98c"></div><div><strong>Repaso de historia</strong><small>Historia · Completada en la demostración</small></div></div>
+        </div>
+      </section>
+
+      <section id="page-logros" class="page-section">
+        <div class="welcome-row"><div><h1>Mis logros ⭐</h1><p>Reconoce tu esfuerzo y tus hábitos de aprendizaje.</p></div></div>
+        <div class="grid profile-grid">
+          <div class="card"><div style="font-size:35px">🌱</div><h3>Primeros pasos</h3><p class="subcopy">Has comenzado tu camino de aprendizaje.</p><span class="role-chip">Desbloqueado · Demo</span></div>
+          <div class="card"><div style="font-size:35px">🔥</div><h3>Constancia</h3><p class="subcopy">Cinco días de racha de estudio de ejemplo.</p><span class="role-chip">Desbloqueado · Demo</span></div>
+          <div class="card"><div style="font-size:35px">⭐</div><h3>Explorador</h3><p class="subcopy">Descubre las secciones de tu plataforma.</p><span class="role-chip">En progreso · Demo</span></div>
+          <div class="card"><div style="font-size:35px">🏆</div><h3>Gran esfuerzo</h3><p class="subcopy">Sigue practicando y celebrando tus avances.</p><span class="role-chip">Próximo objetivo</span></div>
+        </div>
+      </section>
+
+      <section id="page-perfil" class="page-section">
+        <div class="welcome-row"><div><h1>Mi perfil ◉</h1><p>Datos de la sesión de demostración.</p></div></div>
+        <div class="card">
+          <div class="avatar" id="profile-avatar" style="width:60px;height:60px;font-size:22px;margin-bottom:18px">A</div>
+          <h2 id="profile-name">Usuario</h2>
+          <p id="profile-role" class="subcopy">Estudiante</p>
+          <div class="info-banner">Esta versión no crea cuentas reales ni guarda tus datos en un servidor. El nombre solo se usa para personalizar esta sesión en tu navegador.</div>
+          <button class="primary-btn" id="profile-logout" type="button" style="max-width:220px">Cerrar sesión</button>
+        </div>
+      </section>
+    </main>
   </div>
-  <div class="achievement-grid" id="achievementGrid"></div>
-</section>
 
-<section class="section" id="reports">
-  <div class="welcome"><div><h1>Informes académicos</h1><p>Resumen del desempeño y evolución.</p></div><button class="btn" onclick="window.print()">Imprimir / Guardar PDF</button></div>
-  <div class="cards" id="reportStats"></div>
-  <div class="card"><h2 style="font-size:16px">Resumen por asignatura</h2><div class="table-wrap"><table><thead><tr><th>ASIGNATURA</th><th>PROMEDIO</th><th>SEGUIMIENTO</th></tr></thead><tbody id="reportTable"></tbody></table></div></div>
+  <nav class="mobile-nav">
+    <button class="nav-btn active" data-page="inicio" type="button"><span>⌂</span><span>Inicio</span></button>
+    <button class="nav-btn" data-page="asignaturas" type="button"><span>▤</span><span>Materias</span></button>
+    <button class="nav-btn" data-page="tareas" type="button"><span>✓</span><span>Tareas</span></button>
+    <button class="nav-btn" data-page="logros" type="button"><span>♧</span><span>Logros</span></button>
+    <button class="nav-btn" data-page="perfil" type="button"><span>◉</span><span>Perfil</span></button>
+  </nav>
 </section>
-
-<section class="section" id="people">
-  <div class="welcome"><div><h1>Comunidad escolar</h1><p>Un espacio para acompañar el proceso educativo.</p></div></div>
-  <div class="cards">
-    <div class="card"><div class="stat-icon">🎓</div><h3>Estudiantes</h3><p>Consultar calificaciones, metas, logros y recursos de refuerzo.</p><button class="btn btn-light" onclick="setRole('student')">Vista de estudiante</button></div>
-    <div class="card"><div class="stat-icon">📚</div><h3>Docentes</h3><p>Organizar asignaturas, revisar resultados y orientar el aprendizaje.</p><button class="btn btn-light" onclick="setRole('teacher')">Vista de docente</button></div>
-    <div class="card"><div class="stat-icon">👨‍👩‍👧</div><h3>Familias</h3><p>Acompañar el progreso académico y conocer áreas de apoyo.</p><button class="btn btn-light" onclick="setRole('parent')">Vista de familia</button></div>
-  </div>
-  <div class="card"><h2 style="font-size:16px">Próximas funciones</h2><p>Mensajería segura, vinculación real entre acudientes y estudiantes, gestión de cursos, permisos y sincronización con plataformas académicas.</p></div>
-</section>
-
-<div class="footer">AulaNova · Prototipo educativo · Versión 0.1</div>
-</div>
-</main>
-</div>
 
 <script>
-const demoGrades = [
- {subject:"Matemáticas",activity:"Evaluación de álgebra",score:3.2,date:"2026-10-10"},
- {subject:"Ciencias",activity:"Laboratorio",score:4.6,date:"2026-10-12"},
- {subject:"Lengua",activity:"Comprensión lectora",score:4.3,date:"2026-10-14"},
- {subject:"Historia",activity:"Proyecto histórico",score:4.5,date:"2026-10-15"},
- {subject:"Inglés",activity:"Vocabulario",score:3.8,date:"2026-10-17"},
- {subject:"Tecnología",activity:"Proyecto digital",score:4.8,date:"2026-10-19"}
-];
-let grades = demoGrades.map(g=>({...g}));
-let subjects = ["Matemáticas","Ciencias","Lengua","Historia","Inglés","Tecnología"];
-const roleInfo = {
- student:{name:"estudiante",avatar:"ES",welcome:"¡Hola, estudiante! 👋",text:"Este es tu espacio para aprender, avanzar y descubrir tu potencial."},
- teacher:{name:"docente",avatar:"DO",welcome:"¡Hola, docente! 👋",text:"Revisa resultados, identifica necesidades y acompaña el aprendizaje."},
- parent:{name:"familiar",avatar:"FA",welcome:"¡Hola, familia! 👋",text:"Consulta el progreso académico y descubre cómo acompañar el aprendizaje."}
-};
-let currentRole = "student";
-const titles = {dashboard:"Panel principal",grades:"Calificaciones",subjects:"Asignaturas",recommendations:"Refuerzo inteligente",achievements:"Logros y niveles",reports:"Informes",people:"Comunidad escolar"};
-function average(arr){return arr.length?arr.reduce((a,g)=>a+Number(g.score),0)/arr.length:0}
-function avgSubject(s){return average(grades.filter(g=>g.subject===s))}
-function status(score){return score>=4?'<span class="status">Buen desempeño</span>':score>=3?'<span class="status warn">Puede mejorar</span>':'<span class="status low">Necesita refuerzo</span>'}
-function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function showPage(page){
- document.querySelectorAll(".section").forEach(s=>s.classList.toggle("active",s.id===page));
- document.querySelectorAll(".nav[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
- document.getElementById("pageTitle").textContent=titles[page]||"AulaNova";
- document.querySelector(".sidebar").style.display="";
- if(page==="grades")renderGrades();
- if(page==="subjects")renderSubjects();
- if(page==="recommendations")renderRecommendations();
- if(page==="reports")renderReports();
-}
-document.querySelectorAll(".nav[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
-document.getElementById("mobileMenu").addEventListener("click",()=>{
- const s=document.querySelector(".sidebar");
- s.style.display=s.style.display==="flex"?"none":"flex";
- s.style.position="absolute";s.style.zIndex="5";s.style.height="100vh";s.style.boxShadow="0 0 30px #0002";
-});
-function setRole(role){
- currentRole=role;
- document.getElementById("roleSelect").value=role;
- renderRole();
- showPage("dashboard");
-}
-document.getElementById("roleSelect").addEventListener("change",e=>{currentRole=e.target.value;renderRole()});
-function renderRole(){
- const r=roleInfo[currentRole];
- document.getElementById("welcomeTitle").textContent=r.welcome;
- document.getElementById("welcomeText").textContent=r.text;
- document.getElementById("avatar").textContent=r.avatar;
- const labels={student:["Promedio general","Asignaturas","Logros obtenidos","Actividades"],teacher:["Estudiantes de ejemplo","Asignaturas","Promedio de clase","Notas registradas"],parent:["Promedio acompañado","Asignaturas","Áreas destacadas","Notas registradas"]};
- const avg=average(grades);
- const vals=currentRole==="student"?[avg.toFixed(1)+"/5",subjects.length,8,24]:
- currentRole==="teacher"?["24",subjects.length,avg.toFixed(1)+"/5",grades.length]:
- [avg.toFixed(1)+"/5",subjects.length,grades.filter(g=>g.score>=4).length,grades.length];
- document.getElementById("stats").innerHTML=labels[currentRole].map((l,i)=>`<div class="card"><div class="stat-head">${l}<span class="stat-icon">${["◎","▤","♜","✓"][i]}</span></div><div class="stat-value">${vals[i]}</div><div class="small">${currentRole==="teacher"&&i===0?"Cantidad ficticia":currentRole==="parent"?"Datos de demostración":"Resumen de ejemplo"}</div></div>`).join("");
- renderDashboard();
-}
-function renderDashboard(){
- document.getElementById("chart").innerHTML=subjects.map(s=>{
- let v=avgSubject(s);
- return `<div class="bar-group"><div class="bar" title="${v.toFixed(1)}/5" style="height:${v/5*78}%"></div><div class="bar-label">${escapeHTML(s)}</div></div>`;
- }).join("");
- document.getElementById("recentGrades").innerHTML=grades.slice(-4).reverse().map(g=>`<tr><td>${escapeHTML(g.subject)}</td><td>${escapeHTML(g.activity)}</td><td><strong>${Number(g.score).toFixed(1)}</strong></td><td>${status(Number(g.score))}</td></tr>`).join("");
- document.getElementById("miniRecommendations").innerHTML=makeRecommendations().slice(0,3).map(rec=>`<div class="recommendation"><div class="rec-icon ${rec.color}">${rec.icon}</div><div><div class="rec-title">${escapeHTML(rec.title)}</div><div class="rec-text">${escapeHTML(rec.text)}</div></div></div>`).join("");
-}
-function renderGrades(){
- document.getElementById("allGrades").innerHTML=grades.slice().reverse().map(g=>`<tr><td>${escapeHTML(g.subject)}</td><td>${escapeHTML(g.activity)}</td><td><strong>${Number(g.score).toFixed(1)}</strong></td><td>${status(Number(g.score))}</td></tr>`).join("")||'<tr><td colspan="4">Todavía no hay calificaciones.</td></tr>';
-}
-function openGradeForm(){document.getElementById("gradeForm").style.display="block";document.getElementById("gradeForm").scrollIntoView({behavior:"smooth",block:"center"})}
-document.getElementById("newGradeForm").addEventListener("submit",e=>{
- e.preventDefault();const f=new FormData(e.target);
- const g={subject:f.get("subject").trim(),activity:f.get("activity").trim(),score:Number(f.get("score")),date:f.get("date")};
- if(!g.subject||!g.activity||g.score<0||g.score>5)return;
- grades.push(g);if(!subjects.includes(g.subject))subjects.push(g.subject);
- e.target.reset();document.getElementById("gradeForm").style.display="none";
- renderRole();renderGrades();showPage("grades");
-});
-function addSubject(){
- const s=prompt("Nombre de la nueva asignatura:");
- if(s&&s.trim()&&!subjects.includes(s.trim())){subjects.push(s.trim());renderSubjects();renderDashboard()}
-}
-function renderSubjects(){
- document.getElementById("subjectCards").innerHTML=subjects.map((s,i)=>{
- const a=avgSubject(s);
- return `<div class="card"><div class="stat-head">Asignatura <span class="stat-icon">${["∑","⚗","✎","⌛","🌐","⌘"][i%6]}</span></div><h3>${escapeHTML(s)}</h3><div class="stat-value">${grades.some(g=>g.subject===s)?a.toFixed(1)+"/5":"—"}</div><div class="track"><div class="fill" style="width:${a/5*100}%"></div></div><p>${grades.some(g=>g.subject===s)?"Promedio de las notas registradas":"Sin calificaciones registradas"}</p><button class="btn btn-light" onclick="showPage('grades')">Ver calificaciones</button></div>`;
- }).join("");
-}
-function makeRecommendations(){
- return subjects.map(s=>({s,score:avgSubject(s)})).filter(x=>grades.some(g=>g.subject===x.s)).sort((a,b)=>a.score-b.score).map(x=>{
- if(x.score<3){return {icon:"📌",color:"red",title:"Refuerzo prioritario: "+x.s,text:"Revisa los conceptos fundamentales y solicita acompañamiento para resolver tus dudas."}}
- if(x.score<4){return {icon:"🎯",color:"purple",title:"Practica un poco más: "+x.s,text:"Realiza ejercicios cortos, revisa los errores y comprueba tu progreso."}}
- return {icon:"🌟",color:"green",title:"Continúa avanzando en "+x.s,text:"Tu resultado de ejemplo es favorable. Intenta actividades de mayor dificultad para profundizar."}
- });
-}
-function renderRecommendations(){
- document.getElementById("recommendationList").innerHTML=makeRecommendations().map(r=>`<div class="recommendation"><div class="rec-icon ${r.color}">${r.icon}</div><div><div class="rec-title">${escapeHTML(r.title)}</div><div class="rec-text">${escapeHTML(r.text)}</div></div></div>`).join("")||'<div class="empty">Registra calificaciones para ver sugerencias.</div>';
-}
-function renderReports(){
- const a=average(grades);
- document.getElementById("reportStats").innerHTML=[["Promedio general",a.toFixed(2)+"/5"],["Notas registradas",grades.length],["Asignaturas",subjects.length],["Notas iguales o superiores a 4",grades.filter(g=>g.score>=4).length]].map(x=>`<div class="card"><div class="small">${x[0]}</div><div class="stat-value">${x[1]}</div></div>`).join("");
- document.getElementById("reportTable").innerHTML=subjects.map(s=>{const n=grades.filter(g=>g.subject===s).length;const a=avgSubject(s);return `<tr><td>${escapeHTML(s)}</td><td>${n?a.toFixed(2)+"/5":"Sin datos"}</td><td>${n?status(a):"Pendiente"}</td></tr>`}).join("");
-}
-const medals=[["🏅","Buen comienzo","Explora las herramientas de aprendizaje."],["📚","Lector constante","Dedica tiempo a la lectura."],["🎯","Meta cumplida","Completa una actividad de aprendizaje."],["🌟","Excelencia","Mantén resultados académicos favorables."],["🧠","Mente curiosa","Investiga un tema nuevo."],["🤝","Gran compañero","Colabora y comparte conocimientos."]];
-document.getElementById("achievementGrid").innerHTML=medals.map((m,i)=>`<div class="card achievement"><div class="medal">${m[0]}</div><h3>${m[1]}</h3><p class="small">${m[2]}</p><span class="pill">${i<4?"Ejemplo de insignia":"Por desbloquear"}</span></div>`).join("");
-function renderAll(){renderRole();renderGrades();renderSubjects();renderRecommendations();renderReports()}
-renderAll();
-</script>
+(function(){
+  "use strict";
+  var loginScreen=document.getElementById("login-screen");
+  var appScreen=document.getElementById("app-screen");
+  var form=document.getElementById("login-form");
+  var userInput=document.getElementById("username");
+  var passwordInput=document.getElementById("password");
+  var roleInput=document.getElementById("role");
+  var errorBox=document.getElementById("login-error");
 
-<!-- Pantalla de bienvenida de AulaNova -->
-<style>
-  #aulanova-login {
-    position: fixed;
-    inset: 0;
-    z-index: 99999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: linear-gradient(135deg, #eeeaff, #f8f7ff, #e2e8ff);
-    font-family: Arial, sans-serif;
-    color: #29234b;
-  }
-  #aulanova-login .login-card {
-    box-sizing: border-box;
-    width: 100%;
-    max-width: 390px;
-    padding: 32px;
-    border-radius: 24px;
-    background: white;
-    box-shadow: 0 18px 55px #40308020;
-  }
-  #aulanova-login h1 {
-    margin: 0 0 8px;
-    color: #6558d9;
-    font-size: 32px;
-  }
-  #aulanova-login p { color: #6c6880; line-height: 1.5; }
-  #aulanova-login label {
-    display: block;
-    margin: 18px 0 7px;
-    font-size: 14px;
-    font-weight: bold;
-  }
-  #aulanova-login input {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 13px;
-    border: 1px solid #dedbea;
-    border-radius: 10px;
-    font-size: 16px;
-  }
-  #aulanova-login button {
-    width: 100%;
-    margin-top: 22px;
-    padding: 14px;
-    border: 0;
-    border-radius: 10px;
-    background: #6558d9;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  #aulanova-login .login-note {
-    font-size: 12px;
-    text-align: center;
-  }
-</style>
+  document.getElementById("toggle-password").addEventListener("click",function(){
+    var show=passwordInput.type==="password";
+    passwordInput.type=show?"text":"password";
+    this.textContent=show?"Ocultar":"Mostrar";
+  });
 
-<div id="aulanova-login">
-  <form class="login-card" id="aulanova-form">
-    <h1>✦ AulaNova</h1>
-    <p>Tu futuro comienza aprendiendo.</p>
-    <p>Inicia sesión para entrar a tu espacio educativo.</p>
-
-    <label for="aulanova-user">Usuario o correo</label>
-    <input id="aulanova-user" name="username"
-      autocomplete="username" required
-      placeholder="Escribe tu usuario">
-
-    <label for="aulanova-password">Contraseña</label>
-    <input id="aulanova-password" name="password"
-      type="password" autocomplete="current-password"
-      required placeholder="Escribe tu contraseña">
-
-    <button type="submit">Entrar a AulaNova →</button>
-    <p class="login-note">Estudiantes · Docentes · Familias</p>
-  </form>
-</div>
-
-<script>
-  document.getElementById("aulanova-form")
-    .addEventListener("submit", function(event) {
-      event.preventDefault();
-      alert("La pantalla está lista, pero todavía falta conectar un sistema seguro de inicio de sesión. No se ha validado tu cuenta.");
+  function openPage(page){
+    document.querySelectorAll(".page-section").forEach(function(section){
+      section.classList.remove("active");
     });
-</script>
+    var target=document.getElementById("page-"+page);
+    if(target) target.classList.add("active");
+    document.querySelectorAll("[data-page]").forEach(function(button){
+      button.classList.toggle("active",button.getAttribute("data-page")===page);
+    });
+    window.scrollTo(0,0);
+  }
 
+  document.querySelectorAll("[data-page]").forEach(function(button){
+    button.addEventListener("click",function(){
+      openPage(this.getAttribute("data-page"));
+    });
+  });
+
+  function enterDemo(){
+    var username=(userInput.value||"Usuario").trim();
+    var role=roleInput.value;
+    loginScreen.classList.add("hidden");
+    appScreen.classList.remove("hidden");
+    document.getElementById("welcome-title").textContent="¡Hola, "+username+"! 👋";
+    document.getElementById("role-chip").textContent=role;
+    document.getElementById("avatar").textContent=username.charAt(0).toUpperCase();
+    document.getElementById("profile-avatar").textContent=username.charAt(0).toUpperCase();
+    document.getElementById("profile-name").textContent=username;
+    document.getElementById("profile-role").textContent=role+" · Sesión de demostración";
+    document.getElementById("today-date").textContent=new Intl.DateTimeFormat("es-CO",{dateStyle:"long"}).format(new Date());
+    passwordInput.value="";
+    errorBox.classList.add("hidden");
+    openPage("inicio");
+  }
+
+  form.addEventListener("submit",function(event){
+    event.preventDefault();
+    if(!userInput.value.trim()||!passwordInput.value){
+      errorBox.textContent="Escribe un usuario y una contraseña para continuar.";
+      errorBox.classList.remove("hidden");
+      return;
+    }
+    /* Demostración únicamente: no valida ni envía credenciales. */
+    enterDemo();
+  });
+
+  function logout(){
+    appScreen.classList.add("hidden");
+    loginScreen.classList.remove("hidden");
+    passwordInput.value="";
+    openPage("inicio");
+    window.scrollTo(0,0);
+  }
+  document.getElementById("logout").addEventListener("click",logout);
+  document.getElementById("profile-logout").addEventListener("click",logout);
+})();
+</script>
 </body>
 </html>
