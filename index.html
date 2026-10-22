@@ -727,10 +727,12 @@ document.getElementById("tutorForm").addEventListener(
     }
   }
 
-  status.textContent = "Error del tutor: " + detalle;
-} finally {
-  button.disabled = false;
-}
+       status.textContent = "Error del tutor: " + detalle;
+    } finally {
+      button.disabled = false;
+    }
+  }
+);
 
 /* CERRAR SESIÓN */
 document.getElementById("logoutButton").addEventListener(
