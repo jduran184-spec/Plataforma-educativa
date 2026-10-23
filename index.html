@@ -204,7 +204,7 @@
       color: var(--muted);
     }
 
-    /* NUEVO: mensajes del estado de Google Classroom */
+    /* Mensajes del estado de Google Classroom */
     .classroom-status {
       padding: 13px;
       border-radius: 10px;
@@ -226,6 +226,30 @@
     .classroom-status.info {
       background: #eeefff;
       color: #4546b5;
+    }
+
+    /* NUEVO: tarjetas de cursos de Google Classroom */
+    #classroomCoursesList {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    #classroomCoursesList .card {
+      margin-bottom: 0;
+    }
+
+    .classroom-course-link {
+      display: inline-block;
+      margin-top: 14px;
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .classroom-course-link:hover {
+      text-decoration: underline;
     }
 
     @media (max-width: 750px) {
@@ -256,6 +280,7 @@
       }
 
       .cards { grid-template-columns: 1fr; }
+      #classroomCoursesList { grid-template-columns: 1fr; }
       .content { padding: 17px; }
       .top { padding: 14px; }
       .authbox { padding: 23px; }
@@ -459,7 +484,6 @@
           <h1>Área docente 👩‍🏫</h1>
           <p class="muted">Administra tus cursos y acompaña el progreso de tus estudiantes.</p>
 
-          <!-- NUEVO: mensaje después de regresar de Google -->
           <div id="classroomReturnNotice" class="classroom-status hidden" role="status" aria-live="polite"></div>
 
           <div class="cards">
@@ -507,7 +531,7 @@
           </div>
         </section>
 
-        <!-- NUEVO: DOCENTE: GOOGLE CLASSROOM -->
+        <!-- DOCENTE: GOOGLE CLASSROOM -->
         <section id="teacher-classroom" class="panel">
           <h1>Google Classroom 🔗</h1>
           <p class="muted">
@@ -537,18 +561,39 @@
             </p>
           </div>
 
+          <!-- NUEVO: CONSULTAR Y MOSTRAR LAS CLASES -->
+          <div class="card">
+            <h2>Mis clases de Google Classroom 📚</h2>
+            <p class="muted">
+              Consulta las clases disponibles en la cuenta de Google que conectaste.
+            </p>
+
+            <button id="loadClassroomCoursesButton" class="btn" type="button">
+              Ver mis clases
+            </button>
+
+            <p
+              id="classroomCoursesStatus"
+              class="muted"
+              role="status"
+              aria-live="polite"
+            ></p>
+
+            <div id="classroomCoursesList"></div>
+          </div>
+
           <div class="card">
             <h2>¿Qué permite esta conexión?</h2>
             <ul>
               <li>Autorizar el acceso a Google Classroom mediante Google OAuth.</li>
               <li>Guardar la autorización del docente en el servidor de Supabase.</li>
-              <li>Preparar la siguiente fase para consultar cursos, estudiantes y asignaciones.</li>
+              <li>Consultar los cursos disponibles en la cuenta conectada.</li>
+              <li>Abrir cada curso desde su enlace oficial de Google Classroom.</li>
             </ul>
 
             <div class="notice">
-              Esta primera fase solo conecta la cuenta. La importación de cursos,
-              estudiantes, tareas y calificaciones todavía requiere implementar
-              las consultas a la API de Google Classroom.
+              Esta versión permite consultar cursos. La importación de estudiantes,
+              tareas y calificaciones todavía requiere implementar esas funciones.
             </div>
           </div>
         </section>
@@ -613,7 +658,7 @@
     let currentRole = "student";
     let currentPage = null;
 
-    // NUEVO: resultado de la redirección OAuth de Google.
+    // Resultado de la redirección OAuth de Google.
     let classroomReturnResult = null;
 
     const roleNames = {
@@ -826,7 +871,7 @@
 
       currentPage = pageId;
 
-      // NUEVO: actualizar el estado visual de Classroom al abrir su sección.
+      // Actualizar el estado visual de Classroom al abrir su sección.
       if (pageId === "teacher-classroom") {
         renderClassroomReturnResult();
       }
@@ -882,7 +927,7 @@
       // Classroom solo aparece en la navegación del rol docente.
       showPage((rolePages[currentRole] || rolePages.student)[0][0]);
 
-      // Mostrar el resultado OAuth después de que se haya cargado el perfil.
+      // Mostrar el resultado OAuth después de cargar el perfil.
       if (currentRole === "teacher" && classroomReturnResult) {
         renderClassroomReturnResult();
       }
@@ -999,7 +1044,7 @@
     });
 
     // ==========================================================
-    // NUEVO: INTEGRACIÓN DE GOOGLE CLASSROOM MEDIANTE OAUTH
+    // INTEGRACIÓN DE GOOGLE CLASSROOM MEDIANTE OAUTH
     // ==========================================================
 
     function setClassroomStatus(message, type = "info") {
@@ -1119,8 +1164,6 @@
           "error"
         );
       } finally {
-        // Si el navegador ya está redirigiendo a Google, esta página
-        // dejará de ejecutarse. Si hubo un error, se vuelve a habilitar.
         button.disabled = false;
         button.textContent = "Conectar Google Classroom";
       }
@@ -1151,6 +1194,172 @@
       const cleanUrl = url.pathname + url.search + url.hash;
       window.history.replaceState({}, document.title, cleanUrl);
     }
+
+    // ==========================================================
+    // NUEVO: CONSULTAR Y MOSTRAR LAS CLASES DE GOOGLE CLASSROOM
+    // ==========================================================
+
+    function renderClassroomCourses(courses) {
+      const list = $("classroomCoursesList");
+      list.replaceChildren();
+
+      if (!courses.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent =
+          "No se encontraron clases. Comprueba que la cuenta de Google tenga cursos disponibles.";
+        list.appendChild(empty);
+        return;
+      }
+
+      courses.forEach((course) => {
+        const card = document.createElement("article");
+        card.className = "card";
+
+        const title = document.createElement("h2");
+        title.textContent = course.name || "Clase sin nombre";
+        card.appendChild(title);
+
+        if (course.section) {
+          const section = document.createElement("p");
+          section.className = "muted";
+          section.textContent = "Sección: " + course.section;
+          card.appendChild(section);
+        }
+
+        if (course.room) {
+          const room = document.createElement("p");
+          room.className = "muted";
+          room.textContent = "Aula: " + course.room;
+          card.appendChild(room);
+        }
+
+        if (course.courseState) {
+          const state = document.createElement("span");
+          state.className = "tag";
+          state.textContent = course.courseState;
+          card.appendChild(state);
+        }
+
+        // Aceptar únicamente enlaces oficiales de Google Classroom.
+        if (typeof course.alternateLink === "string") {
+          try {
+            const courseUrl = new URL(course.alternateLink);
+
+            if (
+              courseUrl.protocol === "https:" &&
+              courseUrl.hostname === "classroom.google.com"
+            ) {
+              const link = document.createElement("a");
+              link.href = courseUrl.href;
+              link.target = "_blank";
+              link.rel = "noopener noreferrer";
+              link.className = "classroom-course-link";
+              link.textContent = "Abrir clase en Google Classroom ↗";
+              card.appendChild(link);
+            }
+          } catch (error) {
+            console.warn("Enlace de Classroom no válido.");
+          }
+        }
+
+        list.appendChild(card);
+      });
+    }
+
+    async function loadClassroomCourses() {
+      const button = $("loadClassroomCoursesButton");
+      const status = $("classroomCoursesStatus");
+      const list = $("classroomCoursesList");
+
+      if (currentRole !== "teacher") {
+        status.textContent =
+          "Esta opción solo está disponible para docentes.";
+        status.className = "classroom-status error";
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "Cargando clases...";
+      status.className = "classroom-status info";
+      status.textContent = "Consultando Google Classroom...";
+      list.replaceChildren();
+
+      try {
+        const {
+          data: sessionData,
+          error: sessionError
+        } = await db.auth.getSession();
+
+        if (sessionError || !sessionData?.session?.access_token) {
+          throw new Error(
+            "Tu sesión de NYCE ha caducado. Inicia sesión de nuevo."
+          );
+        }
+
+        const { data, error } = await db.functions.invoke(
+          "classroom-courses",
+          {
+            body: {},
+            headers: {
+              Authorization:
+                "Bearer " + sessionData.session.access_token
+            }
+          }
+        );
+
+        if (error) {
+          console.error("Error al consultar las clases:", error);
+
+          throw new Error(
+            data?.error ||
+            error.message ||
+            "No se pudieron cargar las clases. Revisa los registros de classroom-courses en Supabase."
+          );
+        }
+
+        if (data?.reconnect) {
+          throw new Error(
+            data.error ||
+            "Debes volver a conectar tu cuenta de Google Classroom."
+          );
+        }
+
+        if (!data?.connected || !Array.isArray(data.courses)) {
+          throw new Error(
+            data?.error ||
+            "El servidor devolvió una respuesta inesperada."
+          );
+        }
+
+        renderClassroomCourses(data.courses);
+
+        status.textContent = data.google_email
+          ? "Cuenta conectada: " + data.google_email +
+            ". Clases encontradas: " + data.courses.length + "."
+          : "Clases encontradas: " + data.courses.length + ".";
+
+        status.className = "classroom-status success";
+
+      } catch (error) {
+        console.error("Error de Google Classroom:", error);
+
+        status.textContent =
+          error?.message ||
+          "No se pudieron cargar las clases.";
+
+        status.className = "classroom-status error";
+
+      } finally {
+        button.disabled = false;
+        button.textContent = "Ver mis clases";
+      }
+    }
+
+    $("loadClassroomCoursesButton").addEventListener(
+      "click",
+      loadClassroomCourses
+    );
 
     // Restaurar la sesión si la persona ya había iniciado sesión.
     async function initializeApp() {
