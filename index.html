@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -203,6 +202,30 @@
       border: 1px dashed var(--border);
       border-radius: 10px;
       color: var(--muted);
+    }
+
+    /* NUEVO: mensajes del estado de Google Classroom */
+    .classroom-status {
+      padding: 13px;
+      border-radius: 10px;
+      margin: 14px 0;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .classroom-status.success {
+      background: #e8f7ed;
+      color: #176b39;
+    }
+
+    .classroom-status.error {
+      background: #fff0f0;
+      color: #a32222;
+    }
+
+    .classroom-status.info {
+      background: #eeefff;
+      color: #4546b5;
     }
 
     @media (max-width: 750px) {
@@ -436,10 +459,21 @@
           <h1>Área docente 👩‍🏫</h1>
           <p class="muted">Administra tus cursos y acompaña el progreso de tus estudiantes.</p>
 
+          <!-- NUEVO: mensaje después de regresar de Google -->
+          <div id="classroomReturnNotice" class="classroom-status hidden" role="status" aria-live="polite"></div>
+
           <div class="cards">
             <div class="card"><span class="muted">Cursos</span><h1>—</h1><span class="tag">Por conectar</span></div>
             <div class="card"><span class="muted">Asignaciones</span><h1>—</h1><span class="tag">Por conectar</span></div>
             <div class="card"><span class="muted">Calificaciones</span><h1>—</h1><span class="tag">Por conectar</span></div>
+          </div>
+
+          <div class="card">
+            <h2>Google Classroom</h2>
+            <p class="muted">Conecta tu cuenta de docente para preparar la integración con tus cursos.</p>
+            <button class="btn" type="button" data-go="teacher-classroom">
+              Configurar Google Classroom →
+            </button>
           </div>
 
           <div class="notice">
@@ -470,6 +504,52 @@
             <p class="section-note">
               Esta vista previa no guarda ni publica calificaciones.
             </p>
+          </div>
+        </section>
+
+        <!-- NUEVO: DOCENTE: GOOGLE CLASSROOM -->
+        <section id="teacher-classroom" class="panel">
+          <h1>Google Classroom 🔗</h1>
+          <p class="muted">
+            Conecta tu propia cuenta de Google para preparar la integración de tus cursos y asignaciones.
+          </p>
+
+          <div class="card">
+            <h2>Conectar tu cuenta de Google</h2>
+
+            <p>
+              La conexión se realizará en la página oficial de Google.
+              Inicia sesión con la cuenta que utilizas como docente y revisa
+              los permisos solicitados antes de aceptarlos.
+            </p>
+
+            <div id="classroomStatus" class="classroom-status info" role="status" aria-live="polite">
+              Tu cuenta de Google Classroom todavía no se ha conectado desde esta sesión.
+            </div>
+
+            <button id="connectClassroomButton" class="btn" type="button">
+              Conectar Google Classroom
+            </button>
+
+            <p class="section-note">
+              NYCE no te pedirá tu contraseña de Google. La autorización se realiza en Google.
+              No compartas claves secretas ni tokens en esta página.
+            </p>
+          </div>
+
+          <div class="card">
+            <h2>¿Qué permite esta conexión?</h2>
+            <ul>
+              <li>Autorizar el acceso a Google Classroom mediante Google OAuth.</li>
+              <li>Guardar la autorización del docente en el servidor de Supabase.</li>
+              <li>Preparar la siguiente fase para consultar cursos, estudiantes y asignaciones.</li>
+            </ul>
+
+            <div class="notice">
+              Esta primera fase solo conecta la cuenta. La importación de cursos,
+              estudiantes, tareas y calificaciones todavía requiere implementar
+              las consultas a la API de Google Classroom.
+            </div>
           </div>
         </section>
 
@@ -533,6 +613,9 @@
     let currentRole = "student";
     let currentPage = null;
 
+    // NUEVO: resultado de la redirección OAuth de Google.
+    let classroomReturnResult = null;
+
     const roleNames = {
       student: "Estudiante",
       teacher: "Docente",
@@ -550,7 +633,8 @@
       ],
       teacher: [
         ["teacher-home", "🏠 Inicio docente"],
-        ["teacher-assignments", "📝 Asignaciones y notas"]
+        ["teacher-assignments", "📝 Asignaciones y notas"],
+        ["teacher-classroom", "🔗 Google Classroom"]
       ],
       parent: [
         ["parent-home", "👨‍👩‍👧 Área de familia"]
@@ -741,14 +825,17 @@
         });
 
       currentPage = pageId;
+
+      // NUEVO: actualizar el estado visual de Classroom al abrir su sección.
+      if (pageId === "teacher-classroom") {
+        renderClassroomReturnResult();
+      }
     }
 
     async function loadUser(user) {
       if (!user) return;
 
       currentUser = user;
-
-      let profile = null;
 
       const { data, error } = await db
         .from("profiles")
@@ -763,7 +850,7 @@
         );
       }
 
-      profile = data;
+      const profile = data;
 
       // No conceder permisos elevados si falta el perfil.
       if (!profile) {
@@ -792,7 +879,13 @@
       $("authScreen").classList.add("hidden");
       $("appScreen").classList.remove("hidden");
 
+      // Classroom solo aparece en la navegación del rol docente.
       showPage((rolePages[currentRole] || rolePages.student)[0][0]);
+
+      // Mostrar el resultado OAuth después de que se haya cargado el perfil.
+      if (currentRole === "teacher" && classroomReturnResult) {
+        renderClassroomReturnResult();
+      }
     }
 
     async function logout() {
@@ -805,6 +898,7 @@
         currentUser = null;
         currentRole = "student";
         currentPage = null;
+        classroomReturnResult = null;
 
         $("appScreen").classList.add("hidden");
         $("authScreen").classList.remove("hidden");
@@ -821,7 +915,7 @@
     $("logoutButton").addEventListener("click", logout);
     $("accountLogout").addEventListener("click", logout);
 
-    // CORRECCIÓN: botón Mi cuenta.
+    // Botón Mi cuenta.
     document.querySelectorAll('.sidebar [data-page="account"]')
       .forEach(button => {
         button.addEventListener("click", () => showPage("account"));
@@ -904,8 +998,164 @@
       }
     });
 
+    // ==========================================================
+    // NUEVO: INTEGRACIÓN DE GOOGLE CLASSROOM MEDIANTE OAUTH
+    // ==========================================================
+
+    function setClassroomStatus(message, type = "info") {
+      const status = $("classroomStatus");
+
+      status.textContent = message;
+      status.className = "classroom-status " + type;
+    }
+
+    function renderClassroomReturnResult() {
+      if (!classroomReturnResult) return;
+
+      const { status, message } = classroomReturnResult;
+
+      if (status === "connected") {
+        setClassroomStatus(
+          message || "Google Classroom se conectó correctamente. La autorización se guardó en el servidor.",
+          "success"
+        );
+
+        $("classroomReturnNotice").textContent =
+          "Google Classroom se conectó correctamente. Puedes abrir la sección Google Classroom para continuar.";
+        $("classroomReturnNotice").className =
+          "classroom-status success";
+      } else {
+        setClassroomStatus(
+          message || "No se pudo completar la conexión con Google Classroom. Inténtalo de nuevo.",
+          "error"
+        );
+
+        $("classroomReturnNotice").textContent =
+          "La conexión con Google Classroom no se completó. Entra en su sección para volver a intentarlo.";
+        $("classroomReturnNotice").className =
+          "classroom-status error";
+      }
+    }
+
+    async function connectGoogleClassroom() {
+      // Comprobar la sesión antes de iniciar el flujo OAuth.
+      const { data: sessionData, error: sessionError } =
+        await db.auth.getSession();
+
+      if (sessionError) {
+        throw new Error("No se pudo comprobar tu sesión de NYCE.");
+      }
+
+      const session = sessionData?.session;
+
+      if (!session?.access_token) {
+        throw new Error(
+          "Tu sesión de NYCE ha expirado. Cierra sesión, vuelve a entrar e inténtalo de nuevo."
+        );
+      }
+
+      // La función de servidor debe verificar que el usuario sea docente.
+      const { data, error } = await db.functions.invoke("classroom-auth", {
+        body: { action: "start" },
+        headers: {
+          Authorization: "Bearer " + session.access_token
+        }
+      });
+
+      if (error) {
+        console.error("Error al iniciar Google Classroom OAuth:", error);
+        throw new Error(
+          "No se pudo iniciar la conexión. Comprueba que la función classroom-auth esté desplegada y revisa sus registros en Supabase."
+        );
+      }
+
+      if (!data || typeof data.auth_url !== "string" || !data.auth_url) {
+        console.error("Respuesta inesperada de classroom-auth:", data);
+        throw new Error(
+          "El servidor no devolvió la dirección de autorización de Google."
+        );
+      }
+
+      let authorizationUrl;
+
+      try {
+        authorizationUrl = new URL(data.auth_url);
+      } catch {
+        throw new Error("El servidor devolvió una dirección de Google no válida.");
+      }
+
+      // Evitar redirecciones a páginas ajenas.
+      if (
+        authorizationUrl.protocol !== "https:" ||
+        authorizationUrl.hostname !== "accounts.google.com"
+      ) {
+        throw new Error(
+          "La dirección de autorización no corresponde a Google."
+        );
+      }
+
+      // Ir a Google para que el docente conceda los permisos.
+      window.location.assign(authorizationUrl.href);
+    }
+
+    $("connectClassroomButton").addEventListener("click", async () => {
+      const button = $("connectClassroomButton");
+
+      button.disabled = true;
+      button.textContent = "Conectando con Google...";
+      setClassroomStatus(
+        "Estamos preparando la autorización segura con Google. No cierres esta página.",
+        "info"
+      );
+
+      try {
+        await connectGoogleClassroom();
+      } catch (error) {
+        console.error("Error de conexión con Google Classroom:", error);
+
+        setClassroomStatus(
+          error?.message ||
+            "No se pudo iniciar la conexión con Google Classroom.",
+          "error"
+        );
+      } finally {
+        // Si el navegador ya está redirigiendo a Google, esta página
+        // dejará de ejecutarse. Si hubo un error, se vuelve a habilitar.
+        button.disabled = false;
+        button.textContent = "Conectar Google Classroom";
+      }
+    });
+
+    // Leer el resultado de la redirección que realiza classroom-auth.
+    function readClassroomOAuthResult() {
+      const url = new URL(window.location.href);
+      const result = url.searchParams.get("classroom");
+
+      if (!result) return;
+
+      if (result === "connected") {
+        classroomReturnResult = {
+          status: "connected",
+          message: "Google Classroom se conectó correctamente."
+        };
+      } else if (result === "error") {
+        classroomReturnResult = {
+          status: "error",
+          message: "Google no completó la autorización. Comprueba los permisos e inténtalo otra vez."
+        };
+      }
+
+      // Quitar el parámetro de resultado de la dirección sin recargar.
+      url.searchParams.delete("classroom");
+
+      const cleanUrl = url.pathname + url.search + url.hash;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+
     // Restaurar la sesión si la persona ya había iniciado sesión.
     async function initializeApp() {
+      readClassroomOAuthResult();
+
       const { data, error } = await db.auth.getSession();
 
       if (error) {
@@ -922,6 +1172,13 @@
           $("authScreen").classList.remove("hidden");
           setMessage(error.message, true);
         }
+      } else if (classroomReturnResult) {
+        setMessage(
+          classroomReturnResult.status === "connected"
+            ? "Google terminó la autorización. Inicia sesión en NYCE para continuar."
+            : classroomReturnResult.message,
+          classroomReturnResult.status !== "connected"
+        );
       }
     }
 
