@@ -1,19 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NYCE | Plataforma educativa</title>
-
 <style>
-:root {
-  --primary:#5b5ce2;
-  --dark:#202344;
-  --muted:#747b91;
-  --bg:#f5f6fc;
-  --border:#e8eaf3;
-}
+:root{--primary:#5b5ce2;--dark:#202344;--muted:#747b91;--bg:#f5f6fc;--border:#e8eaf3}
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--dark)}
 button,input,textarea,select{font:inherit}
@@ -46,8 +38,6 @@ h2{font-size:19px}
 .role-chip{background:#f0f1f8;color:var(--dark);border-radius:99px;font-weight:700;margin-right:6px}
 .notice{padding:12px;background:#fff5dd;border-radius:9px;font-size:13px}
 .empty{padding:16px;border:1px dashed var(--border);border-radius:10px;color:var(--muted)}
-.progress{height:9px;background:#eeeef7;border-radius:10px;overflow:hidden}
-.progress div{height:100%;background:var(--primary)}
 .answer{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;margin-top:12px}
 .classroom-status{padding:13px;border-radius:10px;margin:14px 0;line-height:1.5;overflow-wrap:anywhere}
 .classroom-status.success{background:#e8f7ed;color:#176b39}
@@ -57,203 +47,147 @@ h2{font-size:19px}
 .classroom-course-link{display:inline-block;margin-top:14px;color:var(--primary);font-weight:700;text-decoration:none}
 .classroom-course-link:hover{text-decoration:underline}
 @media(max-width:750px){
-  .app{display:block}
-  .sidebar{width:100%;display:flex;flex-wrap:wrap;padding:8px;gap:4px;border-right:0;border-bottom:1px solid var(--border)}
-  .sidebar .logo{width:100%;padding:8px 12px!important}
-  .sidebar button{width:auto;flex:1 1 calc(50% - 8px);min-width:0;margin:0;text-align:center;overflow-wrap:anywhere}
-  .cards,#classroomCoursesList{grid-template-columns:1fr}
-  .content{padding:17px}
-  .top{padding:14px}
-  .authbox{padding:23px}
+.app{display:block}
+.sidebar{width:100%;display:flex;flex-wrap:wrap;padding:8px;gap:4px;border-right:0;border-bottom:1px solid var(--border)}
+.sidebar .logo{width:100%;padding:8px 12px!important}
+.sidebar button{width:auto;flex:1 1 calc(50% - 8px);min-width:0;margin:0;text-align:center;overflow-wrap:anywhere}
+.cards,#classroomCoursesList{grid-template-columns:1fr}
+.content{padding:17px}
+.top{padding:14px}
+.authbox{padding:23px}
 }
 </style>
 </head>
-
 <body>
-
 <section id="authScreen" class="auth">
-  <div class="authbox">
-    <div class="logo">✦ NYCE</div>
-    <h1 id="authTitle" style="margin-top:24px">¡Bienvenido a NYCE!</h1>
-    <p id="authDescription" class="muted">Tu espacio para aprender, descubrir y avanzar.</p>
-
-    <form id="authForm">
-      <div id="nameField" class="hidden">
-        <label for="fullName">Tu nombre</label>
-        <input id="fullName" autocomplete="name" placeholder="Escribe tu nombre">
-      </div>
-
-      <div id="roleField" class="hidden">
-        <label for="signupRole">Tipo de cuenta</label>
-        <select id="signupRole">
-          <option value="student">Estudiante</option>
-          <option value="parent">Padre de familia</option>
-        </select>
-        <p class="section-note">Las cuentas docentes y administrativas deben ser asignadas por una persona autorizada.</p>
-      </div>
-
-      <label for="email">Correo electrónico</label>
-      <input id="email" type="email" autocomplete="email" required placeholder="tu@correo.com">
-
-      <label for="password">Contraseña</label>
-      <input id="password" type="password" autocomplete="current-password" required minlength="6" placeholder="Mínimo 6 caracteres">
-
-      <button id="authButton" class="btn" type="submit" style="width:100%">Entrar a NYCE</button>
-    </form>
-
-    <p id="authMessage" class="muted" role="status" aria-live="polite"></p>
-    <button id="toggleAuth" class="btn light" type="button" style="width:100%">Crear una cuenta nueva</button>
-    <p class="muted" style="font-size:12px">Si el registro lo requiere, confirma tu correo electrónico.</p>
-  </div>
+<div class="authbox">
+<div class="logo">✦ NYCE</div>
+<h1 id="authTitle" style="margin-top:24px">¡Bienvenido a NYCE!</h1>
+<p id="authDescription" class="muted">Tu espacio para aprender, descubrir y avanzar.</p>
+<form id="authForm">
+<div id="nameField" class="hidden">
+<label for="fullName">Tu nombre</label>
+<input id="fullName" autocomplete="name" placeholder="Escribe tu nombre">
+</div>
+<div id="roleField" class="hidden">
+<label for="signupRole">Tipo de cuenta</label>
+<select id="signupRole"><option value="student">Estudiante</option><option value="parent">Padre de familia</option></select>
+<p class="section-note">Las cuentas docentes y administrativas deben ser asignadas por una persona autorizada.</p>
+</div>
+<label for="email">Correo electrónico</label>
+<input id="email" type="email" autocomplete="email" required placeholder="tu@correo.com">
+<label for="password">Contraseña</label>
+<input id="password" type="password" autocomplete="current-password" required minlength="6" placeholder="Mínimo 6 caracteres">
+<button id="authButton" class="btn" type="submit" style="width:100%">Entrar a NYCE</button>
+</form>
+<p id="authMessage" class="muted" role="status" aria-live="polite"></p>
+<button id="toggleAuth" class="btn light" type="button" style="width:100%">Crear una cuenta nueva</button>
+<p class="muted" style="font-size:12px">Si el registro lo requiere, confirma tu correo electrónico.</p>
+</div>
 </section>
 
 <div id="appScreen" class="app hidden">
-  <aside class="sidebar">
-    <div class="logo" style="padding:8px 12px 18px">✦ NYCE</div>
-    <div id="roleNav"></div>
-    <button type="button" data-page="account">👤 Mi cuenta</button>
-    <button type="button" id="logoutButton">🚪 Cerrar sesión</button>
-  </aside>
+<aside class="sidebar">
+<div class="logo" style="padding:8px 12px 18px">✦ NYCE</div>
+<div id="roleNav"></div>
+<button type="button" data-page="account">👤 Mi cuenta</button>
+<button type="button" id="logoutButton">🚪 Cerrar sesión</button>
+</aside>
+<main class="main">
+<header class="top">
+<strong id="pageTitle">Inicio</strong>
+<div><span id="roleBadge" class="role-chip"></span><span id="userLabel" class="muted"></span></div>
+</header>
+<div class="content">
+<section id="student-home" class="panel">
+<h1 id="greeting">¡Hola! 👋</h1>
+<p class="muted">Tu espacio para aprender, avanzar y descubrir tu potencial.</p>
+<div class="cards">
+<div class="card"><span class="muted">Mis cursos</span><h1 id="studentCourseCount">—</h1></div>
+<div class="card"><span class="muted">Mis tareas</span><h1 id="studentTaskCount">—</h1></div>
+<div class="card"><span class="muted">Calificaciones</span><h1 id="studentGradeCount">—</h1></div>
+</div>
+<div class="card"><h2>¡Continúa aprendiendo!</h2><p class="muted">Revisa tus asignaciones y pregunta al Tutor IA.</p>
+<button class="btn" data-go="student-tasks">Ver mis asignaciones →</button>
+<button class="btn light" data-go="student-tutor">Preguntar al Tutor IA →</button></div>
+</section>
 
-  <main class="main">
-    <header class="top">
-      <strong id="pageTitle">Inicio</strong>
-      <div><span id="roleBadge" class="role-chip"></span><span id="userLabel" class="muted"></span></div>
-    </header>
+<section id="student-courses" class="panel">
+<h1>Mis cursos 📚</h1><p class="muted">Tus cursos sincronizados aparecerán en esta sección.</p>
+<div id="studentCoursesList"></div>
+</section>
 
-    <div class="content">
+<section id="student-tasks" class="panel">
+<h1>Mis asignaciones 📝</h1><p class="muted">Consulta tus tareas, fechas de entrega y notas publicadas por tus docentes.</p>
+<div class="card"><button id="refreshStudentTasksButton" class="btn" type="button">Actualizar mis tareas</button>
+<div id="studentTasksStatus" class="classroom-status info" role="status" aria-live="polite">Pulsa actualizar para consultar tus tareas.</div>
+<div id="studentTasksList"></div></div>
+</section>
 
-      <section id="student-home" class="panel">
-        <h1 id="greeting">¡Hola! 👋</h1>
-        <p class="muted">Tu espacio para aprender, avanzar y descubrir tu potencial.</p>
-        <div class="cards">
-          <div class="card"><span class="muted">Mis cursos</span><h1 id="studentCourseCount">—</h1></div>
-          <div class="card"><span class="muted">Mis tareas</span><h1 id="studentTaskCount">—</h1></div>
-          <div class="card"><span class="muted">Calificaciones</span><h1 id="studentGradeCount">—</h1></div>
-        </div>
-        <div class="card">
-          <h2>¡Continúa aprendiendo!</h2>
-          <p class="muted">Revisa tus asignaciones y pregunta al Tutor IA.</p>
-          <button class="btn" data-go="student-tasks">Ver mis asignaciones →</button>
-          <button class="btn light" data-go="student-tutor">Preguntar al Tutor IA →</button>
-        </div>
-      </section>
+<section id="student-progress" class="panel">
+<h1>Mi progreso 📈</h1><div class="card"><p class="muted">Las calificaciones publicadas se mostrarán en tus asignaciones.</p>
+<button class="btn" data-go="student-tasks">Consultar mis calificaciones</button></div>
+</section>
 
-      <section id="student-courses" class="panel">
-        <h1>Mis cursos 📚</h1>
-        <p class="muted">Tus cursos sincronizados aparecerán en esta sección.</p>
-        <div id="studentCoursesList"></div>
-      </section>
+<section id="student-tutor" class="panel">
+<h1>🤖 Tutor IA de NYCE</h1><p class="muted">Pregunta lo que quieras aprender. Te explicaré los conceptos paso a paso.</p>
+<div class="card"><form id="tutorForm">
+<label for="tutorQuestion">¿Qué quieres aprender hoy?</label>
+<textarea id="tutorQuestion" rows="4" maxlength="1000" required placeholder="Ej.: Explícame las matrices con ejemplos."></textarea>
+<button id="tutorButton" class="btn" type="submit">Preguntar al tutor</button>
+</form>
+<p id="tutorStatus" class="muted" role="status" aria-live="polite"></p>
+<div id="tutorAnswer" class="answer"></div></div>
+</section>
 
-      <section id="student-tasks" class="panel">
-        <h1>Mis asignaciones 📝</h1>
-        <p class="muted">Consulta tus tareas, fechas de entrega y notas publicadas por tus docentes.</p>
-        <div class="card">
-          <button id="refreshStudentTasksButton" class="btn" type="button">Actualizar mis tareas</button>
-          <div id="studentTasksStatus" class="classroom-status info" role="status" aria-live="polite">Pulsa actualizar para consultar tus tareas.</div>
-          <div id="studentTasksList"></div>
-        </div>
-      </section>
+<section id="teacher-home" class="panel">
+<h1>Área docente 👩‍🏫</h1><p class="muted">Administra tus cursos y acompaña el progreso de tus estudiantes.</p>
+<div class="cards">
+<div class="card"><span class="muted">Cursos sincronizados</span><h1 id="teacherCourseCount">—</h1></div>
+<div class="card"><span class="muted">Actividades</span><h1 id="teacherWorkCount">—</h1></div>
+<div class="card"><span class="muted">Entregas consultadas</span><h1 id="teacherSubmissionCount">—</h1></div>
+</div>
+<div class="card"><h2>Google Classroom</h2><p class="muted">Conecta tu cuenta y sincroniza las actividades de tus cursos.</p>
+<button class="btn" data-go="teacher-classroom">Configurar Google Classroom →</button></div>
+</section>
 
-      <section id="student-progress" class="panel">
-        <h1>Mi progreso 📈</h1>
-        <div class="card">
-          <p class="muted">Las calificaciones publicadas se mostrarán en tus asignaciones.</p>
-          <button class="btn" data-go="student-tasks">Consultar mis calificaciones</button>
-        </div>
-      </section>
+<section id="teacher-assignments" class="panel">
+<h1>Asignaciones y notas 📝</h1><p class="muted">Las calificaciones publicadas en Google Classroom se consultan mediante la sincronización.</p>
+<div class="card"><button class="btn" data-go="teacher-classroom">Ir a sincronización</button></div>
+</section>
 
-      <section id="student-tutor" class="panel">
-        <h1>🤖 Tutor IA de NYCE</h1>
-        <p class="muted">Pregunta lo que quieras aprender. Te explicaré los conceptos paso a paso.</p>
-        <div class="card">
-          <form id="tutorForm">
-            <label for="tutorQuestion">¿Qué quieres aprender hoy?</label>
-            <textarea id="tutorQuestion" rows="4" maxlength="1000" required placeholder="Ej.: Explícame las matrices con ejemplos."></textarea>
-            <button id="tutorButton" class="btn" type="submit">Preguntar al tutor</button>
-          </form>
-          <p id="tutorStatus" class="muted" role="status" aria-live="polite"></p>
-          <div id="tutorAnswer" class="answer"></div>
-        </div>
-      </section>
+<section id="teacher-classroom" class="panel">
+<h1>Google Classroom 🔗</h1>
+<p class="muted">Conecta tu cuenta de Google y sincroniza tus clases, actividades, estudiantes y calificaciones.</p>
+<div id="classroomReturnNotice" class="classroom-status hidden" role="status" aria-live="polite"></div>
+<div class="card"><h2>Conexión de Google</h2>
+<div id="classroomStatus" class="classroom-status info" role="status" aria-live="polite">Conecta la cuenta que utilizas como docente.</div>
+<button id="connectClassroomButton" class="btn" type="button">Conectar Google Classroom</button>
+<p class="section-note">La autorización se realiza en Google. No ingreses tu contraseña de Google en NYCE.</p></div>
+<div class="card"><h2>Mis clases de Google Classroom 📚</h2>
+<button id="loadClassroomCoursesButton" class="btn" type="button">Ver mis clases</button>
+<p id="classroomCoursesStatus" class="muted" role="status" aria-live="polite"></p>
+<div id="classroomCoursesList"></div></div>
+<div class="card"><h2>Sincronización de tareas y notas</h2>
+<p class="muted">Trae las actividades, estudiantes y entregas de tus cursos activos a NYCE.</p>
+<button id="syncClassroomButton" class="btn" type="button">Sincronizar ahora</button>
+<div id="syncClassroomStatus" class="classroom-status info" role="status" aria-live="polite"></div></div>
+<div class="notice">La sincronización consulta información de Classroom. No entrega tareas por los estudiantes ni publica notas en Google Classroom.</div>
+</section>
 
-      <section id="teacher-home" class="panel">
-        <h1>Área docente 👩‍🏫</h1>
-        <p class="muted">Administra tus cursos y acompaña el progreso de tus estudiantes.</p>
-        <div class="cards">
-          <div class="card"><span class="muted">Cursos sincronizados</span><h1 id="teacherCourseCount">—</h1></div>
-          <div class="card"><span class="muted">Actividades</span><h1 id="teacherWorkCount">—</h1></div>
-          <div class="card"><span class="muted">Entregas consultadas</span><h1 id="teacherSubmissionCount">—</h1></div>
-        </div>
-        <div class="card">
-          <h2>Google Classroom</h2>
-          <p class="muted">Conecta tu cuenta y sincroniza las actividades de tus cursos.</p>
-          <button class="btn" data-go="teacher-classroom">Configurar Google Classroom →</button>
-        </div>
-      </section>
-
-      <section id="teacher-assignments" class="panel">
-        <h1>Asignaciones y notas 📝</h1>
-        <p class="muted">Las calificaciones publicadas en Google Classroom se consultan mediante la sincronización.</p>
-        <div class="card">
-          <button class="btn" data-go="teacher-classroom">Ir a sincronización</button>
-        </div>
-      </section>
-
-      <section id="teacher-classroom" class="panel">
-        <h1>Google Classroom 🔗</h1>
-        <p class="muted">Conecta tu cuenta de Google y sincroniza tus clases, actividades, estudiantes y calificaciones.</p>
-
-        <div id="classroomReturnNotice" class="classroom-status hidden" role="status" aria-live="polite"></div>
-
-        <div class="card">
-          <h2>Conexión de Google</h2>
-          <div id="classroomStatus" class="classroom-status info" role="status" aria-live="polite">Conecta la cuenta que utilizas como docente.</div>
-          <button id="connectClassroomButton" class="btn" type="button">Conectar Google Classroom</button>
-          <p class="section-note">La autorización se realiza en Google. No ingreses tu contraseña de Google en NYCE.</p>
-        </div>
-
-        <div class="card">
-          <h2>Mis clases de Google Classroom 📚</h2>
-          <button id="loadClassroomCoursesButton" class="btn" type="button">Ver mis clases</button>
-          <p id="classroomCoursesStatus" class="muted" role="status" aria-live="polite"></p>
-          <div id="classroomCoursesList"></div>
-        </div>
-
-        <div class="card">
-          <h2>Sincronización de tareas y notas</h2>
-          <p class="muted">Trae las actividades, estudiantes y entregas de tus cursos activos a NYCE.</p>
-          <button id="syncClassroomButton" class="btn" type="button">Sincronizar ahora</button>
-          <div id="syncClassroomStatus" class="classroom-status info" role="status" aria-live="polite"></div>
-        </div>
-
-        <div class="notice">
-          La sincronización consulta información de Classroom. No entrega tareas por los estudiantes ni publica notas en Google Classroom.
-        </div>
-      </section>
-
-      <section id="parent-home" class="panel">
-        <h1>Área de familia 👨‍👩‍👧</h1>
-        <div class="card"><p class="muted">Todavía no hay estudiantes vinculados a esta cuenta.</p></div>
-      </section>
-
-      <section id="admin-home" class="panel">
-        <h1>Administración ⚙️</h1>
-        <div class="notice">Los permisos administrativos deben configurarse de forma segura en Supabase.</div>
-      </section>
-
-      <section id="account" class="panel">
-        <h1>Mi cuenta 👤</h1>
-        <div class="card">
-          <p><strong>Nombre:</strong> <span id="accountName">—</span></p>
-          <p><strong>Correo:</strong> <span id="accountEmail">—</span></p>
-          <p><strong>Tipo de cuenta:</strong> <span id="accountRole">—</span></p>
-          <button id="accountLogout" class="btn light" type="button">Cerrar sesión</button>
-        </div>
-      </section>
-
-    </div>
-  </main>
+<section id="parent-home" class="panel"><h1>Área de familia 👨‍👩‍👧</h1>
+<div class="card"><p class="muted">Todavía no hay estudiantes vinculados a esta cuenta.</p></div></section>
+<section id="admin-home" class="panel"><h1>Administración ⚙️</h1>
+<div class="notice">Los permisos administrativos deben configurarse de forma segura en Supabase.</div></section>
+<section id="account" class="panel"><h1>Mi cuenta 👤</h1>
+<div class="card">
+<p><strong>Nombre:</strong> <span id="accountName">—</span></p>
+<p><strong>Correo:</strong> <span id="accountEmail">—</span></p>
+<p><strong>Tipo de cuenta:</strong> <span id="accountRole">—</span></p>
+<button id="accountLogout" class="btn light" type="button">Cerrar sesión</button>
+</div></section>
+</div>
+</main>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -261,612 +195,433 @@ h2{font-size:19px}
 "use strict";
 
 /* CONFIGURACIÓN SUPABASE */
-const SUPABASE_URL = "https://zemgfahecttvuhfghogl.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_s1O9sJ1pNEdFVCUBEQZnUw_5E2n6qS9";
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const $ = id => document.getElementById(id);
+const SUPABASE_URL="https://zemgfahecttvuhfghogl.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_s1O9sJ1pNEdFVCUBEQZnUw_5E2n6qS9";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const $=id=>document.getElementById(id);
 
-let isSignup = false;
-let currentUser = null;
-let currentRole = "student";
-let classroomReturnResult = null;
+let isSignup=false;
+let currentUser=null;
+let currentRole="student";
+let classroomReturnResult=null;
 
-const roleNames = {
-  student:"Estudiante",
-  teacher:"Docente",
-  parent:"Familia",
-  admin:"Administración"
-};
-
-const rolePages = {
-  student:[
-    ["student-home","🏠 Inicio"],
-    ["student-courses","📚 Mis cursos"],
-    ["student-tasks","📝 Mis asignaciones"],
-    ["student-progress","📈 Mi progreso"],
-    ["student-tutor","🤖 Tutor IA"]
-  ],
-  teacher:[
-    ["teacher-home","🏠 Inicio docente"],
-    ["teacher-assignments","📝 Asignaciones y notas"],
-    ["teacher-classroom","🔗 Google Classroom"]
-  ],
-  parent:[["parent-home","👨‍👩‍👧 Área de familia"]],
-  admin:[["admin-home","⚙️ Administración"]]
+const roleNames={student:"Estudiante",teacher:"Docente",parent:"Familia",admin:"Administración"};
+const rolePages={
+student:[["student-home","🏠 Inicio"],["student-courses","📚 Mis cursos"],["student-tasks","📝 Mis asignaciones"],["student-progress","📈 Mi progreso"],["student-tutor","🤖 Tutor IA"]],
+teacher:[["teacher-home","🏠 Inicio docente"],["teacher-assignments","📝 Asignaciones y notas"],["teacher-classroom","🔗 Google Classroom"]],
+parent:[["parent-home","👨‍👩‍👧 Área de familia"]],
+admin:[["admin-home","⚙️ Administración"]]
 };
 
 function setMessage(message,error=false){
-  $("authMessage").textContent=message;
-  $("authMessage").style.color=error?"#a32222":"";
+$("authMessage").textContent=message;
+$("authMessage").style.color=error?"#a32222":"";
 }
-
 function setAuthMode(signup){
-  isSignup=signup;
-  $("nameField").classList.toggle("hidden",!signup);
-  $("roleField").classList.toggle("hidden",!signup);
-  $("fullName").required=signup;
-  $("authTitle").textContent=signup?"Crea tu cuenta en NYCE":"¡Bienvenido a NYCE!";
-  $("authDescription").textContent=signup?"Completa tus datos para comenzar.":"Tu espacio para aprender, descubrir y avanzar.";
-  $("authButton").textContent=signup?"Crear cuenta":"Entrar a NYCE";
-  $("toggleAuth").textContent=signup?"Ya tengo una cuenta":"Crear una cuenta nueva";
-  $("password").autocomplete=signup?"new-password":"current-password";
-  setMessage("");
+isSignup=signup;
+$("nameField").classList.toggle("hidden",!signup);
+$("roleField").classList.toggle("hidden",!signup);
+$("fullName").required=signup;
+$("authTitle").textContent=signup?"Crea tu cuenta en NYCE":"¡Bienvenido a NYCE!";
+$("authDescription").textContent=signup?"Completa tus datos para comenzar.":"Tu espacio para aprender, descubrir y avanzar.";
+$("authButton").textContent=signup?"Crear cuenta":"Entrar a NYCE";
+$("toggleAuth").textContent=signup?"Ya tengo una cuenta":"Crear una cuenta nueva";
+$("password").autocomplete=signup?"new-password":"current-password";
+setMessage("");
 }
-
 $("toggleAuth").addEventListener("click",()=>setAuthMode(!isSignup));
 
 function friendlyAuthError(error){
-  const m=String(error?.message||"").toLowerCase();
-  if(m.includes("invalid login credentials"))return "El correo o la contraseña no son correctos.";
-  if(m.includes("email not confirmed"))return "Confirma tu correo electrónico antes de iniciar sesión.";
-  if(m.includes("already registered"))return "Ese correo ya tiene una cuenta. Inicia sesión.";
-  if(m.includes("failed to fetch")||m.includes("network"))return "No se pudo conectar. Revisa tu conexión a internet.";
-  return error?.message||"Ocurrió un error. Inténtalo de nuevo.";
+const m=String(error?.message||"").toLowerCase();
+if(m.includes("invalid login credentials"))return "El correo o la contraseña no son correctos.";
+if(m.includes("email not confirmed"))return "Confirma tu correo electrónico antes de iniciar sesión.";
+if(m.includes("already registered"))return "Ese correo ya tiene una cuenta. Inicia sesión.";
+if(m.includes("failed to fetch")||m.includes("network"))return "No se pudo conectar. Revisa tu conexión a internet.";
+return error?.message||"Ocurrió un error. Inténtalo de nuevo.";
 }
 
 $("authForm").addEventListener("submit",async event=>{
-  event.preventDefault();
-  const email=$("email").value.trim();
-  const password=$("password").value;
-  const button=$("authButton");
-  button.disabled=true;
-  setMessage(isSignup?"Creando tu cuenta...":"Iniciando sesión...");
-
-  try{
-    if(isSignup){
-      const fullName=$("fullName").value.trim();
-      if(!fullName)throw new Error("Escribe tu nombre.");
-      const {data,error}=await db.auth.signUp({
-        email,password,
-        options:{data:{full_name:fullName,role:$("signupRole").value}}
-      });
-      if(error)throw error;
-      if(data.session&&data.user)await loadUser(data.user);
-      else setMessage("Cuenta creada. Revisa tu correo para confirmarla y después inicia sesión.");
-    }else{
-      const {data,error}=await db.auth.signInWithPassword({email,password});
-      if(error)throw error;
-      if(data.user)await loadUser(data.user);
-    }
-  }catch(error){
-    console.error(error);
-    setMessage(friendlyAuthError(error),true);
-  }finally{
-    button.disabled=false;
-  }
+event.preventDefault();
+const email=$("email").value.trim();
+const password=$("password").value;
+const button=$("authButton");
+button.disabled=true;
+setMessage(isSignup?"Creando tu cuenta...":"Iniciando sesión...");
+try{
+if(isSignup){
+const fullName=$("fullName").value.trim();
+if(!fullName)throw new Error("Escribe tu nombre.");
+const {data,error}=await db.auth.signUp({email,password,options:{data:{full_name:fullName,role:$("signupRole").value}}});
+if(error)throw error;
+if(data.session&&data.user)await loadUser(data.user);
+else setMessage("Cuenta creada. Revisa tu correo para confirmarla y después inicia sesión.");
+}else{
+const {data,error}=await db.auth.signInWithPassword({email,password});
+if(error)throw error;
+if(data.user)await loadUser(data.user);
+}
+}catch(error){console.error(error);setMessage(friendlyAuthError(error),true);}
+finally{button.disabled=false;}
 });
 
 function buildNavigation(role){
-  const nav=$("roleNav");
-  nav.replaceChildren();
-  (rolePages[role]||rolePages.student).forEach(([id,label],index)=>{
-    const button=document.createElement("button");
-    button.type="button";
-    button.dataset.page=id;
-    button.textContent=label;
-    if(index===0)button.classList.add("active");
-    button.addEventListener("click",()=>showPage(id));
-    nav.appendChild(button);
-  });
+const nav=$("roleNav");
+nav.replaceChildren();
+(rolePages[role]||rolePages.student).forEach(([id,label],index)=>{
+const button=document.createElement("button");
+button.type="button";button.dataset.page=id;button.textContent=label;
+if(index===0)button.classList.add("active");
+button.addEventListener("click",()=>showPage(id));
+nav.appendChild(button);
+});
 }
 
 function showPage(pageId){
-  const allowed=(rolePages[currentRole]||rolePages.student).map(x=>x[0]);
-  if(pageId!=="account"&&!allowed.includes(pageId))pageId=allowed[0];
-
-  const navButton=document.querySelector('#roleNav button[data-page="'+pageId+'"]');
-  $("pageTitle").textContent=pageId==="account"?"Mi cuenta":(navButton?.textContent||"NYCE");
-
-  document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===pageId));
-  document.querySelectorAll("#roleNav button").forEach(b=>b.classList.toggle("active",b.dataset.page===pageId));
-  document.querySelectorAll(".sidebar button[data-page='account']").forEach(b=>b.classList.toggle("active",pageId==="account"));
-
-  if(pageId==="teacher-classroom")renderClassroomReturnResult();
-  if(pageId==="student-tasks")loadStudentTasks();
-  if(pageId==="student-courses")loadStudentCourses();
+const allowed=(rolePages[currentRole]||rolePages.student).map(x=>x[0]);
+if(pageId!=="account"&&!allowed.includes(pageId))pageId=allowed[0];
+const navButton=document.querySelector('#roleNav button[data-page="'+pageId+'"]');
+$("pageTitle").textContent=pageId==="account"?"Mi cuenta":(navButton?.textContent||"NYCE");
+document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===pageId));
+document.querySelectorAll("#roleNav button").forEach(b=>b.classList.toggle("active",b.dataset.page===pageId));
+document.querySelectorAll(".sidebar button[data-page='account']").forEach(b=>b.classList.toggle("active",pageId==="account"));
+if(pageId==="teacher-classroom")renderClassroomReturnResult();
+if(pageId==="student-tasks")loadStudentTasks();
+if(pageId==="student-courses")loadStudentCourses();
 }
 
 async function loadUser(user){
-  currentUser=user;
-  const {data:profile,error}=await db.from("profiles")
-    .select("full_name,role").eq("id",user.id).maybeSingle();
-
-  if(error)throw new Error("No pudimos consultar tu perfil. Verifica profiles y sus permisos RLS.");
-  if(!profile)throw new Error("No encontramos tu perfil en profiles. Contacta al administrador de NYCE.");
-
-  const valid=["student","teacher","parent","admin"];
-  currentRole=valid.includes(profile.role)?profile.role:"student";
-  const name=profile.full_name||user.user_metadata?.full_name||"Usuario";
-
-  $("userLabel").textContent=name;
-  $("roleBadge").textContent=roleNames[currentRole];
-  $("accountName").textContent=name;
-  $("accountEmail").textContent=user.email||"—";
-  $("accountRole").textContent=roleNames[currentRole];
-  $("greeting").textContent="¡Hola, "+name+"! 👋";
-
-  buildNavigation(currentRole);
-  $("authScreen").classList.add("hidden");
-  $("appScreen").classList.remove("hidden");
-  showPage((rolePages[currentRole]||rolePages.student)[0][0]);
-  if(currentRole==="teacher"&&classroomReturnResult)renderClassroomReturnResult();
+currentUser=user;
+const {data:profile,error}=await db.from("profiles").select("full_name,role").eq("id",user.id).maybeSingle();
+if(error)throw new Error("No pudimos consultar tu perfil. Verifica profiles y sus permisos RLS.");
+if(!profile)throw new Error("No encontramos tu perfil en profiles. Contacta al administrador de NYCE.");
+const valid=["student","teacher","parent","admin"];
+currentRole=valid.includes(profile.role)?profile.role:"student";
+const name=profile.full_name||user.user_metadata?.full_name||"Usuario";
+$("userLabel").textContent=name;
+$("roleBadge").textContent=roleNames[currentRole];
+$("accountName").textContent=name;
+$("accountEmail").textContent=user.email||"—";
+$("accountRole").textContent=roleNames[currentRole];
+$("greeting").textContent="¡Hola, "+name+"! 👋";
+buildNavigation(currentRole);
+$("authScreen").classList.add("hidden");
+$("appScreen").classList.remove("hidden");
+showPage((rolePages[currentRole]||rolePages.student)[0][0]);
+if(currentRole==="teacher"&&classroomReturnResult)renderClassroomReturnResult();
 }
 
 async function logout(){
-  $("logoutButton").disabled=true;
-  try{
-    const {error}=await db.auth.signOut();
-    if(error)throw error;
-    currentUser=null;
-    currentRole="student";
-    $("appScreen").classList.add("hidden");
-    $("authScreen").classList.remove("hidden");
-    $("password").value="";
-    setAuthMode(false);
-  }catch(error){
-    alert("No se pudo cerrar sesión. Inténtalo de nuevo.");
-  }finally{$("logoutButton").disabled=false;}
+$("logoutButton").disabled=true;
+try{
+const {error}=await db.auth.signOut();
+if(error)throw error;
+currentUser=null;currentRole="student";
+$("appScreen").classList.add("hidden");
+$("authScreen").classList.remove("hidden");
+$("password").value="";
+setAuthMode(false);
+}catch(error){alert("No se pudo cerrar sesión. Inténtalo de nuevo.");}
+finally{$("logoutButton").disabled=false;}
 }
 $("logoutButton").addEventListener("click",logout);
 $("accountLogout").addEventListener("click",logout);
-
 document.querySelector('[data-page="account"]').addEventListener("click",()=>showPage("account"));
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.go)));
 
 /* TUTOR IA */
 $("tutorForm").addEventListener("submit",async event=>{
-  event.preventDefault();
-  const question=$("tutorQuestion").value.trim();
-  if(!question)return;
-  const button=$("tutorButton");
-  button.disabled=true;
-  $("tutorStatus").textContent="El tutor está preparando tu respuesta...";
-  $("tutorAnswer").textContent="";
-  try{
-    const {data,error}=await db.functions.invoke("smart-action",{body:{question}});
-    if(error)throw error;
-    const answer=data?.answer??data?.text??data?.response??data?.result??data?.message;
-    if(typeof answer!=="string"||!answer.trim())throw new Error("Respuesta inesperada de smart-action.");
-    $("tutorAnswer").textContent=answer;
-    $("tutorStatus").textContent="Respuesta del tutor:";
-  }catch(error){
-    console.error(error);
-    $("tutorStatus").textContent="No se pudo obtener una respuesta. Revisa smart-action en Supabase.";
-  }finally{button.disabled=false;}
+event.preventDefault();
+const question=$("tutorQuestion").value.trim();
+if(!question)return;
+const button=$("tutorButton");
+button.disabled=true;
+$("tutorStatus").textContent="El tutor está preparando tu respuesta...";
+$("tutorAnswer").textContent="";
+try{
+const {data,error}=await db.functions.invoke("smart-action",{body:{question}});
+if(error)throw error;
+const answer=data?.answer??data?.text??data?.response??data?.result??data?.message;
+if(typeof answer!=="string"||!answer.trim())throw new Error("Respuesta inesperada de smart-action.");
+$("tutorAnswer").textContent=answer;
+$("tutorStatus").textContent="Respuesta del tutor:";
+}catch(error){
+console.error(error);
+$("tutorStatus").textContent="No se pudo obtener una respuesta. Revisa smart-action en Supabase.";
+}finally{button.disabled=false;}
 });
 
 /* GOOGLE CLASSROOM: OAUTH */
 function setClassroomStatus(message,type="info"){
-  $("classroomStatus").textContent=message;
-  $("classroomStatus").className="classroom-status "+type;
+$("classroomStatus").textContent=message;
+$("classroomStatus").className="classroom-status "+type;
 }
-
 function renderClassroomReturnResult(){
-  if(!classroomReturnResult)return;
-  const ok=classroomReturnResult.status==="connected";
-  setClassroomStatus(classroomReturnResult.message,ok?"success":"error");
-  $("classroomReturnNotice").textContent=classroomReturnResult.message;
-  $("classroomReturnNotice").className="classroom-status "+(ok?"success":"error");
+if(!classroomReturnResult)return;
+const ok=classroomReturnResult.status==="connected";
+setClassroomStatus(classroomReturnResult.message,ok?"success":"error");
+$("classroomReturnNotice").textContent=classroomReturnResult.message;
+$("classroomReturnNotice").className="classroom-status "+(ok?"success":"error");
 }
-
 async function connectGoogleClassroom(){
-  const {data:sessionData,error:sessionError}=await db.auth.getSession();
-  const token=sessionData?.session?.access_token;
-  if(sessionError||!token)throw new Error("Tu sesión de NYCE expiró. Inicia sesión otra vez.");
-
-  const {data,error}=await db.functions.invoke("classroom-auth",{
-    body:{action:"start"},
-    headers:{Authorization:"Bearer "+token}
-  });
-  if(error)throw new Error(error.message||"No se pudo iniciar classroom-auth.");
-  if(typeof data?.auth_url!=="string")throw new Error("El servidor no devolvió auth_url.");
-
-  const url=new URL(data.auth_url);
-  if(url.protocol!=="https:"||url.hostname!=="accounts.google.com")throw new Error("La dirección de autorización no es de Google.");
-  window.location.assign(url.href);
+const {data:sessionData,error:sessionError}=await db.auth.getSession();
+const token=sessionData?.session?.access_token;
+if(sessionError||!token)throw new Error("Tu sesión de NYCE expiró. Inicia sesión otra vez.");
+const {data,error}=await db.functions.invoke("classroom-auth",{
+body:{action:"start"},headers:{Authorization:"Bearer "+token}
+});
+if(error)throw new Error(error.message||"No se pudo iniciar classroom-auth.");
+if(typeof data?.auth_url!=="string")throw new Error("El servidor no devolvió auth_url.");
+const url=new URL(data.auth_url);
+if(url.protocol!=="https:"||url.hostname!=="accounts.google.com")throw new Error("La dirección de autorización no es de Google.");
+window.location.assign(url.href);
 }
-
 $("connectClassroomButton").addEventListener("click",async()=>{
-  const b=$("connectClassroomButton");
-  b.disabled=true;
-  setClassroomStatus("Preparando la autorización segura con Google...");
-  try{await connectGoogleClassroom();}
-  catch(error){setClassroomStatus(error.message||"No se pudo conectar.", "error");}
-  finally{b.disabled=false;}
+const b=$("connectClassroomButton");
+b.disabled=true;
+setClassroomStatus("Preparando la autorización segura con Google...");
+try{await connectGoogleClassroom();}
+catch(error){setClassroomStatus(error.message||"No se pudo conectar.","error");}
+finally{b.disabled=false;}
 });
 
 function readClassroomOAuthResult(){
-  const url=new URL(window.location.href);
-  const result=url.searchParams.get("classroom");
-  if(!result)return;
-
-  classroomReturnResult=result==="connected"
-    ?{status:"connected",message:"Google Classroom se conectó correctamente."}
-    :{status:"error",message:"Google no completó la autorización. Comprueba los permisos e inténtalo de nuevo."};
-
-  url.searchParams.delete("classroom");
-  history.replaceState({},document.title,url.pathname+url.search+url.hash);
+const url=new URL(window.location.href);
+const result=url.searchParams.get("classroom");
+if(!result)return;
+classroomReturnResult=result==="connected"
+?{status:"connected",message:"Google Classroom se conectó correctamente."}
+:{status:"error",message:"Google no completó la autorización. Comprueba los permisos e inténtalo de nuevo."};
+url.searchParams.delete("classroom");
+history.replaceState({},document.title,url.pathname+url.search+url.hash);
 }
 
 /* LISTAR CLASES */
 function renderClassroomCourses(courses){
-  const list=$("classroomCoursesList");
-  list.replaceChildren();
-  if(!courses.length){
-    const empty=document.createElement("div");
-    empty.className="empty";
-    empty.textContent="No se encontraron clases en esta cuenta.";
-    list.appendChild(empty);
-    return;
-  }
-
-  courses.forEach(course=>{
-    const card=document.createElement("article");
-    card.className="card";
-    const title=document.createElement("h2");
-    title.textContent=course.name||"Clase sin nombre";
-    card.appendChild(title);
-
-    if(course.section){
-      const p=document.createElement("p");
-      p.className="muted";
-      p.textContent="Sección: "+course.section;
-      card.appendChild(p);
-    }
-    if(course.courseState){
-      const tag=document.createElement("span");
-      tag.className="tag";
-      tag.textContent=course.courseState;
-      card.appendChild(tag);
-    }
-    if(course.alternateLink){
-      try{
-        const u=new URL(course.alternateLink);
-        if(u.protocol==="https:"&&u.hostname==="classroom.google.com"){
-          const a=document.createElement("a");
-          a.href=u.href;
-          a.target="_blank";
-          a.rel="noopener noreferrer";
-          a.className="classroom-course-link";
-          a.textContent="Abrir clase en Google Classroom ↗";
-          card.appendChild(a);
-        }
-      }catch(_){}
-    }
-    list.appendChild(card);
-  });
+const list=$("classroomCoursesList");
+list.replaceChildren();
+if(!courses.length){
+const empty=document.createElement("div");
+empty.className="empty";empty.textContent="No se encontraron clases en esta cuenta.";
+list.appendChild(empty);return;
+}
+courses.forEach(course=>{
+const card=document.createElement("article");card.className="card";
+const title=document.createElement("h2");title.textContent=course.name||"Clase sin nombre";
+card.appendChild(title);
+if(course.section){
+const p=document.createElement("p");p.className="muted";p.textContent="Sección: "+course.section;card.appendChild(p);
+}
+if(course.courseState){
+const tag=document.createElement("span");tag.className="tag";tag.textContent=course.courseState;card.appendChild(tag);
+}
+if(course.alternateLink){
+try{
+const u=new URL(course.alternateLink);
+if(u.protocol==="https:"&&u.hostname==="classroom.google.com"){
+const a=document.createElement("a");a.href=u.href;a.target="_blank";a.rel="noopener noreferrer";
+a.className="classroom-course-link";a.textContent="Abrir clase en Google Classroom ↗";card.appendChild(a);
+}
+}catch(_){}
+}
+list.appendChild(card);
+});
 }
 
 async function loadClassroomCourses(){
-  const button=$("loadClassroomCoursesButton");
-  const status=$("classroomCoursesStatus");
-  button.disabled=true;
-  status.className="classroom-status info";
-  status.textContent="Consultando Google Classroom...";
-  $("classroomCoursesList").replaceChildren();
-
-  try{
-    if(currentRole!=="teacher")throw new Error("Esta opción solo está disponible para docentes.");
-    const {data:sessionData,error:sessionError}=await db.auth.getSession();
-    const token=sessionData?.session?.access_token;
-    if(sessionError||!token)throw new Error("Tu sesión de NYCE expiró.");
-
-    const {data,error}=await db.functions.invoke("classroom-courses",{
-      body:{},headers:{Authorization:"Bearer "+token}
-    });
-    if(error)throw new Error(data?.error||error.message);
-    if(data?.reconnect)throw new Error(data.error||"Vuelve a conectar Google Classroom.");
-    if(!data?.connected||!Array.isArray(data.courses))throw new Error(data?.error||"Respuesta inesperada del servidor.");
-
-    renderClassroomCourses(data.courses);
-    status.className="classroom-status success";
-    status.textContent=(data.google_email?"Cuenta: "+data.google_email+". ":"")+"Clases encontradas: "+data.courses.length+".";
-  }catch(error){
-    status.className="classroom-status error";
-    status.textContent=error.message||"No se pudieron cargar las clases.";
-  }finally{
-    button.disabled=false;
-  }
+const button=$("loadClassroomCoursesButton");
+const status=$("classroomCoursesStatus");
+button.disabled=true;
+status.className="classroom-status info";
+status.textContent="Consultando Google Classroom...";
+$("classroomCoursesList").replaceChildren();
+try{
+if(currentRole!=="teacher")throw new Error("Esta opción solo está disponible para docentes.");
+const {data:sessionData,error:sessionError}=await db.auth.getSession();
+const token=sessionData?.session?.access_token;
+if(sessionError||!token)throw new Error("Tu sesión de NYCE expiró.");
+const {data,error}=await db.functions.invoke("classroom-courses",{
+body:{},headers:{Authorization:"Bearer "+token}
+});
+if(error)throw new Error(data?.error||error.message);
+if(data?.reconnect)throw new Error(data.error||"Vuelve a conectar Google Classroom.");
+if(!data?.connected||!Array.isArray(data.courses))throw new Error(data?.error||"Respuesta inesperada del servidor.");
+renderClassroomCourses(data.courses);
+status.className="classroom-status success";
+status.textContent=(data.google_email?"Cuenta: "+data.google_email+". ":"")+"Clases encontradas: "+data.courses.length+".";
+}catch(error){
+status.className="classroom-status error";
+status.textContent=error.message||"No se pudieron cargar las clases.";
+}finally{button.disabled=false;}
 }
 $("loadClassroomCoursesButton").addEventListener("click",loadClassroomCourses);
 
-/* SINCRONIZAR TAREAS Y NOTAS DESDE EL SERVIDOR */
-async function syncClassroomData() {
-  const button = $("syncClassroomButton");
-  const status = $("syncClassroomStatus");
+/* SINCRONIZAR TAREAS Y NOTAS */
+async function syncClassroomData(){
+const button=$("syncClassroomButton");
+const status=$("syncClassroomStatus");
+button.disabled=true;
+status.className="classroom-status info";
+status.textContent="Sincronizando cursos, actividades, estudiantes y entregas...";
+try{
+if(currentRole!=="teacher")throw new Error("Solo los docentes pueden sincronizar Classroom.");
+const {data:sessionData,error:sessionError}=await db.auth.getSession();
+const token=sessionData?.session?.access_token;
+if(sessionError||!token)throw new Error("Tu sesión expiró. Inicia sesión otra vez en NYCE.");
 
-  button.disabled = true;
-  status.className = "classroom-status info";
-  status.textContent = "Sincronizando Google Classroom...";
+/* El nombre debe coincidir con el nombre desplegado en Supabase. */
+const {data,error}=await db.functions.invoke("Classroom_sync",{
+body:{},headers:{Authorization:"Bearer "+token}
+});
 
-  try {
-    if (currentRole !== "teacher") {
-      throw new Error("Solo los docentes pueden sincronizar Classroom.");
-    }
-
-    const { data: sessionData, error: sessionError } =
-      await db.auth.getSession();
-
-    const token = sessionData?.session?.access_token;
-
-    if (sessionError || !token) {
-      throw new Error("Tu sesión expiró. Inicia sesión otra vez en NYCE.");
-    }
-
-    // IMPORTANTE: el nombre debe coincidir con el de Supabase.
-    const { data, error } = await db.functions.invoke(
-      "classroom-sync",
-      {
-        body: {},
-        headers: {
-          Authorization: "Bearer " + token
-        }
-      }
-    );
-
-    if (error) {
-      console.error("Error de classroom-sync:", error);
-
-      let message = error.message || "No se pudo conectar con la función.";
-
-      if (error.context) {
-        try {
-          const response = error.context;
-          const details = await response.clone().json();
-
-          if (details.error) {
-            message += " Detalle: " + details.error;
-          }
-
-          if (response.status) {
-            message += " (HTTP " + response.status + ")";
-          }
-        } catch (_) {
-          if (error.context.status) {
-            message += " (HTTP " + error.context.status + ")";
-          }
-        }
-      }
-
-      throw new Error(message);
-    }
-
-    if (data?.error) {
-      throw new Error(data.error);
-    }
-
-    const courses =
-      data.courses_synced ?? data.courses ?? 0;
-
-    const assignments =
-      data.assignments_synced ??
-      data.assignments ??
-      data.coursework ?? 0;
-
-    const submissions =
-      data.student_assignment_rows_synced ??
-      data.submissions_synced ??
-      data.submissions ?? 0;
-
-    status.className =
-      data.success === false
-        ? "classroom-status error"
-        : "classroom-status success";
-
-    status.textContent =
-      (data.message || "Sincronización completada.") +
-      " Cursos: " + courses +
-      "; actividades: " + assignments +
-      "; filas de tareas por estudiante: " + submissions + ".";
-
-    if (data.course_errors?.length) {
-      status.textContent +=
-        " Algunos cursos tuvieron errores. Revisa los Logs de Supabase.";
-    }
-
-    $("teacherCourseCount").textContent = courses;
-    $("teacherWorkCount").textContent = assignments;
-    $("teacherSubmissionCount").textContent = submissions;
-
-  } catch (error) {
-    console.error("Error sincronizando Classroom:", error);
-
-    status.className = "classroom-status error";
-    status.textContent =
-      error.message || "No se pudo sincronizar Google Classroom.";
-  } finally {
-    button.disabled = false;
-  }
+if(error){
+console.error("Error al invocar Classroom_sync:",error);
+let message=error.message||"No se pudo conectar con la función.";
+if(error.context){
+try{
+const response=error.context;
+const details=typeof response.json==="function"?await response.clone().json():null;
+if(details?.error)message+=" Detalle: "+details.error;
+else if(details?.message)message+=" Detalle: "+details.message;
+if(response.status)message+=" (HTTP "+response.status+")";
+}catch(_){
+if(error.context.status)message+=" (HTTP "+error.context.status+")";
 }
+}
+throw new Error(message);
+}
+if(data?.error)throw new Error(data.details||data.error);
 
-$("syncClassroomButton").addEventListener(
-  "click",
-  syncClassroomData
-);
+const courses=data.courses_synced??data.courses??0;
+const assignments=data.assignments_synced??data.assignments??data.coursework??0;
+const submissions=data.student_assignment_rows_synced??data.submissions_synced??data.submissions??0;
+
+status.className=data.success===false?"classroom-status error":"classroom-status success";
+status.textContent=(data.message||"Sincronización completada.")+
+" Cursos: "+courses+
+"; actividades: "+assignments+
+"; filas de tareas por estudiante: "+submissions+"."+
+(Array.isArray(data.course_errors)&&data.course_errors.length
+?" Cursos con errores: "+data.course_errors.length+". Revisa los Logs de Supabase."
+:"");
+$("teacherCourseCount").textContent=courses;
+$("teacherWorkCount").textContent=assignments;
+$("teacherSubmissionCount").textContent=submissions;
+}catch(error){
+console.error("Error sincronizando Classroom:",error);
+status.className="classroom-status error";
+status.textContent=error.message||"No se pudo sincronizar Google Classroom.";
+}finally{button.disabled=false;}
+}
+$("syncClassroomButton").addEventListener("click",syncClassroomData);
 
 /* TAREAS DEL ESTUDIANTE */
 function safeDate(value){
-  if(!value)return "Sin fecha límite";
-  const d=new Date(value);
-  if(Number.isNaN(d.getTime()))return "Fecha no disponible";
-  return d.toLocaleString("es-CO",{dateStyle:"medium",timeStyle:"short"});
+if(!value)return "Sin fecha límite";
+const d=new Date(value);
+if(Number.isNaN(d.getTime()))return "Fecha no disponible";
+return d.toLocaleString("es-CO",{dateStyle:"medium",timeStyle:"short"});
 }
-
 function translateState(state){
-  const states={
-    NEW:"Sin entregar",
-    CREATED:"Creada",
-    TURNED_IN:"Entregada",
-    RETURNED:"Devuelta",
-    RECLAIMED_BY_STUDENT:"Devuelta al estudiante"
-  };
-  return states[state]||state||"Sin información";
+const states={NEW:"Sin entregar",CREATED:"Creada",TURNED_IN:"Entregada",RETURNED:"Devuelta",RECLAIMED_BY_STUDENT:"Devuelta al estudiante"};
+return states[state]||state||"Sin información";
 }
-
 function renderStudentTasks(rows){
-  const list=$("studentTasksList");
-  list.replaceChildren();
-  $("studentTaskCount").textContent=rows.length;
-  $("studentGradeCount").textContent=rows.filter(r=>r.grade_5!==null&&r.grade_5!==undefined).length;
-
-  if(!rows.length){
-    const empty=document.createElement("div");
-    empty.className="empty";
-    empty.textContent="No encontramos tareas vinculadas a tu correo. Pide a tu docente que sincronice Google Classroom.";
-    list.appendChild(empty);
-    return;
-  }
-
-  rows.forEach(task=>{
-    const card=document.createElement("article");
-    card.className="card";
-
-    const title=document.createElement("h2");
-    title.textContent=task.title||"Tarea sin título";
-    card.appendChild(title);
-
-    const course=document.createElement("p");
-    course.className="muted";
-    course.textContent=task.course_name||"Curso de Google Classroom";
-    card.appendChild(course);
-
-    if(task.description){
-      const desc=document.createElement("p");
-      desc.textContent=task.description;
-      card.appendChild(desc);
-    }
-
-    const due=document.createElement("p");
-    due.textContent="Fecha límite: "+safeDate(task.due_date);
-    card.appendChild(due);
-
-    const state=document.createElement("p");
-    state.textContent="Estado: "+translateState(task.submission_state);
-    card.appendChild(state);
-
-    const grade=document.createElement("p");
-    if(task.grade_5!==null&&task.grade_5!==undefined&&task.grade_5!==""){
-      grade.textContent="Calificación NYCE: "+Number(task.grade_5).toLocaleString("es-CO",{
-        minimumFractionDigits:1,maximumFractionDigits:2
-      })+"/5,0";
-    }else{
-      grade.textContent="Calificación: pendiente de publicación";
-    }
-    card.appendChild(grade);
-
-    if(task.alternate_link){
-      try{
-        const u=new URL(task.alternate_link);
-        if(u.protocol==="https:"&&u.hostname==="classroom.google.com"){
-          const a=document.createElement("a");
-          a.href=u.href;
-          a.target="_blank";
-          a.rel="noopener noreferrer";
-          a.className="classroom-course-link";
-          a.textContent="Abrir tarea en Google Classroom ↗";
-          card.appendChild(a);
-        }
-      }catch(_){}
-    }
-    list.appendChild(card);
-  });
+const list=$("studentTasksList");
+list.replaceChildren();
+$("studentTaskCount").textContent=rows.length;
+$("studentGradeCount").textContent=rows.filter(r=>r.grade_5!==null&&r.grade_5!==undefined&&r.grade_5!=="").length;
+if(!rows.length){
+const empty=document.createElement("div");empty.className="empty";
+empty.textContent="No encontramos tareas vinculadas a tu correo. Pide a tu docente que sincronice Google Classroom.";
+list.appendChild(empty);return;
+}
+rows.forEach(task=>{
+const card=document.createElement("article");card.className="card";
+const title=document.createElement("h2");title.textContent=task.title||"Tarea sin título";card.appendChild(title);
+const course=document.createElement("p");course.className="muted";course.textContent=task.course_name||"Curso de Google Classroom";card.appendChild(course);
+if(task.description){const desc=document.createElement("p");desc.textContent=task.description;card.appendChild(desc);}
+const due=document.createElement("p");due.textContent="Fecha límite: "+safeDate(task.due_date);card.appendChild(due);
+const state=document.createElement("p");state.textContent="Estado: "+translateState(task.submission_state);card.appendChild(state);
+const grade=document.createElement("p");
+if(task.grade_5!==null&&task.grade_5!==undefined&&task.grade_5!==""){
+grade.textContent="Calificación NYCE: "+Number(task.grade_5).toLocaleString("es-CO",{minimumFractionDigits:1,maximumFractionDigits:2})+"/5,0";
+}else{grade.textContent="Calificación: pendiente de publicación";}
+card.appendChild(grade);
+if(task.alternate_link){
+try{
+const u=new URL(task.alternate_link);
+if(u.protocol==="https:"&&u.hostname==="classroom.google.com"){
+const a=document.createElement("a");a.href=u.href;a.target="_blank";a.rel="noopener noreferrer";
+a.className="classroom-course-link";a.textContent="Abrir tarea en Google Classroom ↗";card.appendChild(a);
+}
+}catch(_){}
+}
+list.appendChild(card);
+});
 }
 
 async function loadStudentTasks(){
-  const button=$("refreshStudentTasksButton");
-  const status=$("studentTasksStatus");
-  if(!currentUser?.email){
-    status.className="classroom-status error";
-    status.textContent="Inicia sesión para consultar tus tareas.";
-    return;
-  }
-
-  button.disabled=true;
-  status.className="classroom-status info";
-  status.textContent="Cargando tus tareas...";
-  $("studentTasksList").replaceChildren();
-
-  try{
-    const {data,error}=await db.from("classroom_sync_assignments")
-      .select("course_id,coursework_id,course_name,title,description,alternate_link,due_date,max_points,submission_state,points_earned,grade_5,synced_at")
-      .ilike("student_email",currentUser.email)
-      .order("due_date",{ascending:true,nullsFirst:false});
-
-    if(error)throw error;
-    const rows=data||[];
-    renderStudentTasks(rows);
-    status.className="classroom-status success";
-    status.textContent="Tareas encontradas: "+rows.length+".";
-  }catch(error){
-    console.error(error);
-    status.className="classroom-status error";
-    status.textContent="No se pudieron cargar las tareas. Comprueba la tabla y las políticas RLS de classroom_sync_assignments en Supabase.";
-  }finally{
-    button.disabled=false;
-  }
+const button=$("refreshStudentTasksButton");
+const status=$("studentTasksStatus");
+if(!currentUser?.email){
+status.className="classroom-status error";status.textContent="Inicia sesión para consultar tus tareas.";return;
+}
+button.disabled=true;
+status.className="classroom-status info";
+status.textContent="Cargando tus tareas...";
+$("studentTasksList").replaceChildren();
+try{
+const {data,error}=await db.from("classroom_sync_assignments")
+.select("course_id,coursework_id,course_name,title,description,alternate_link,due_date,max_points,submission_state,points_earned,grade_5,synced_at")
+.ilike("student_email",currentUser.email)
+.order("due_date",{ascending:true,nullsFirst:false});
+if(error)throw error;
+const rows=data||[];
+renderStudentTasks(rows);
+status.className="classroom-status success";
+status.textContent="Tareas encontradas: "+rows.length+".";
+}catch(error){
+console.error(error);
+status.className="classroom-status error";
+status.textContent="No se pudieron cargar las tareas. Comprueba la tabla y las políticas RLS de classroom_sync_assignments en Supabase.";
+}finally{button.disabled=false;}
 }
 $("refreshStudentTasksButton").addEventListener("click",loadStudentTasks);
 
 /* CURSOS DEL ESTUDIANTE */
 async function loadStudentCourses(){
-  const list=$("studentCoursesList");
-  if(!currentUser?.email)return;
-  list.replaceChildren();
-  const info=document.createElement("div");
-  info.className="empty";
-  info.textContent="Los cursos disponibles dependen de las tareas sincronizadas de tus docentes.";
-  list.appendChild(info);
+const list=$("studentCoursesList");
+if(!currentUser?.email)return;
+list.replaceChildren();
+const info=document.createElement("div");info.className="empty";
+info.textContent="Los cursos disponibles dependen de las tareas sincronizadas de tus docentes.";
+list.appendChild(info);
 }
 
 /* RESULTADO OAUTH Y SESIÓN */
 async function initializeApp(){
-  readClassroomOAuthResult();
-  const {data,error}=await db.auth.getSession();
-  if(error){
-    console.error(error);
-    return;
-  }
-  if(data.session?.user){
-    try{await loadUser(data.session.user);}
-    catch(error){
-      console.error(error);
-      $("appScreen").classList.add("hidden");
-      $("authScreen").classList.remove("hidden");
-      setMessage(error.message,true);
-    }
-  }else if(classroomReturnResult){
-    setMessage("Google terminó la autorización. Inicia sesión en NYCE para continuar.");
-  }
+readClassroomOAuthResult();
+const {data,error}=await db.auth.getSession();
+if(error){console.error(error);return;}
+if(data.session?.user){
+try{await loadUser(data.session.user);}
+catch(error){
+console.error(error);
+$("appScreen").classList.add("hidden");
+$("authScreen").classList.remove("hidden");
+setMessage(error.message,true);
 }
-
+}else if(classroomReturnResult){
+setMessage("Google terminó la autorización. Inicia sesión en NYCE para continuar.");
+}
+}
 db.auth.onAuthStateChange(event=>{
-  if(event==="SIGNED_OUT"){
-    currentUser=null;
-    $("appScreen").classList.add("hidden");
-    $("authScreen").classList.remove("hidden");
-  }
+if(event==="SIGNED_OUT"){
+currentUser=null;
+$("appScreen").classList.add("hidden");
+$("authScreen").classList.remove("hidden");
+}
 });
-
 initializeApp();
 </script>
 </body>
