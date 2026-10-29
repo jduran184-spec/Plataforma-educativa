@@ -591,41 +591,118 @@ async function loadClassroomCourses(){
 $("loadClassroomCoursesButton").addEventListener("click",loadClassroomCourses);
 
 /* SINCRONIZAR TAREAS Y NOTAS DESDE EL SERVIDOR */
-async function syncClassroomData(){
-  const button=$("syncClassroomButton");
-  const status=$("syncClassroomStatus");
-  button.disabled=true;
-  status.className="classroom-status info";
-  status.textContent="Sincronizando cursos, actividades, estudiantes y entregas...";
+async function syncClassroomData() {
+  const button = $("syncClassroomButton");
+  const status = $("syncClassroomStatus");
 
-  try{
-    if(currentRole!=="teacher")throw new Error("Solo los docentes pueden sincronizar Classroom.");
-    const {data:sessionData,error:sessionError}=await db.auth.getSession();
-    const token=sessionData?.session?.access_token;
-    if(sessionError||!token)throw new Error("Tu sesión de NYCE expiró.");
+  button.disabled = true;
+  status.className = "classroom-status info";
+  status.textContent = "Sincronizando Google Classroom...";
 
-    const {data,error}=await db.functions.invoke("classroom-sync",{
-      body:{},headers:{Authorization:"Bearer "+token}
-    });
-    if(error)throw new Error(data?.details||data?.error||error.message);
-    if(data?.error)throw new Error(data.details||data.error);
+  try {
+    if (currentRole !== "teacher") {
+      throw new Error("Solo los docentes pueden sincronizar Classroom.");
+    }
 
-    status.className="classroom-status success";
-    status.textContent="Sincronización completada. Cursos: "+(data.courses??0)+
-      "; actividades: "+(data.assignments??data.coursework??0)+
-      "; entregas consultadas: "+(data.submissions??0)+".";
-    $("teacherCourseCount").textContent=data.courses??"—";
-    $("teacherWorkCount").textContent=data.assignments??data.coursework??"—";
-    $("teacherSubmissionCount").textContent=data.submissions??"—";
-  }catch(error){
-    console.error(error);
-    status.className="classroom-status error";
-    status.textContent=error.message||"No se pudo sincronizar. Revisa classroom-sync en Supabase.";
-  }finally{
-    button.disabled=false;
+    const { data: sessionData, error: sessionError } =
+      await db.auth.getSession();
+
+    const token = sessionData?.session?.access_token;
+
+    if (sessionError || !token) {
+      throw new Error("Tu sesión expiró. Inicia sesión otra vez en NYCE.");
+    }
+
+    // IMPORTANTE: el nombre debe coincidir con el de Supabase.
+    const { data, error } = await db.functions.invoke(
+      "classroom-sync",
+      {
+        body: {},
+        headers: {
+          Authorization: "Bearer " + token
+        }
+      }
+    );
+
+    if (error) {
+      console.error("Error de classroom-sync:", error);
+
+      let message = error.message || "No se pudo conectar con la función.";
+
+      if (error.context) {
+        try {
+          const response = error.context;
+          const details = await response.clone().json();
+
+          if (details.error) {
+            message += " Detalle: " + details.error;
+          }
+
+          if (response.status) {
+            message += " (HTTP " + response.status + ")";
+          }
+        } catch (_) {
+          if (error.context.status) {
+            message += " (HTTP " + error.context.status + ")";
+          }
+        }
+      }
+
+      throw new Error(message);
+    }
+
+    if (data?.error) {
+      throw new Error(data.error);
+    }
+
+    const courses =
+      data.courses_synced ?? data.courses ?? 0;
+
+    const assignments =
+      data.assignments_synced ??
+      data.assignments ??
+      data.coursework ?? 0;
+
+    const submissions =
+      data.student_assignment_rows_synced ??
+      data.submissions_synced ??
+      data.submissions ?? 0;
+
+    status.className =
+      data.success === false
+        ? "classroom-status error"
+        : "classroom-status success";
+
+    status.textContent =
+      (data.message || "Sincronización completada.") +
+      " Cursos: " + courses +
+      "; actividades: " + assignments +
+      "; filas de tareas por estudiante: " + submissions + ".";
+
+    if (data.course_errors?.length) {
+      status.textContent +=
+        " Algunos cursos tuvieron errores. Revisa los Logs de Supabase.";
+    }
+
+    $("teacherCourseCount").textContent = courses;
+    $("teacherWorkCount").textContent = assignments;
+    $("teacherSubmissionCount").textContent = submissions;
+
+  } catch (error) {
+    console.error("Error sincronizando Classroom:", error);
+
+    status.className = "classroom-status error";
+    status.textContent =
+      error.message || "No se pudo sincronizar Google Classroom.";
+  } finally {
+    button.disabled = false;
   }
 }
-$("syncClassroomButton").addEventListener("click",syncClassroomData);
+
+$("syncClassroomButton").addEventListener(
+  "click",
+  syncClassroomData
+);
 
 /* TAREAS DEL ESTUDIANTE */
 function safeDate(value){
