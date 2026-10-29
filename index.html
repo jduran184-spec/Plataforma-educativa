@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -71,12 +70,19 @@ h2{font-size:19px}
 .gradebook th,.gradebook td{padding:12px;text-align:left;border-bottom:1px solid var(--border);font-size:14px}
 .gradebook th{background:#f7f8ff}
 .gradebook tr:hover td{background:#fafaff}
+
+/* ÁREA FAMILIAR */
+#familyStudentsList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.family-student-card{margin-bottom:0}
+.family-student-card h2{overflow-wrap:anywhere}
+.family-student-icon{font-size:28px;margin-bottom:8px}
+
 @media(max-width:750px){
 .app{display:block}
 .sidebar{width:100%;display:flex;flex-wrap:wrap;padding:8px;gap:4px;border-right:0;border-bottom:1px solid var(--border)}
 .sidebar .logo{width:100%;padding:8px 12px!important}
 .sidebar button{width:auto;flex:1 1 calc(50% - 8px);min-width:0;margin:0;text-align:center;overflow-wrap:anywhere}
-.cards,#classroomCoursesList{grid-template-columns:1fr}
+.cards,#classroomCoursesList,#familyStudentsList{grid-template-columns:1fr}
 .content{padding:17px}
 .top{padding:14px}
 .authbox{padding:23px}
@@ -222,17 +228,43 @@ h2{font-size:19px}
 <div class="notice">La sincronización consulta información de Classroom. No entrega tareas por los estudiantes ni publica notas en Google Classroom.</div>
 </section>
 
-<section id="parent-home" class="panel"><h1>Área de familia 👨‍👩‍👧</h1>
-<div class="card"><p class="muted">Todavía no hay estudiantes vinculados a esta cuenta.</p></div></section>
-<section id="admin-home" class="panel"><h1>Administración ⚙️</h1>
-<div class="notice">Los permisos administrativos deben configurarse de forma segura en Supabase.</div></section>
-<section id="account" class="panel"><h1>Mi cuenta 👤</h1>
+<!-- ÁREA DE FAMILIA: NUEVA VERSIÓN CONECTADA A SUPABASE -->
+<section id="parent-home" class="panel">
+  <h1>Área de familia 👨‍👩‍👧</h1>
+  <p class="muted">
+    Consulta los estudiantes vinculados a tu cuenta de NYCE.
+  </p>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <h2>Mis estudiantes</h2>
+      <button id="refreshFamilyButton" class="btn" type="button">
+        Actualizar
+      </button>
+    </div>
+
+    <div id="familyStatus" class="classroom-status info" role="status" aria-live="polite">
+      Consultando estudiantes vinculados...
+    </div>
+
+    <div id="familyStudentsList"></div>
+  </div>
+</section>
+
+<section id="admin-home" class="panel">
+<h1>Administración ⚙️</h1>
+<div class="notice">Los permisos administrativos deben configurarse de forma segura en Supabase.</div>
+</section>
+
+<section id="account" class="panel">
+<h1>Mi cuenta 👤</h1>
 <div class="card">
 <p><strong>Nombre:</strong> <span id="accountName">—</span></p>
 <p><strong>Correo:</strong> <span id="accountEmail">—</span></p>
 <p><strong>Tipo de cuenta:</strong> <span id="accountRole">—</span></p>
 <button id="accountLogout" class="btn light" type="button">Cerrar sesión</button>
-</div></section>
+</div>
+</section>
 
 </div>
 </main>
@@ -343,6 +375,7 @@ if(pageId==="teacher-classroom")renderClassroomReturnResult();
 if(pageId==="teacher-assignments")loadTeacherGradebook();
 if(pageId==="student-tasks")loadStudentTasks();
 if(pageId==="student-courses")loadStudentCourses();
+if(pageId==="parent-home")loadFamilyStudents();
 }
 
 async function loadUser(user){
@@ -363,7 +396,14 @@ buildNavigation(currentRole);
 $("authScreen").classList.add("hidden");
 $("appScreen").classList.remove("hidden");
 showPage((rolePages[currentRole]||rolePages.student)[0][0]);
-if(currentRole==="teacher"&&classroomReturnResult)renderClassroomReturnResult();
+
+if(currentRole==="parent"){
+await loadFamilyStudents();
+}
+
+if(currentRole==="teacher"&&classroomReturnResult){
+renderClassroomReturnResult();
+}
 }
 
 async function logout(){
@@ -393,8 +433,6 @@ function renderTutorAnswer(rawAnswer) {
   const source = String(rawAnswer ?? "");
   const mathBlocks = [];
 
-  // Protege fórmulas para que Markdown no modifique su contenido.
-  // Admite $$...$$, \[...\], \(...\) y fórmulas entre $...$.
   const protectedText = source.replace(
     /(\$\$[\s\S]+?\$\$|\\\[[\s\S]+?\\\]|\\\([\s\S]+?\\\)|(?<!\$)\$(?!\$)[^\n$]+?\$(?!\$))/g,
     (match) => {
@@ -403,19 +441,15 @@ function renderTutorAnswer(rawAnswer) {
     }
   );
 
-  // Convierte Markdown a HTML.
   const markdownHtml = marked.parse(protectedText, {
     gfm: true,
     breaks: true
   });
 
-  // Limpia el HTML generado antes de insertarlo en la página.
   const safeHtml = DOMPurify.sanitize(markdownHtml);
   const template = document.createElement("template");
   template.innerHTML = safeHtml;
 
-  // Busca los marcadores incluso cuando Markdown los coloca
-  // dentro de párrafos, listas o negritas.
   const walker = document.createTreeWalker(
     template.content,
     NodeFilter.SHOW_TEXT
@@ -492,10 +526,6 @@ function renderTutorAnswer(rawAnswer) {
   container.replaceChildren(template.content);
 }
 
-/*
- * Detecta señales comunes de una respuesta posiblemente incompleta.
- * No puede confirmar por sí sola si Supabase cortó la generación.
- */
 function tutorAnswerMayBeIncomplete(answer) {
   const text = String(answer ?? "").trim();
   if (!text) return true;
@@ -516,7 +546,6 @@ function tutorAnswerMayBeIncomplete(answer) {
     return true;
   }
 
-  // Detecta delimitadores de fórmulas sin cerrar.
   const dollarCount = (text.match(/\$\$/g) || []).length;
   if (dollarCount % 2 !== 0) return true;
 
@@ -965,6 +994,78 @@ info.textContent="Los cursos disponibles dependen de las tareas sincronizadas de
 list.appendChild(info);
 }
 
+
+/* ÁREA FAMILIAR: ESTUDIANTES VINCULADOS A SUPABASE */
+async function loadFamilyStudents(){
+const button=$("refreshFamilyButton");
+const status=$("familyStatus");
+const list=$("familyStudentsList");
+
+if(!button||!status||!list){
+console.error("No se encontraron los elementos del área familiar.");
+return;
+}
+
+if(currentRole!=="parent"||!currentUser){
+status.className="classroom-status error";
+status.textContent="Inicia sesión con una cuenta familiar.";
+list.replaceChildren();
+return;
+}
+
+button.disabled=true;
+status.className="classroom-status info";
+status.textContent="Consultando tus estudiantes...";
+list.replaceChildren();
+
+try{
+const {data,error}=await db.rpc("get_my_linked_students");
+
+if(error)throw error;
+
+if(!Array.isArray(data)||data.length===0){
+status.className="classroom-status info";
+status.textContent="Todavía no tienes estudiantes vinculados a tu cuenta.";
+return;
+}
+
+data.forEach(student=>{
+const card=document.createElement("article");
+card.className="card family-student-card";
+
+const icon=document.createElement("div");
+icon.className="family-student-icon";
+icon.textContent="🎓";
+icon.setAttribute("aria-hidden","true");
+
+const name=document.createElement("h2");
+name.textContent=student.full_name||"Estudiante";
+
+const label=document.createElement("p");
+label.className="muted";
+label.textContent="Estudiante vinculado a tu cuenta de NYCE.";
+
+card.appendChild(icon);
+card.appendChild(name);
+card.appendChild(label);
+list.appendChild(card);
+});
+
+status.className="classroom-status success";
+status.textContent="Estudiantes vinculados: "+data.length+".";
+
+}catch(error){
+console.error("Error cargando estudiantes familiares:",error);
+status.className="classroom-status error";
+status.textContent="No se pudieron consultar los estudiantes. Comprueba que exista la función get_my_linked_students y que los permisos de Supabase estén configurados correctamente.";
+}finally{
+button.disabled=false;
+}
+}
+
+$("refreshFamilyButton").addEventListener("click",loadFamilyStudents);
+
+
 /* RESULTADO OAUTH Y SESIÓN */
 async function initializeApp(){
 readClassroomOAuthResult();
@@ -985,6 +1086,7 @@ setMessage("Google terminó la autorización. Inicia sesión en NYCE para contin
 db.auth.onAuthStateChange(event=>{
 if(event==="SIGNED_OUT"){
 currentUser=null;
+currentRole="student";
 $("appScreen").classList.add("hidden");
 $("authScreen").classList.remove("hidden");
 }
