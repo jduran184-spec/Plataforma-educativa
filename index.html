@@ -531,35 +531,166 @@ setClassroomStatus(classroomReturnResult.message,ok?"success":"error");
 $("classroomReturnNotice").textContent=classroomReturnResult.message;
 $("classroomReturnNotice").className="classroom-status "+(ok?"success":"error");
 }
-async function connectGoogleClassroom(){
-const {data:sessionData,error:sessionError}=await db.auth.getSession();
-const token=sessionData?.session?.access_token;
-if(sessionError||!token)throw new Error("Tu sesión de NYCE expiró. Inicia sesión otra vez.");
-const {data,error}=await db.functions.invoke("classroom-auth",{body:{action:"start"},headers:{Authorization:"Bearer "+token}});
-if(error)throw new Error(error.message||"No se pudo iniciar classroom-auth.");
-if(typeof data?.auth_url!=="string")throw new Error("El servidor no devolvió auth_url.");
-const url=new URL(data.auth_url);
-if(url.protocol!=="https:"||url.hostname!=="accounts.google.com")throw new Error("La dirección de autorización no es de Google.");
-window.location.assign(url.href);
-}
-$("connectClassroomButton").addEventListener("click",async()=>{
-const b=$("connectClassroomButton");
-b.disabled=true;
-setClassroomStatus("Preparando la autorización segura con Google...");
-try{await connectGoogleClassroom();}
-catch(error){setClassroomStatus(error.message||"No se pudo conectar.","error");}
-finally{b.disabled=false;}
-});
 
-function readClassroomOAuthResult(){
-const url=new URL(window.location.href);
-const result=url.searchParams.get("classroom");
-if(!result)return;
-classroomReturnResult=result==="connected"
-?{status:"connected",message:"Google Classroom se conectó correctamente."}
-:{status:"error",message:"Google no completó la autorización. Comprueba los permisos e inténtalo de nuevo."};
-url.searchParams.delete("classroom");
-history.replaceState({},document.title,url.pathname+url.search+url.hash);
+async function connectGoogleClassroom() {
+  const { data: sessionData, error: sessionError } =
+    await db.auth.getSession();
+
+  const token = sessionData?.session?.access_token;
+
+  if (sessionError || !token) {
+    throw new Error(
+      "Tu sesión de NYCE expiró. Inicia sesión otra vez."
+    );
+  }
+
+  const { data, error } = await db.functions.invoke(
+    "classroom-auth",
+    {
+      body: { action: "start" },
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    }
+  );
+
+  // Mostrar el detalle real del error de Supabase
+  if (error) {
+    let detail = error.message || "Error desconocido";
+    const response = error.context;
+
+    try {
+      if (response && typeof response.clone === "function") {
+        const responseCopy = response.clone();
+        let bodyText = "";
+
+        try {
+          const body = await responseCopy.json();
+
+          detail =
+            body.error ||
+            body.message ||
+            body.details ||
+            JSON.stringify(body);
+        } catch {
+          bodyText = await response.clone().text();
+
+          if (bodyText) {
+            detail = bodyText;
+          }
+        }
+
+        if (response.status) {
+          detail += " (HTTP " + response.status + ")";
+        }
+      }
+    } catch (diagnosticError) {
+      console.error(
+        "No se pudo leer el detalle HTTP:",
+        diagnosticError
+      );
+    }
+
+    console.error("Error de classroom-auth:", error);
+
+    throw new Error(
+      "Error de Google Classroom: " + detail
+    );
+  }
+
+  // Verificar que el servidor haya devuelto la URL
+  if (typeof data?.auth_url !== "string") {
+    console.error("Respuesta de classroom-auth:", data);
+
+    throw new Error(
+      data?.error ||
+      data?.message ||
+      "La función no devolvió auth_url."
+    );
+  }
+
+  // Validar la URL de autorización de Google
+  let url;
+
+  try {
+    url = new URL(data.auth_url);
+  } catch {
+    throw new Error(
+      "La función devolvió una dirección de autorización inválida."
+    );
+  }
+
+  if (
+    url.protocol !== "https:" ||
+    url.hostname !== "accounts.google.com"
+  ) {
+    throw new Error(
+      "La dirección de autorización no corresponde a Google."
+    );
+  }
+
+  window.location.assign(url.href);
+}
+
+
+// Botón para conectar Google Classroom
+$("connectClassroomButton").addEventListener(
+  "click",
+  async () => {
+    const b = $("connectClassroomButton");
+
+    b.disabled = true;
+
+    setClassroomStatus(
+      "Preparando la autorización segura con Google..."
+    );
+
+    try {
+      await connectGoogleClassroom();
+    } catch (error) {
+      console.error(
+        "Error al conectar Google Classroom:",
+        error
+      );
+
+      setClassroomStatus(
+        error.message || "No se pudo conectar.",
+        "error"
+      );
+    } finally {
+      b.disabled = false;
+    }
+  }
+);
+
+
+// Leer el resultado al regresar de Google
+function readClassroomOAuthResult() {
+  const url = new URL(window.location.href);
+  const result = url.searchParams.get("classroom");
+
+  if (!result) return;
+
+  classroomReturnResult =
+    result === "connected"
+      ? {
+          status: "connected",
+          message:
+            "Google Classroom se conectó correctamente."
+        }
+      : {
+          status: "error",
+          message:
+            "Google no completó la autorización. Comprueba los permisos e inténtalo de nuevo."
+        };
+
+  url.searchParams.delete("classroom");
+
+  history.replaceState(
+    {},
+    document.title,
+    url.pathname + url.search + url.hash
+  );
 }
 
 /* LISTAR CLASES */
