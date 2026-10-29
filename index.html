@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -41,8 +42,6 @@ h2{font-size:19px}
 .role-chip{background:#f0f1f8;color:var(--dark);border-radius:99px;font-weight:700;margin-right:6px}
 .notice{padding:12px;background:#fff5dd;border-radius:9px;font-size:13px}
 .empty{padding:16px;border:1px dashed var(--border);border-radius:10px;color:var(--muted)}
-
-/* RESPUESTAS DEL TUTOR IA */
 .answer{overflow-wrap:anywhere;line-height:1.8;margin-top:16px;color:var(--dark);font-size:15px}
 .answer p{margin:0 0 14px}
 .answer h1,.answer h2,.answer h3{font-size:1.1rem;margin:20px 0 10px;color:var(--dark)}
@@ -70,19 +69,18 @@ h2{font-size:19px}
 .gradebook th,.gradebook td{padding:12px;text-align:left;border-bottom:1px solid var(--border);font-size:14px}
 .gradebook th{background:#f7f8ff}
 .gradebook tr:hover td{background:#fafaff}
-
-/* ÁREA FAMILIAR */
 #familyStudentsList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
 .family-student-card{margin-bottom:0}
 .family-student-card h2{overflow-wrap:anywhere}
 .family-student-icon{font-size:28px;margin-bottom:8px}
-
+#familyGradesList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+#familyGradesList .card{margin-bottom:0}
 @media(max-width:750px){
 .app{display:block}
 .sidebar{width:100%;display:flex;flex-wrap:wrap;padding:8px;gap:4px;border-right:0;border-bottom:1px solid var(--border)}
 .sidebar .logo{width:100%;padding:8px 12px!important}
 .sidebar button{width:auto;flex:1 1 calc(50% - 8px);min-width:0;margin:0;text-align:center;overflow-wrap:anywhere}
-.cards,#classroomCoursesList,#familyStudentsList{grid-template-columns:1fr}
+.cards,#classroomCoursesList,#familyStudentsList,#familyGradesList{grid-template-columns:1fr}
 .content{padding:17px}
 .top{padding:14px}
 .authbox{padding:23px}
@@ -228,27 +226,28 @@ h2{font-size:19px}
 <div class="notice">La sincronización consulta información de Classroom. No entrega tareas por los estudiantes ni publica notas en Google Classroom.</div>
 </section>
 
-<!-- ÁREA DE FAMILIA: NUEVA VERSIÓN CONECTADA A SUPABASE -->
 <section id="parent-home" class="panel">
-  <h1>Área de familia 👨‍👩‍👧</h1>
-  <p class="muted">
-    Consulta los estudiantes vinculados a tu cuenta de NYCE.
-  </p>
+<h1>Área de familia 👨‍👩‍👧</h1>
+<p class="muted">Consulta los estudiantes vinculados a tu cuenta de NYCE.</p>
 
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-      <h2>Mis estudiantes</h2>
-      <button id="refreshFamilyButton" class="btn" type="button">
-        Actualizar
-      </button>
-    </div>
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+<h2>Mis estudiantes</h2>
+<button id="refreshFamilyButton" class="btn" type="button">Actualizar</button>
+</div>
+<div id="familyStatus" class="classroom-status info" role="status" aria-live="polite">Consultando estudiantes vinculados...</div>
+<div id="familyStudentsList"></div>
+</div>
 
-    <div id="familyStatus" class="classroom-status info" role="status" aria-live="polite">
-      Consultando estudiantes vinculados...
-    </div>
-
-    <div id="familyStudentsList"></div>
-  </div>
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+<h2>Tareas y calificaciones 📝</h2>
+<button id="refreshFamilyGradesButton" class="btn" type="button">Actualizar notas</button>
+</div>
+<p class="muted">Consulta las actividades, los estados de entrega y las calificaciones publicadas en Google Classroom del estudiante vinculado.</p>
+<div id="familyGradesStatus" class="classroom-status info" role="status" aria-live="polite">Preparando consulta de tareas...</div>
+<div id="familyGradesList"></div>
+</div>
 </section>
 
 <section id="admin-home" class="panel">
@@ -278,7 +277,6 @@ h2{font-size:19px}
 <script>
 "use strict";
 
-/* CONFIGURACIÓN SUPABASE */
 const SUPABASE_URL="https://zemgfahecttvuhfghogl.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_s1O9sJ1pNEdFVCUBEQZnUw_5E2n6qS9";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
@@ -375,7 +373,10 @@ if(pageId==="teacher-classroom")renderClassroomReturnResult();
 if(pageId==="teacher-assignments")loadTeacherGradebook();
 if(pageId==="student-tasks")loadStudentTasks();
 if(pageId==="student-courses")loadStudentCourses();
-if(pageId==="parent-home")loadFamilyStudents();
+if(pageId==="parent-home"){
+loadFamilyStudents();
+loadFamilyGrades();
+}
 }
 
 async function loadUser(user){
@@ -399,11 +400,9 @@ showPage((rolePages[currentRole]||rolePages.student)[0][0]);
 
 if(currentRole==="parent"){
 await loadFamilyStudents();
+await loadFamilyGrades();
 }
-
-if(currentRole==="teacher"&&classroomReturnResult){
-renderClassroomReturnResult();
-}
+if(currentRole==="teacher"&&classroomReturnResult)renderClassroomReturnResult();
 }
 
 async function logout(){
@@ -425,207 +424,100 @@ $("accountLogout").addEventListener("click",logout);
 document.querySelector('[data-page="account"]').addEventListener("click",()=>showPage("account"));
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.go)));
 
-
-/* TUTOR IA: MARKDOWN, MATEMÁTICAS Y CONTROL DE RESPUESTAS */
-
+/* TUTOR IA */
 function renderTutorAnswer(rawAnswer) {
-  const container = $("tutorAnswer");
-  const source = String(rawAnswer ?? "");
-  const mathBlocks = [];
-
-  const protectedText = source.replace(
-    /(\$\$[\s\S]+?\$\$|\\\[[\s\S]+?\\\]|\\\([\s\S]+?\\\)|(?<!\$)\$(?!\$)[^\n$]+?\$(?!\$))/g,
-    (match) => {
-      const index = mathBlocks.push(match) - 1;
-      return `NYCEMATHPLACEHOLDER${index}END`;
-    }
-  );
-
-  const markdownHtml = marked.parse(protectedText, {
-    gfm: true,
-    breaks: true
-  });
-
-  const safeHtml = DOMPurify.sanitize(markdownHtml);
-  const template = document.createElement("template");
-  template.innerHTML = safeHtml;
-
-  const walker = document.createTreeWalker(
-    template.content,
-    NodeFilter.SHOW_TEXT
-  );
-
-  const nodes = [];
-  while (walker.nextNode()) nodes.push(walker.currentNode);
-
-  for (const node of nodes) {
-    const value = node.nodeValue;
-    const regex = /NYCEMATHPLACEHOLDER(\d+)END/g;
-    let match;
-    let lastIndex = 0;
-    let changed = false;
-    const fragment = document.createDocumentFragment();
-
-    while ((match = regex.exec(value)) !== null) {
-      changed = true;
-
-      fragment.appendChild(
-        document.createTextNode(value.slice(lastIndex, match.index))
-      );
-
-      const original = mathBlocks[Number(match[1])];
-      const span = document.createElement("span");
-      let expression = original;
-      let displayMode = false;
-
-      if (expression.startsWith("$$") && expression.endsWith("$$")) {
-        expression = expression.slice(2, -2);
-        displayMode = true;
-      } else if (
-        expression.startsWith("\\[") &&
-        expression.endsWith("\\]")
-      ) {
-        expression = expression.slice(2, -2);
-        displayMode = true;
-      } else if (
-        expression.startsWith("\\(") &&
-        expression.endsWith("\\)")
-      ) {
-        expression = expression.slice(2, -2);
-      } else if (
-        expression.startsWith("$") &&
-        expression.endsWith("$")
-      ) {
-        expression = expression.slice(1, -1);
-      }
-
-      try {
-        katex.render(expression, span, {
-          displayMode,
-          throwOnError: false,
-          strict: "ignore",
-          output: "htmlAndMathml"
-        });
-      } catch (error) {
-        console.warn("No se pudo renderizar una fórmula:", error);
-        span.textContent = original;
-      }
-
-      fragment.appendChild(span);
-      lastIndex = regex.lastIndex;
-    }
-
-    if (changed) {
-      fragment.appendChild(
-        document.createTextNode(value.slice(lastIndex))
-      );
-      node.replaceWith(fragment);
-    }
-  }
-
-  container.replaceChildren(template.content);
-}
-
-function tutorAnswerMayBeIncomplete(answer) {
-  const text = String(answer ?? "").trim();
-  if (!text) return true;
-
-  const unfinishedEndings = [
-    "imagina que",
-    "por ejemplo,",
-    "esto significa que",
-    "en la vida cotidiana",
-    "para resolverlo",
-    "el siguiente paso es",
-    "tenemos que"
-  ];
-
-  const lower = text.toLowerCase();
-
-  if (unfinishedEndings.some(ending => lower.endsWith(ending))) {
-    return true;
-  }
-
-  const dollarCount = (text.match(/\$\$/g) || []).length;
-  if (dollarCount % 2 !== 0) return true;
-
-  if (
-    (text.match(/\\\(/g) || []).length !==
-    (text.match(/\\\)/g) || []).length
-  ) return true;
-
-  if (
-    (text.match(/\\\[/g) || []).length !==
-    (text.match(/\\\]/g) || []).length
-  ) return true;
-
-  return false;
-}
-
-$("tutorForm").addEventListener("submit", async event => {
-  event.preventDefault();
-
-  const question = $("tutorQuestion").value.trim();
-  if (!question) return;
-
-  const button = $("tutorButton");
-  const status = $("tutorStatus");
-  const answerBox = $("tutorAnswer");
-
-  button.disabled = true;
-  status.textContent = "El tutor está preparando tu respuesta...";
-  answerBox.replaceChildren();
-
-  try {
-    const { data, error } = await db.functions.invoke("smart-action", {
-      body: {
-        question,
-        response_format: "markdown_math",
-        instructions: [
-          "Responde en español claro y apropiado para estudiantes.",
-          "Da una explicación completa, ordenada y paso a paso.",
-          "Usa Markdown para títulos, listas y negritas.",
-          "Escribe las fórmulas en LaTeX delimitado por \\(...\\) o $$...$$.",
-          "No escribas fórmulas matemáticas dentro de bloques de código.",
-          "Incluye el resultado final y termina todas las explicaciones.",
-          "No dejes frases, listas, ejemplos ni operaciones a medio terminar.",
-          "Si la respuesta es larga, resume sin cortar una frase."
-        ].join("\n")
-      }
-    });
-
-    if (error) throw error;
-
-    const answer =
-      data?.answer ??
-      data?.text ??
-      data?.response ??
-      data?.result ??
-      data?.message;
-
-    if (typeof answer !== "string" || !answer.trim()) {
-      console.error("Respuesta inesperada de smart-action:", data);
-      throw new Error("El servidor no devolvió texto en un formato reconocido.");
-    }
-
-    renderTutorAnswer(answer);
-
-    if (tutorAnswerMayBeIncomplete(answer)) {
-      status.textContent =
-        "La respuesta podría estar incompleta. Puedes pedirle al tutor que continúe.";
-    } else {
-      status.textContent = "Respuesta del tutor:";
-    }
-
-  } catch (error) {
-    console.error("Error del Tutor IA:", error);
-    status.textContent =
-      "No se pudo obtener una respuesta. Revisa la función smart-action en Supabase.";
-  } finally {
-    button.disabled = false;
-  }
+const container=$("tutorAnswer");
+const source=String(rawAnswer??"");
+const mathBlocks=[];
+const protectedText=source.replace(/(\$\$[\s\S]+?\$\$|\\\[[\s\S]+?\\\]|\\\([\s\S]+?\\\)|(?<!\$)\$(?!\$)[^\n$]+?\$(?!\$))/g,match=>{
+const index=mathBlocks.push(match)-1;
+return `NYCEMATHPLACEHOLDER${index}END`;
 });
+const markdownHtml=marked.parse(protectedText,{gfm:true,breaks:true});
+const safeHtml=DOMPurify.sanitize(markdownHtml);
+const template=document.createElement("template");
+template.innerHTML=safeHtml;
+const walker=document.createTreeWalker(template.content,NodeFilter.SHOW_TEXT);
+const nodes=[];
+while(walker.nextNode())nodes.push(walker.currentNode);
+for(const node of nodes){
+const value=node.nodeValue;
+const regex=/NYCEMATHPLACEHOLDER(\d+)END/g;
+let match,lastIndex=0,changed=false;
+const fragment=document.createDocumentFragment();
+while((match=regex.exec(value))!==null){
+changed=true;
+fragment.appendChild(document.createTextNode(value.slice(lastIndex,match.index)));
+const original=mathBlocks[Number(match[1])];
+const span=document.createElement("span");
+let expression=original,displayMode=false;
+if(expression.startsWith("$$")&&expression.endsWith("$$")){expression=expression.slice(2,-2);displayMode=true;}
+else if(expression.startsWith("\\[")&&expression.endsWith("\\]")){expression=expression.slice(2,-2);displayMode=true;}
+else if(expression.startsWith("\\(")&&expression.endsWith("\\)")){expression=expression.slice(2,-2);}
+else if(expression.startsWith("$")&&expression.endsWith("$")){expression=expression.slice(1,-1);}
+try{katex.render(expression,span,{displayMode,throwOnError:false,strict:"ignore",output:"htmlAndMathml"});}
+catch(error){console.warn("No se pudo renderizar una fórmula:",error);span.textContent=original;}
+fragment.appendChild(span);
+lastIndex=regex.lastIndex;
+}
+if(changed){
+fragment.appendChild(document.createTextNode(value.slice(lastIndex)));
+node.replaceWith(fragment);
+}
+}
+container.replaceChildren(template.content);
+}
 
+function tutorAnswerMayBeIncomplete(answer){
+const text=String(answer??"").trim();
+if(!text)return true;
+const endings=["imagina que","por ejemplo,","esto significa que","en la vida cotidiana","para resolverlo","el siguiente paso es","tenemos que"];
+const lower=text.toLowerCase();
+if(endings.some(ending=>lower.endsWith(ending)))return true;
+if(((text.match(/\$\$/g)||[]).length)%2!==0)return true;
+if((text.match(/\\\(/g)||[]).length!==(text.match(/\\\)/g)||[]).length)return true;
+if((text.match(/\\\[/g)||[]).length!==(text.match(/\\\]/g)||[]).length)return true;
+return false;
+}
+
+$("tutorForm").addEventListener("submit",async event=>{
+event.preventDefault();
+const question=$("tutorQuestion").value.trim();
+if(!question)return;
+const button=$("tutorButton"),status=$("tutorStatus"),answerBox=$("tutorAnswer");
+button.disabled=true;
+status.textContent="El tutor está preparando tu respuesta...";
+answerBox.replaceChildren();
+try{
+const {data,error}=await db.functions.invoke("smart-action",{body:{
+question,
+response_format:"markdown_math",
+instructions:[
+"Responde en español claro y apropiado para estudiantes.",
+"Da una explicación completa, ordenada y paso a paso.",
+"Usa Markdown para títulos, listas y negritas.",
+"Escribe las fórmulas en LaTeX delimitado por \\(...\\) o $$...$$.",
+"No escribas fórmulas matemáticas dentro de bloques de código.",
+"Incluye el resultado final y termina todas las explicaciones.",
+"No dejes frases, listas, ejemplos ni operaciones a medio terminar.",
+"Si la respuesta es larga, resume sin cortar una frase."
+].join("\n")
+}});
+if(error)throw error;
+const answer=data?.answer??data?.text??data?.response??data?.result??data?.message;
+if(typeof answer!=="string"||!answer.trim()){
+console.error("Respuesta inesperada de smart-action:",data);
+throw new Error("El servidor no devolvió texto en un formato reconocido.");
+}
+renderTutorAnswer(answer);
+status.textContent=tutorAnswerMayBeIncomplete(answer)
+?"La respuesta podría estar incompleta. Puedes pedirle al tutor que continúe."
+:"Respuesta del tutor:";
+}catch(error){
+console.error("Error del Tutor IA:",error);
+status.textContent="No se pudo obtener una respuesta. Revisa la función smart-action en Supabase.";
+}finally{button.disabled=false;}
+});
 
 /* GOOGLE CLASSROOM: OAUTH */
 function setClassroomStatus(message,type="info"){
@@ -643,9 +535,7 @@ async function connectGoogleClassroom(){
 const {data:sessionData,error:sessionError}=await db.auth.getSession();
 const token=sessionData?.session?.access_token;
 if(sessionError||!token)throw new Error("Tu sesión de NYCE expiró. Inicia sesión otra vez.");
-const {data,error}=await db.functions.invoke("classroom-auth",{
-body:{action:"start"},headers:{Authorization:"Bearer "+token}
-});
+const {data,error}=await db.functions.invoke("classroom-auth",{body:{action:"start"},headers:{Authorization:"Bearer "+token}});
 if(error)throw new Error(error.message||"No se pudo iniciar classroom-auth.");
 if(typeof data?.auth_url!=="string")throw new Error("El servidor no devolvió auth_url.");
 const url=new URL(data.auth_url);
@@ -718,21 +608,17 @@ list.appendChild(card);
 }
 
 async function loadClassroomCourses(){
-const button=$("loadClassroomCoursesButton");
-const status=$("classroomCoursesStatus");
+const button=$("loadClassroomCoursesButton"),status=$("classroomCoursesStatus");
 button.disabled=true;
 status.className="classroom-status info";
 status.textContent="Consultando Google Classroom...";
 $("classroomCoursesList").replaceChildren();
-
 try{
 if(currentRole!=="teacher")throw new Error("Esta opción solo está disponible para docentes.");
 const {data:sessionData,error:sessionError}=await db.auth.getSession();
 const token=sessionData?.session?.access_token;
 if(sessionError||!token)throw new Error("Tu sesión de NYCE expiró.");
-const {data,error}=await db.functions.invoke("classroom-courses",{
-body:{},headers:{Authorization:"Bearer "+token}
-});
+const {data,error}=await db.functions.invoke("classroom-courses",{body:{},headers:{Authorization:"Bearer "+token}});
 if(error)throw new Error(data?.error||error.message);
 if(data?.reconnect)throw new Error(data.error||"Vuelve a conectar Google Classroom.");
 if(!data?.connected||!Array.isArray(data.courses))throw new Error(data?.error||"Respuesta inesperada del servidor.");
@@ -742,9 +628,7 @@ status.textContent=(data.google_email?"Cuenta: "+data.google_email+". ":"")+"Cla
 }catch(error){
 status.className="classroom-status error";
 status.textContent=error.message||"No se pudieron cargar las clases.";
-}finally{
-button.disabled=false;
-}
+}finally{button.disabled=false;}
 }
 $("loadClassroomCoursesButton").addEventListener("click",loadClassroomCourses);
 
@@ -768,12 +652,8 @@ function renderTeacherGradebook(rows){
 const body=$("teacherGradebookBody");
 body.replaceChildren();
 if(!rows.length){
-const tr=document.createElement("tr");
-const td=gradebookCell("No hay registros disponibles para mostrar.");
-td.colSpan=7;
-tr.appendChild(td);
-body.appendChild(tr);
-return;
+const tr=document.createElement("tr"),td=gradebookCell("No hay registros disponibles para mostrar.");
+td.colSpan=7;tr.appendChild(td);body.appendChild(tr);return;
 }
 rows.forEach(row=>{
 const tr=document.createElement("tr");
@@ -793,10 +673,7 @@ body.appendChild(tr);
 });
 }
 async function loadTeacherGradebook(){
-const button=$("refreshTeacherGradebookButton");
-const status=$("teacherGradebookStatus");
-const body=$("teacherGradebookBody");
-
+const button=$("refreshTeacherGradebookButton"),status=$("teacherGradebookStatus"),body=$("teacherGradebookBody");
 if(currentRole!=="teacher"||!currentUser){
 status.className="classroom-status error";
 status.textContent="Esta consulta solo está disponible para docentes.";
@@ -822,16 +699,13 @@ console.error("Error cargando libro de calificaciones:",error);
 body.replaceChildren();
 status.className="classroom-status error";
 status.textContent="No se pudo cargar la tabla. Verifica las columnas y las políticas RLS de classroom_sync_assignments.";
-}finally{
-button.disabled=false;
-}
+}finally{button.disabled=false;}
 }
 $("refreshTeacherGradebookButton").addEventListener("click",loadTeacherGradebook);
 
 /* SINCRONIZAR TAREAS Y NOTAS */
 async function syncClassroomData(){
-const button=$("syncClassroomButton");
-const status=$("syncClassroomStatus");
+const button=$("syncClassroomButton"),status=$("syncClassroomStatus");
 button.disabled=true;
 status.className="classroom-status info";
 status.textContent="Sincronizando cursos, actividades, estudiantes y entregas...";
@@ -840,10 +714,7 @@ if(currentRole!=="teacher")throw new Error("Solo los docentes pueden sincronizar
 const {data:sessionData,error:sessionError}=await db.auth.getSession();
 const token=sessionData?.session?.access_token;
 if(sessionError||!token)throw new Error("Tu sesión expiró. Inicia sesión otra vez en NYCE.");
-
-const {data,error}=await db.functions.invoke("Classroom_sync",{
-body:{},headers:{Authorization:"Bearer "+token}
-});
+const {data,error}=await db.functions.invoke("Classroom_sync",{body:{},headers:{Authorization:"Bearer "+token}});
 if(error){
 console.error("Error al invocar Classroom_sync:",error);
 let message=error.message||"No se pudo conectar con la función.";
@@ -854,9 +725,7 @@ const details=typeof response.json==="function"?await response.clone().json():nu
 if(details?.error)message+=" Detalle: "+details.error;
 else if(details?.message)message+=" Detalle: "+details.message;
 if(response.status)message+=" (HTTP "+response.status+")";
-}catch(_){
-if(error.context.status)message+=" (HTTP "+error.context.status+")";
-}
+}catch(_){if(error.context.status)message+=" (HTTP "+error.context.status+")";}
 }
 throw new Error(message);
 }
@@ -865,10 +734,7 @@ const courses=data.courses_synced??data.courses??0;
 const assignments=data.assignments_synced??data.assignments??data.coursework??0;
 const submissions=data.student_assignment_rows_synced??data.submissions_synced??data.submissions??0;
 status.className=data.success===false?"classroom-status error":"classroom-status success";
-status.textContent=(data.message||"Sincronización completada.")+
-" Cursos: "+courses+"; actividades: "+assignments+
-"; filas de tareas por estudiante: "+submissions+"."+
-(Array.isArray(data.course_errors)&&data.course_errors.length?" Cursos con errores: "+data.course_errors.length+". Revisa los Logs de Supabase.":"");
+status.textContent=(data.message||"Sincronización completada.")+" Cursos: "+courses+"; actividades: "+assignments+"; filas de tareas por estudiante: "+submissions+"."+(Array.isArray(data.course_errors)&&data.course_errors.length?" Cursos con errores: "+data.course_errors.length+". Revisa los Logs de Supabase.":"");
 $("teacherCourseCount").textContent=courses;
 $("teacherWorkCount").textContent=assignments;
 $("teacherSubmissionCount").textContent=submissions;
@@ -877,9 +743,7 @@ await loadTeacherGradebook();
 console.error("Error sincronizando Classroom:",error);
 status.className="classroom-status error";
 status.textContent=error.message||"No se pudo sincronizar Google Classroom.";
-}finally{
-button.disabled=false;
-}
+}finally{button.disabled=false;}
 }
 $("syncClassroomButton").addEventListener("click",syncClassroomData);
 
@@ -903,46 +767,25 @@ if(!rows.length){
 const empty=document.createElement("div");
 empty.className="empty";
 empty.textContent="No encontramos tareas vinculadas a tu correo. Pide a tu docente que sincronice Google Classroom.";
-list.appendChild(empty);
-return;
+list.appendChild(empty);return;
 }
 rows.forEach(task=>{
-const card=document.createElement("article");
-card.className="card";
-const title=document.createElement("h2");
-title.textContent=task.title||"Tarea sin título";
-card.appendChild(title);
-const course=document.createElement("p");
-course.className="muted";
-course.textContent=task.course_name||"Curso de Google Classroom";
-card.appendChild(course);
-if(task.description){
-const desc=document.createElement("p");
-desc.textContent=task.description;
-card.appendChild(desc);
-}
-const due=document.createElement("p");
-due.textContent="Fecha límite: "+safeDate(task.due_date);
-card.appendChild(due);
-const state=document.createElement("p");
-state.textContent="Estado: "+translateState(task.submission_state);
-card.appendChild(state);
+const card=document.createElement("article");card.className="card";
+const title=document.createElement("h2");title.textContent=task.title||"Tarea sin título";card.appendChild(title);
+const course=document.createElement("p");course.className="muted";course.textContent=task.course_name||"Curso de Google Classroom";card.appendChild(course);
+if(task.description){const desc=document.createElement("p");desc.textContent=task.description;card.appendChild(desc);}
+const due=document.createElement("p");due.textContent="Fecha límite: "+safeDate(task.due_date);card.appendChild(due);
+const state=document.createElement("p");state.textContent="Estado: "+translateState(task.submission_state);card.appendChild(state);
 const grade=document.createElement("p");
 if(task.grade_5!==null&&task.grade_5!==undefined&&task.grade_5!==""){
 grade.textContent="Calificación NYCE: "+Number(task.grade_5).toLocaleString("es-CO",{minimumFractionDigits:1,maximumFractionDigits:2})+"/5,0";
-}else{
-grade.textContent="Calificación: pendiente de publicación";
-}
+}else{grade.textContent="Calificación: pendiente de publicación";}
 card.appendChild(grade);
 if(task.alternate_link){
 try{
 const u=new URL(task.alternate_link);
 if(u.protocol==="https:"&&u.hostname==="classroom.google.com"){
-const a=document.createElement("a");
-a.href=u.href;a.target="_blank";a.rel="noopener noreferrer";
-a.className="classroom-course-link";
-a.textContent="Abrir tarea en Google Classroom ↗";
-card.appendChild(a);
+const a=document.createElement("a");a.href=u.href;a.target="_blank";a.rel="noopener noreferrer";a.className="classroom-course-link";a.textContent="Abrir tarea en Google Classroom ↗";card.appendChild(a);
 }
 }catch(_){}
 }
@@ -950,37 +793,23 @@ list.appendChild(card);
 });
 }
 async function loadStudentTasks(){
-const button=$("refreshStudentTasksButton");
-const status=$("studentTasksStatus");
-if(!currentUser?.email){
-status.className="classroom-status error";
-status.textContent="Inicia sesión para consultar tus tareas.";
-return;
-}
-button.disabled=true;
-status.className="classroom-status info";
-status.textContent="Cargando tus tareas...";
-$("studentTasksList").replaceChildren();
+const button=$("refreshStudentTasksButton"),status=$("studentTasksStatus");
+if(!currentUser?.email){status.className="classroom-status error";status.textContent="Inicia sesión para consultar tus tareas.";return;}
+button.disabled=true;status.className="classroom-status info";status.textContent="Cargando tus tareas...";$("studentTasksList").replaceChildren();
 try{
 const {data,error}=await db.from("classroom_sync_assignments")
 .select("course_id,coursework_id,course_name,title,description,alternate_link,due_date,max_points,submission_state,points_earned,grade_5,synced_at")
 .ilike("student_email",currentUser.email)
 .order("due_date",{ascending:true,nullsFirst:false});
 if(error)throw error;
-const rows=data||[];
-renderStudentTasks(rows);
-status.className="classroom-status success";
-status.textContent="Tareas encontradas: "+rows.length+".";
+const rows=data||[];renderStudentTasks(rows);
+status.className="classroom-status success";status.textContent="Tareas encontradas: "+rows.length+".";
 }catch(error){
 console.error(error);
 status.className="classroom-status error";
 status.textContent="No se pudieron cargar las tareas. Comprueba la tabla y las políticas RLS de classroom_sync_assignments en Supabase.";
-}finally{
-button.disabled=false;
+}finally{button.disabled=false;}
 }
-}
-
-/* ACTUALIZAR TAREAS DEL ESTUDIANTE */
 $("refreshStudentTasksButton").addEventListener("click",loadStudentTasks);
 
 /* CURSOS DEL ESTUDIANTE */
@@ -994,77 +823,96 @@ info.textContent="Los cursos disponibles dependen de las tareas sincronizadas de
 list.appendChild(info);
 }
 
-
-/* ÁREA FAMILIAR: ESTUDIANTES VINCULADOS A SUPABASE */
+/* ÁREA FAMILIAR: ESTUDIANTES VINCULADOS */
 async function loadFamilyStudents(){
-const button=$("refreshFamilyButton");
-const status=$("familyStatus");
-const list=$("familyStudentsList");
-
-if(!button||!status||!list){
-console.error("No se encontraron los elementos del área familiar.");
-return;
-}
-
+const button=$("refreshFamilyButton"),status=$("familyStatus"),list=$("familyStudentsList");
+if(!button||!status||!list)return;
 if(currentRole!=="parent"||!currentUser){
-status.className="classroom-status error";
-status.textContent="Inicia sesión con una cuenta familiar.";
-list.replaceChildren();
-return;
+status.className="classroom-status error";status.textContent="Inicia sesión con una cuenta familiar.";list.replaceChildren();return;
 }
-
-button.disabled=true;
-status.className="classroom-status info";
-status.textContent="Consultando tus estudiantes...";
-list.replaceChildren();
-
+button.disabled=true;status.className="classroom-status info";status.textContent="Consultando tus estudiantes...";list.replaceChildren();
 try{
 const {data,error}=await db.rpc("get_my_linked_students");
-
 if(error)throw error;
-
 if(!Array.isArray(data)||data.length===0){
-status.className="classroom-status info";
-status.textContent="Todavía no tienes estudiantes vinculados a tu cuenta.";
-return;
+status.className="classroom-status info";status.textContent="Todavía no tienes estudiantes vinculados a tu cuenta.";return;
 }
-
 data.forEach(student=>{
-const card=document.createElement("article");
-card.className="card family-student-card";
-
-const icon=document.createElement("div");
-icon.className="family-student-icon";
-icon.textContent="🎓";
-icon.setAttribute("aria-hidden","true");
-
-const name=document.createElement("h2");
-name.textContent=student.full_name||"Estudiante";
-
-const label=document.createElement("p");
-label.className="muted";
-label.textContent="Estudiante vinculado a tu cuenta de NYCE.";
-
-card.appendChild(icon);
-card.appendChild(name);
-card.appendChild(label);
-list.appendChild(card);
+const card=document.createElement("article");card.className="card family-student-card";
+const icon=document.createElement("div");icon.className="family-student-icon";icon.textContent="🎓";icon.setAttribute("aria-hidden","true");
+const name=document.createElement("h2");name.textContent=student.full_name||"Estudiante";
+const label=document.createElement("p");label.className="muted";label.textContent="Estudiante vinculado a tu cuenta de NYCE.";
+card.appendChild(icon);card.appendChild(name);card.appendChild(label);list.appendChild(card);
 });
-
-status.className="classroom-status success";
-status.textContent="Estudiantes vinculados: "+data.length+".";
-
+status.className="classroom-status success";status.textContent="Estudiantes vinculados: "+data.length+".";
 }catch(error){
 console.error("Error cargando estudiantes familiares:",error);
 status.className="classroom-status error";
-status.textContent="No se pudieron consultar los estudiantes. Comprueba que exista la función get_my_linked_students y que los permisos de Supabase estén configurados correctamente.";
-}finally{
-button.disabled=false;
+status.textContent="No se pudieron consultar los estudiantes. Comprueba get_my_linked_students y los permisos de Supabase.";
+}finally{button.disabled=false;}
 }
-}
-
 $("refreshFamilyButton").addEventListener("click",loadFamilyStudents);
 
+/* ÁREA FAMILIAR: TAREAS Y CALIFICACIONES */
+async function loadFamilyGrades(){
+const button=$("refreshFamilyGradesButton"),status=$("familyGradesStatus"),list=$("familyGradesList");
+if(!button||!status||!list)return;
+if(currentRole!=="parent"||!currentUser){
+status.className="classroom-status error";status.textContent="Inicia sesión con una cuenta familiar.";list.replaceChildren();return;
+}
+button.disabled=true;status.className="classroom-status info";status.textContent="Consultando tareas y calificaciones...";list.replaceChildren();
+try{
+const {data,error}=await db.rpc("get_my_child_classroom_grades");
+if(error)throw error;
+if(!Array.isArray(data)||data.length===0){
+status.className="classroom-status info";
+status.textContent="No se encontraron tareas para el estudiante vinculado. Comprueba el vínculo familiar y la sincronización de Google Classroom.";
+return;
+}
+
+/* Agrupa por estudiante, curso y título; conserva la sincronización más reciente. */
+const latest=new Map();
+for(const task of data){
+const key=[task.student_name||"",task.course_name||"",task.assignment_title||""].join("|");
+const previous=latest.get(key);
+const currentTime=task.synced_at?new Date(task.synced_at).getTime():0;
+const previousTime=previous?.synced_at?new Date(previous.synced_at).getTime():0;
+if(!previous||currentTime>=previousTime)latest.set(key,task);
+}
+
+const fragment=document.createDocumentFragment();
+for(const task of latest.values()){
+const card=document.createElement("article");card.className="card";
+const title=document.createElement("h2");title.textContent=task.assignment_title||"Tarea sin título";card.appendChild(title);
+const course=document.createElement("p");course.className="muted";course.textContent="Curso: "+(task.course_name||"Sin nombre");card.appendChild(course);
+const stateNames={NEW:"Sin entregar",CREATED:"Creada",TURNED_IN:"Entregada",RETURNED:"Devuelta y revisada",RECLAIMED_BY_STUDENT:"Devuelta al estudiante"};
+const state=document.createElement("p");state.textContent="Estado: "+(stateNames[task.submission_state]||task.submission_state||"Sin información");card.appendChild(state);
+const grade=document.createElement("p");
+if(task.points_earned!==null&&task.points_earned!==undefined&&task.max_points!==null&&task.max_points!==undefined){
+let gradeText="Calificación: "+task.points_earned+" de "+task.max_points;
+if(task.grade_5!==null&&task.grade_5!==undefined)gradeText+=" (nota sobre 5: "+task.grade_5+")";
+grade.textContent=gradeText;
+}else{
+grade.textContent="Calificación pendiente de publicación.";
+}
+card.appendChild(grade);
+if(task.due_date){
+const due=document.createElement("p");due.className="muted";
+const date=new Date(task.due_date);
+due.textContent=Number.isNaN(date.getTime())?"Fecha de entrega no disponible.":"Fecha de entrega: "+date.toLocaleString("es-CO",{dateStyle:"medium",timeStyle:"short"});
+card.appendChild(due);
+}
+fragment.appendChild(card);
+}
+list.replaceChildren(fragment);
+status.className="classroom-status success";status.textContent="Tareas consultadas: "+latest.size+".";
+}catch(error){
+console.error("Error cargando notas familiares:",error);
+status.className="classroom-status error";
+status.textContent="No se pudieron cargar las calificaciones. Verifica que exista get_my_child_classroom_grades y que tenga los permisos correctos.";
+}finally{button.disabled=false;}
+}
+$("refreshFamilyGradesButton").addEventListener("click",loadFamilyGrades);
 
 /* RESULTADO OAUTH Y SESIÓN */
 async function initializeApp(){
@@ -1085,8 +933,7 @@ setMessage("Google terminó la autorización. Inicia sesión en NYCE para contin
 }
 db.auth.onAuthStateChange(event=>{
 if(event==="SIGNED_OUT"){
-currentUser=null;
-currentRole="student";
+currentUser=null;currentRole="student";
 $("appScreen").classList.add("hidden");
 $("authScreen").classList.remove("hidden");
 }
