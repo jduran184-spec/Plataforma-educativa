@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -46,6 +47,11 @@ h2{font-size:19px}
 #classroomCoursesList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
 .classroom-course-link{display:inline-block;margin-top:14px;color:var(--primary);font-weight:700;text-decoration:none}
 .classroom-course-link:hover{text-decoration:underline}
+.gradebook-wrap{overflow-x:auto;margin-top:16px}
+.gradebook{width:100%;border-collapse:collapse;min-width:760px;background:white}
+.gradebook th,.gradebook td{padding:12px;text-align:left;border-bottom:1px solid var(--border);font-size:14px}
+.gradebook th{background:#f7f8ff}
+.gradebook tr:hover td{background:#fafaff}
 @media(max-width:750px){
 .app{display:block}
 .sidebar{width:100%;display:flex;flex-wrap:wrap;padding:8px;gap:4px;border-right:0;border-bottom:1px solid var(--border)}
@@ -152,8 +158,25 @@ h2{font-size:19px}
 </section>
 
 <section id="teacher-assignments" class="panel">
-<h1>Asignaciones y notas 📝</h1><p class="muted">Las calificaciones publicadas en Google Classroom se consultan mediante la sincronización.</p>
-<div class="card"><button class="btn" data-go="teacher-classroom">Ir a sincronización</button></div>
+<h1>Asignaciones y notas 📝</h1>
+<p class="muted">Consulta todas las relaciones entre estudiantes, actividades y calificaciones sincronizadas.</p>
+<div class="card">
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<button id="refreshTeacherGradebookButton" class="btn" type="button">Actualizar tabla</button>
+<button class="btn light" data-go="teacher-classroom" type="button">Ir a sincronización</button>
+</div>
+<div id="teacherGradebookStatus" class="classroom-status info" role="status" aria-live="polite">Pulsa «Actualizar tabla» para consultar los registros.</div>
+<div class="gradebook-wrap">
+<table class="gradebook">
+<thead><tr>
+<th>Estudiante</th><th>Correo</th><th>Curso</th><th>Asignación</th><th>Estado</th><th>Puntos</th><th>Nota NYCE</th>
+</tr></thead>
+<tbody id="teacherGradebookBody">
+<tr><td colspan="7">Todavía no se han consultado los registros.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
 </section>
 
 <section id="teacher-classroom" class="panel">
@@ -285,6 +308,7 @@ document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id=
 document.querySelectorAll("#roleNav button").forEach(b=>b.classList.toggle("active",b.dataset.page===pageId));
 document.querySelectorAll(".sidebar button[data-page='account']").forEach(b=>b.classList.toggle("active",pageId==="account"));
 if(pageId==="teacher-classroom")renderClassroomReturnResult();
+if(pageId==="teacher-assignments")loadTeacherGradebook();
 if(pageId==="student-tasks")loadStudentTasks();
 if(pageId==="student-courses")loadStudentCourses();
 }
@@ -455,6 +479,97 @@ status.textContent=error.message||"No se pudieron cargar las clases.";
 }
 $("loadClassroomCoursesButton").addEventListener("click",loadClassroomCourses);
 
+/* LIBRO DE CALIFICACIONES DEL DOCENTE */
+function gradebookCell(value){
+const td=document.createElement("td");
+td.textContent=value===null||value===undefined||value===""?"—":String(value);
+return td;
+}
+
+function gradebookState(value){
+const states={
+NEW:"Sin entregar",
+CREATED:"Creada",
+TURNED_IN:"Entregada",
+RETURNED:"Devuelta",
+RECLAIMED_BY_STUDENT:"Devuelta al estudiante"
+};
+return states[value]||value||"Sin información";
+}
+
+function gradebookGrade(value){
+if(value===null||value===undefined||value==="")return "Pendiente";
+const number=Number(value);
+if(!Number.isFinite(number))return "Pendiente";
+return number.toLocaleString("es-CO",{minimumFractionDigits:1,maximumFractionDigits:2})+"/5";
+}
+
+function renderTeacherGradebook(rows){
+const body=$("teacherGradebookBody");
+body.replaceChildren();
+if(!rows.length){
+const tr=document.createElement("tr");
+const td=gradebookCell("No hay registros disponibles para mostrar.");
+td.colSpan=7;
+tr.appendChild(td);
+body.appendChild(tr);
+return;
+}
+rows.forEach(row=>{
+const tr=document.createElement("tr");
+tr.appendChild(gradebookCell(row.student_name));
+tr.appendChild(gradebookCell(row.student_email));
+tr.appendChild(gradebookCell(row.course_name));
+tr.appendChild(gradebookCell(row.title));
+tr.appendChild(gradebookCell(gradebookState(row.submission_state)));
+let points="Pendiente";
+if(row.points_earned!==null&&row.points_earned!==undefined){
+points=String(row.points_earned);
+if(row.max_points!==null&&row.max_points!==undefined)points+=" / "+row.max_points;
+}
+tr.appendChild(gradebookCell(points));
+tr.appendChild(gradebookCell(gradebookGrade(row.grade_5)));
+body.appendChild(tr);
+});
+}
+
+async function loadTeacherGradebook(){
+const button=$("refreshTeacherGradebookButton");
+const status=$("teacherGradebookStatus");
+const body=$("teacherGradebookBody");
+
+if(currentRole!=="teacher"||!currentUser){
+status.className="classroom-status error";
+status.textContent="Esta consulta solo está disponible para docentes.";
+return;
+}
+button.disabled=true;
+status.className="classroom-status info";
+status.textContent="Cargando estudiantes, asignaciones y notas...";
+try{
+const {data,error}=await db
+.from("classroom_sync_assignments")
+.select("course_id,coursework_id,course_name,title,student_email,student_name,submission_state,points_earned,max_points,grade_5,due_date,synced_at,teacher_id")
+.eq("teacher_id",currentUser.id)
+.order("course_name",{ascending:true})
+.order("title",{ascending:true})
+.order("student_name",{ascending:true});
+if(error)throw error;
+const rows=data||[];
+renderTeacherGradebook(rows);
+status.className="classroom-status success";
+status.textContent="Registros consultados: "+rows.length+". Las notas pendientes se conservan como pendientes.";
+}catch(error){
+console.error("Error cargando libro de calificaciones:",error);
+body.replaceChildren();
+status.className="classroom-status error";
+status.textContent="No se pudo cargar la tabla. Verifica las columnas y las políticas RLS de classroom_sync_assignments.";
+}finally{
+button.disabled=false;
+}
+}
+$("refreshTeacherGradebookButton").addEventListener("click",loadTeacherGradebook);
+
 /* SINCRONIZAR TAREAS Y NOTAS */
 async function syncClassroomData(){
 const button=$("syncClassroomButton");
@@ -468,11 +583,9 @@ const {data:sessionData,error:sessionError}=await db.auth.getSession();
 const token=sessionData?.session?.access_token;
 if(sessionError||!token)throw new Error("Tu sesión expiró. Inicia sesión otra vez en NYCE.");
 
-/* El nombre debe coincidir con el nombre desplegado en Supabase. */
 const {data,error}=await db.functions.invoke("Classroom_sync",{
 body:{},headers:{Authorization:"Bearer "+token}
 });
-
 if(error){
 console.error("Error al invocar Classroom_sync:",error);
 let message=error.message||"No se pudo conectar con la función.";
@@ -490,22 +603,18 @@ if(error.context.status)message+=" (HTTP "+error.context.status+")";
 throw new Error(message);
 }
 if(data?.error)throw new Error(data.details||data.error);
-
 const courses=data.courses_synced??data.courses??0;
 const assignments=data.assignments_synced??data.assignments??data.coursework??0;
 const submissions=data.student_assignment_rows_synced??data.submissions_synced??data.submissions??0;
-
 status.className=data.success===false?"classroom-status error":"classroom-status success";
 status.textContent=(data.message||"Sincronización completada.")+
-" Cursos: "+courses+
-"; actividades: "+assignments+
+" Cursos: "+courses+"; actividades: "+assignments+
 "; filas de tareas por estudiante: "+submissions+"."+
-(Array.isArray(data.course_errors)&&data.course_errors.length
-?" Cursos con errores: "+data.course_errors.length+". Revisa los Logs de Supabase."
-:"");
+(Array.isArray(data.course_errors)&&data.course_errors.length?" Cursos con errores: "+data.course_errors.length+". Revisa los Logs de Supabase.":"");
 $("teacherCourseCount").textContent=courses;
 $("teacherWorkCount").textContent=assignments;
 $("teacherSubmissionCount").textContent=submissions;
+await loadTeacherGradebook();
 }catch(error){
 console.error("Error sincronizando Classroom:",error);
 status.className="classroom-status error";
