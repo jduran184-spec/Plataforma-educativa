@@ -385,103 +385,218 @@ $("accountLogout").addEventListener("click",logout);
 document.querySelector('[data-page="account"]').addEventListener("click",()=>showPage("account"));
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.go)));
 
-/* TUTOR IA: MARKDOWN Y MATEMÁTICAS */
-function renderTutorAnswer(rawAnswer){
-const container=$("tutorAnswer");
-const mathBlocks=[];
-let text=String(rawAnswer??"");
 
-// Guardar primero las fórmulas para que Markdown no altere sus caracteres.
-text=text.replace(
-/(\$\$[\s\S]+?\$\$|\\\[[\s\S]+?\\\]|\\\([\s\S]+?\\\))/g,
-match=>{
-const index=mathBlocks.length;
-mathBlocks.push(match);
-return "NYCEMATHBLOCK"+index+"END";
+/* TUTOR IA: MARKDOWN, MATEMÁTICAS Y CONTROL DE RESPUESTAS */
+
+function renderTutorAnswer(rawAnswer) {
+  const container = $("tutorAnswer");
+  const source = String(rawAnswer ?? "");
+  const mathBlocks = [];
+
+  // Protege fórmulas para que Markdown no modifique su contenido.
+  // Admite $$...$$, \[...\], \(...\) y fórmulas entre $...$.
+  const protectedText = source.replace(
+    /(\$\$[\s\S]+?\$\$|\\\[[\s\S]+?\\\]|\\\([\s\S]+?\\\)|(?<!\$)\$(?!\$)[^\n$]+?\$(?!\$))/g,
+    (match) => {
+      const index = mathBlocks.push(match) - 1;
+      return `NYCEMATHPLACEHOLDER${index}END`;
+    }
+  );
+
+  // Convierte Markdown a HTML.
+  const markdownHtml = marked.parse(protectedText, {
+    gfm: true,
+    breaks: true
+  });
+
+  // Limpia el HTML generado antes de insertarlo en la página.
+  const safeHtml = DOMPurify.sanitize(markdownHtml);
+  const template = document.createElement("template");
+  template.innerHTML = safeHtml;
+
+  // Busca los marcadores incluso cuando Markdown los coloca
+  // dentro de párrafos, listas o negritas.
+  const walker = document.createTreeWalker(
+    template.content,
+    NodeFilter.SHOW_TEXT
+  );
+
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+
+  for (const node of nodes) {
+    const value = node.nodeValue;
+    const regex = /NYCEMATHPLACEHOLDER(\d+)END/g;
+    let match;
+    let lastIndex = 0;
+    let changed = false;
+    const fragment = document.createDocumentFragment();
+
+    while ((match = regex.exec(value)) !== null) {
+      changed = true;
+
+      fragment.appendChild(
+        document.createTextNode(value.slice(lastIndex, match.index))
+      );
+
+      const original = mathBlocks[Number(match[1])];
+      const span = document.createElement("span");
+      let expression = original;
+      let displayMode = false;
+
+      if (expression.startsWith("$$") && expression.endsWith("$$")) {
+        expression = expression.slice(2, -2);
+        displayMode = true;
+      } else if (
+        expression.startsWith("\\[") &&
+        expression.endsWith("\\]")
+      ) {
+        expression = expression.slice(2, -2);
+        displayMode = true;
+      } else if (
+        expression.startsWith("\\(") &&
+        expression.endsWith("\\)")
+      ) {
+        expression = expression.slice(2, -2);
+      } else if (
+        expression.startsWith("$") &&
+        expression.endsWith("$")
+      ) {
+        expression = expression.slice(1, -1);
+      }
+
+      try {
+        katex.render(expression, span, {
+          displayMode,
+          throwOnError: false,
+          strict: "ignore",
+          output: "htmlAndMathml"
+        });
+      } catch (error) {
+        console.warn("No se pudo renderizar una fórmula:", error);
+        span.textContent = original;
+      }
+
+      fragment.appendChild(span);
+      lastIndex = regex.lastIndex;
+    }
+
+    if (changed) {
+      fragment.appendChild(
+        document.createTextNode(value.slice(lastIndex))
+      );
+      node.replaceWith(fragment);
+    }
+  }
+
+  container.replaceChildren(template.content);
 }
-);
 
-const markdownHtml=marked.parse(text,{gfm:true,breaks:true});
-const safeHtml=DOMPurify.sanitize(markdownHtml);
-const template=document.createElement("template");
-template.innerHTML=safeHtml;
+/*
+ * Detecta señales comunes de una respuesta posiblemente incompleta.
+ * No puede confirmar por sí sola si Supabase cortó la generación.
+ */
+function tutorAnswerMayBeIncomplete(answer) {
+  const text = String(answer ?? "").trim();
+  if (!text) return true;
 
-const walker=document.createTreeWalker(template.content,NodeFilter.SHOW_TEXT);
-const textNodes=[];
-while(walker.nextNode())textNodes.push(walker.currentNode);
+  const unfinishedEndings = [
+    "imagina que",
+    "por ejemplo,",
+    "esto significa que",
+    "en la vida cotidiana",
+    "para resolverlo",
+    "el siguiente paso es",
+    "tenemos que"
+  ];
 
-for(const node of textNodes){
-const regex=/NYCEMATHBLOCK(\d+)END/g;
-const value=node.nodeValue;
-let match;
-let lastIndex=0;
-const fragment=document.createDocumentFragment();
+  const lower = text.toLowerCase();
 
-while((match=regex.exec(value))!==null){
-fragment.appendChild(document.createTextNode(value.slice(lastIndex,match.index)));
-const math=mathBlocks[Number(match[1])];
-const span=document.createElement("span");
+  if (unfinishedEndings.some(ending => lower.endsWith(ending))) {
+    return true;
+  }
 
-try{
-let expression=math;
-let displayMode=false;
+  // Detecta delimitadores de fórmulas sin cerrar.
+  const dollarCount = (text.match(/\$\$/g) || []).length;
+  if (dollarCount % 2 !== 0) return true;
 
-if(expression.startsWith("$$")&&expression.endsWith("$$")){
-expression=expression.slice(2,-2);
-displayMode=true;
-}else if(expression.startsWith("\\[")&&expression.endsWith("\\]")){
-expression=expression.slice(2,-2);
-displayMode=true;
-}else if(expression.startsWith("\\(")&&expression.endsWith("\\)")){
-expression=expression.slice(2,-2);
+  if (
+    (text.match(/\\\(/g) || []).length !==
+    (text.match(/\\\)/g) || []).length
+  ) return true;
+
+  if (
+    (text.match(/\\\[/g) || []).length !==
+    (text.match(/\\\]/g) || []).length
+  ) return true;
+
+  return false;
 }
 
-katex.render(expression,span,{
-displayMode,
-throwOnError:false,
-strict:"ignore"
+$("tutorForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const question = $("tutorQuestion").value.trim();
+  if (!question) return;
+
+  const button = $("tutorButton");
+  const status = $("tutorStatus");
+  const answerBox = $("tutorAnswer");
+
+  button.disabled = true;
+  status.textContent = "El tutor está preparando tu respuesta...";
+  answerBox.replaceChildren();
+
+  try {
+    const { data, error } = await db.functions.invoke("smart-action", {
+      body: {
+        question,
+        response_format: "markdown_math",
+        instructions: [
+          "Responde en español claro y apropiado para estudiantes.",
+          "Da una explicación completa, ordenada y paso a paso.",
+          "Usa Markdown para títulos, listas y negritas.",
+          "Escribe las fórmulas en LaTeX delimitado por \\(...\\) o $$...$$.",
+          "No escribas fórmulas matemáticas dentro de bloques de código.",
+          "Incluye el resultado final y termina todas las explicaciones.",
+          "No dejes frases, listas, ejemplos ni operaciones a medio terminar.",
+          "Si la respuesta es larga, resume sin cortar una frase."
+        ].join("\n")
+      }
+    });
+
+    if (error) throw error;
+
+    const answer =
+      data?.answer ??
+      data?.text ??
+      data?.response ??
+      data?.result ??
+      data?.message;
+
+    if (typeof answer !== "string" || !answer.trim()) {
+      console.error("Respuesta inesperada de smart-action:", data);
+      throw new Error("El servidor no devolvió texto en un formato reconocido.");
+    }
+
+    renderTutorAnswer(answer);
+
+    if (tutorAnswerMayBeIncomplete(answer)) {
+      status.textContent =
+        "La respuesta podría estar incompleta. Puedes pedirle al tutor que continúe.";
+    } else {
+      status.textContent = "Respuesta del tutor:";
+    }
+
+  } catch (error) {
+    console.error("Error del Tutor IA:", error);
+    status.textContent =
+      "No se pudo obtener una respuesta. Revisa la función smart-action en Supabase.";
+  } finally {
+    button.disabled = false;
+  }
 });
-}catch(error){
-span.textContent=math;
-}
 
-fragment.appendChild(span);
-lastIndex=regex.lastIndex;
-}
-
-if(lastIndex>0){
-fragment.appendChild(document.createTextNode(value.slice(lastIndex)));
-node.replaceWith(fragment);
-}
-}
-
-container.replaceChildren(template.content);
-}
-
-$("tutorForm").addEventListener("submit",async event=>{
-event.preventDefault();
-const question=$("tutorQuestion").value.trim();
-if(!question)return;
-const button=$("tutorButton");
-button.disabled=true;
-$("tutorStatus").textContent="El tutor está preparando tu respuesta...";
-$("tutorAnswer").replaceChildren();
-
-try{
-const {data,error}=await db.functions.invoke("smart-action",{body:{question}});
-if(error)throw error;
-const answer=data?.answer??data?.text??data?.response??data?.result??data?.message;
-if(typeof answer!=="string"||!answer.trim())throw new Error("Respuesta inesperada de smart-action.");
-
-renderTutorAnswer(answer);
-$("tutorStatus").textContent="Respuesta del tutor:";
-}catch(error){
-console.error(error);
-$("tutorStatus").textContent="No se pudo obtener una respuesta. Revisa smart-action en Supabase.";
-}finally{
-button.disabled=false;
-}
-});
 
 /* GOOGLE CLASSROOM: OAUTH */
 function setClassroomStatus(message,type="info"){
